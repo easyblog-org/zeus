@@ -1,0 +1,38 @@
+server:
+  port: 8001
+spring:
+  application:
+    name: user
+logging:
+  config: classpath:logback-spring.xml
+---
+#api验签有关配置
+application:
+  signature:
+    enable: true
+    app-id: 10086
+    secret: a5fbe495127e41da9c2b7f7f6609e39c
+
+spring:
+  profiles: dev
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${host}:3306/easyboot-dev?autoReconnect=true&useSSL=false&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai
+  redis:
+    host: ${host}
+
+urls:
+  demo: http://127.0.0.1:8001
+
+---
+spring:
+  profiles: test
+
+---
+spring:
+  profiles: stg
+
+---
+spring:
+  profiles: pro
