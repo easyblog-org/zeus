@@ -1,0 +1,77 @@
+@startuml
+
+entity "user" as user {
+  *id : int(64) <<generated>> <<PK>>
+  --
+  *nick_name : varchar(20)
+  *phone_international_area_code: int
+  description : 手机国际区号，关联国际区号表
+  *phone: varchar(11)
+  *integration: int(32)
+  description :用户积分
+  *header_img_id: int
+   description : 用户头像，关联头像表
+  *level: int
+  *visit: int(64)
+  *active: byte
+  *create_time: time
+  *update_time: time
+}
+
+entity "user_auth" as user_auth{
+   *id : number <<generated>> <<PK>>
+   --
+   *user_id: int(64)
+   description: 特殊认证code，比如手机的国际区域code
+   *identity_type: byte
+   description: 系统用户 1、邮箱 2、手机 3，或者第三方的QQ 3、微信 4、微博 5
+   *identifier: varchar(100)
+   description: 身份唯一标识，如：登录账号、邮箱地址、手机号码、QQ号码、微信号、微博号
+   *credential: varchar(256)
+   description: 站内账号是密码、第三方登录是Token
+   *verified: byte
+   description: 授权账号是否被验证
+   *status: byte
+   *create_time: time
+   *update_time: time
+}
+
+entity "international_area_code" as area_code {
+  *id : number <<generated>> <<PK>>
+  --
+  *crown_code: varchar(10)
+  *country_code: varchar(10)
+  *area_code: varchar(10)
+  *area_name: varchar(10)
+  *create_time: time
+  *update_time: time
+}
+
+entity "user_header_img" as header_img {
+  *id : number <<generated>> <<PK>>
+  --
+  *header_img_url : varchar(1024)
+  *user_id: int(64)
+  *status : byte
+  *create_time: time
+  *update_time: time
+}
+
+entity "signin_log" as signin_log{
+  *id : number <<generated>> <<PK>>
+  --
+  *user_id: int(64)
+  *status : byte
+  *ip: varchar(128)
+  *device: varchar(100)
+  *operation_system: varchar(64)
+  *login_location: varchar(100)
+  *create_time: time
+  *update_time: time default null
+}
+
+user ||..o{ user_auth
+user ||..|| area_code
+user |o..o{ header_img
+user ||..o{ signin_log
+@enduml
