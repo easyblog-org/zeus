@@ -11,6 +11,8 @@ import java.util.List;
  */
 public interface IDemoService {
 
+    void test();
+
     Integer demo1();
 
     List<UserDetailsBean> demo3();

@@ -30,7 +30,7 @@ public class DemoController {
     @ResponseWrapper
     @GetMapping("/empty")
     public void empty() {
-
+        demoService.test();
     }
 
     /**

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.easyblog.titan.bean.UserDetailsBean;
+import top.easyblog.titan.dao.auto.mapper.UserMapper;
 import top.easyblog.titan.feign.client.DemoClient;
 import top.easyblog.titan.request.QueryUserRequest;
 import top.easyblog.titan.service.IDemoService;
@@ -25,6 +26,13 @@ public class DemoService implements IDemoService {
 
     @Autowired
     private DemoClient demoClient;
+
+    @Autowired
+    private UserMapper mapper;
+
+    public void test(){
+        System.out.println(mapper);
+    }
 
     @Override
     public Integer demo1() {
