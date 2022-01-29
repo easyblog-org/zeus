@@ -1,20 +1,20 @@
 package top.easyblog.titan.dao.auto.mapper;
 
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
-
 import top.easyblog.titan.dao.auto.model.PhoneAuth;
+import top.easyblog.titan.dao.auto.model.PhoneAuthExample;
+
+import java.util.List;
 
 @Mapper
 public interface PhoneAuthMapper {
+    @SelectProvider(type = PhoneAuthSqlProvider.class, method = "countByExample")
+    long countByExample(PhoneAuthExample example);
+
+    @DeleteProvider(type = PhoneAuthSqlProvider.class, method = "deleteByExample")
+    int deleteByExample(PhoneAuthExample example);
+
     @Delete({
             "delete from phone_auth",
             "where id = #{id,jdbcType=BIGINT}"
@@ -34,6 +34,16 @@ public interface PhoneAuthMapper {
     @InsertProvider(type = PhoneAuthSqlProvider.class, method = "insertSelective")
     int insertSelective(PhoneAuth record);
 
+    @SelectProvider(type = PhoneAuthSqlProvider.class, method = "selectByExample")
+    @Results({
+            @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
+            @Result(column = "phone_area_code", property = "phoneAreaCode", jdbcType = JdbcType.INTEGER),
+            @Result(column = "phone", property = "phone", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.TIMESTAMP),
+            @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.TIMESTAMP)
+    })
+    List<PhoneAuth> selectByExample(PhoneAuthExample example);
+
     @Select({
             "select",
             "id, phone_area_code, phone, create_time, update_time",
@@ -48,6 +58,12 @@ public interface PhoneAuthMapper {
             @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.TIMESTAMP)
     })
     PhoneAuth selectByPrimaryKey(Long id);
+
+    @UpdateProvider(type = PhoneAuthSqlProvider.class, method = "updateByExampleSelective")
+    int updateByExampleSelective(@Param("record") PhoneAuth record, @Param("example") PhoneAuthExample example);
+
+    @UpdateProvider(type = PhoneAuthSqlProvider.class, method = "updateByExample")
+    int updateByExample(@Param("record") PhoneAuth record, @Param("example") PhoneAuthExample example);
 
     @UpdateProvider(type = PhoneAuthSqlProvider.class, method = "updateByPrimaryKeySelective")
     int updateByPrimaryKeySelective(PhoneAuth record);

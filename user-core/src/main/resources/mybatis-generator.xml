@@ -56,68 +56,68 @@
         <!--请根据自己数据库对应的表名进行配置修改，这里仅供参考-->
         <!--生成对应表及类名-->
         <table tableName="account" domainObjectName="Account"
-               enableCountByExample="false"
-               enableDeleteByExample="false"
-               enableUpdateByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false">
+               enableCountByExample="true"
+               enableDeleteByExample="true"
+               enableUpdateByExample="true"
+               enableSelectByExample="true"
+               selectByExampleQueryId="true">
             <!--去除表明前缀tb_,注意严格控制大小写-->
-            <domainObjectRenamingRule searchString="^Tb" replaceString="" />
+            <domainObjectRenamingRule searchString="^Tb" replaceString=""/>
             <!--去除列字段前缀,注意严格控制大小写-->
             <columnRenamingRule searchString="^sys" replaceString=""/>
         </table>
         <table tableName="phone_area_code" domainObjectName="PhoneAreaCode"
-               enableCountByExample="false"
-               enableDeleteByExample="false"
-               enableUpdateByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false">
+               enableCountByExample="true"
+               enableDeleteByExample="true"
+               enableUpdateByExample="true"
+               enableSelectByExample="true"
+               selectByExampleQueryId="true">
             <!--去除表明前缀tb_,注意严格控制大小写-->
-            <domainObjectRenamingRule searchString="^Tb" replaceString="" />
+            <domainObjectRenamingRule searchString="^Tb" replaceString=""/>
             <!--去除列字段前缀,注意严格控制大小写-->
             <columnRenamingRule searchString="^sys" replaceString=""/>
         </table>
         <table tableName="phone_auth" domainObjectName="PhoneAuth"
-               enableCountByExample="false"
-               enableDeleteByExample="false"
-               enableUpdateByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false">
+               enableCountByExample="true"
+               enableDeleteByExample="true"
+               enableUpdateByExample="true"
+               enableSelectByExample="true"
+               selectByExampleQueryId="true">
             <!--去除表明前缀tb_,注意严格控制大小写-->
-            <domainObjectRenamingRule searchString="^Tb" replaceString="" />
+            <domainObjectRenamingRule searchString="^Tb" replaceString=""/>
             <!--去除列字段前缀,注意严格控制大小写-->
             <columnRenamingRule searchString="^sys" replaceString=""/>
         </table>
         <table tableName="sign_in_log" domainObjectName="SignInLog"
-               enableCountByExample="false"
-               enableDeleteByExample="false"
-               enableUpdateByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false">
+               enableCountByExample="true"
+               enableDeleteByExample="true"
+               enableUpdateByExample="true"
+               enableSelectByExample="true"
+               selectByExampleQueryId="true">
             <!--去除表明前缀tb_,注意严格控制大小写-->
-            <domainObjectRenamingRule searchString="^Tb" replaceString="" />
+            <domainObjectRenamingRule searchString="^Tb" replaceString=""/>
             <!--去除列字段前缀,注意严格控制大小写-->
             <columnRenamingRule searchString="^sys" replaceString=""/>
         </table>
         <table tableName="user" domainObjectName="User"
-               enableCountByExample="false"
-               enableDeleteByExample="false"
-               enableUpdateByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false">
+               enableCountByExample="true"
+               enableDeleteByExample="true"
+               enableUpdateByExample="true"
+               enableSelectByExample="true"
+               selectByExampleQueryId="true">
             <!--去除表明前缀tb_,注意严格控制大小写-->
-            <domainObjectRenamingRule searchString="^Tb" replaceString="" />
+            <domainObjectRenamingRule searchString="^Tb" replaceString=""/>
             <!--去除列字段前缀,注意严格控制大小写-->
             <columnRenamingRule searchString="^sys" replaceString=""/>
         </table>
         <table tableName="user_header_img" domainObjectName="UserHeaderImg"
-               enableCountByExample="false"
-               enableDeleteByExample="false"
-               enableUpdateByExample="false"
-               enableSelectByExample="false"
-               selectByExampleQueryId="false">
+               enableCountByExample="true"
+               enableDeleteByExample="true"
+               enableUpdateByExample="true"
+               enableSelectByExample="true"
+               selectByExampleQueryId="true">
             <!--去除表明前缀tb_,注意严格控制大小写-->
-            <domainObjectRenamingRule searchString="^Tb" replaceString="" />
+            <domainObjectRenamingRule searchString="^Tb" replaceString=""/>
             <!--去除列字段前缀,注意严格控制大小写-->
             <columnRenamingRule searchString="^sys" replaceString=""/>
         </table>

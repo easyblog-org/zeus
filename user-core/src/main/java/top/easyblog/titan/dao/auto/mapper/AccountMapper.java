@@ -1,20 +1,20 @@
 package top.easyblog.titan.dao.auto.mapper;
 
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
-
 import top.easyblog.titan.dao.auto.model.Account;
+import top.easyblog.titan.dao.auto.model.AccountExample;
+
+import java.util.List;
 
 @Mapper
 public interface AccountMapper {
+    @SelectProvider(type = AccountSqlProvider.class, method = "countByExample")
+    long countByExample(AccountExample example);
+
+    @DeleteProvider(type = AccountSqlProvider.class, method = "deleteByExample")
+    int deleteByExample(AccountExample example);
+
     @Delete({
             "delete from account",
             "where id = #{id,jdbcType=BIGINT}"
@@ -38,6 +38,20 @@ public interface AccountMapper {
     @InsertProvider(type = AccountSqlProvider.class, method = "insertSelective")
     int insertSelective(Account record);
 
+    @SelectProvider(type = AccountSqlProvider.class, method = "selectByExample")
+    @Results({
+            @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
+            @Result(column = "user_id", property = "userId", jdbcType = JdbcType.BIGINT),
+            @Result(column = "identity_type", property = "identityType", jdbcType = JdbcType.INTEGER),
+            @Result(column = "identifier", property = "identifier", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "credential", property = "credential", jdbcType = JdbcType.VARCHAR),
+            @Result(column = "verified", property = "verified", jdbcType = JdbcType.INTEGER),
+            @Result(column = "status", property = "status", jdbcType = JdbcType.INTEGER),
+            @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.TIMESTAMP),
+            @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.TIMESTAMP)
+    })
+    List<Account> selectByExample(AccountExample example);
+
     @Select({
             "select",
             "id, user_id, identity_type, identifier, credential, verified, status, create_time, ",
@@ -57,6 +71,12 @@ public interface AccountMapper {
             @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.TIMESTAMP)
     })
     Account selectByPrimaryKey(Long id);
+
+    @UpdateProvider(type = AccountSqlProvider.class, method = "updateByExampleSelective")
+    int updateByExampleSelective(@Param("record") Account record, @Param("example") AccountExample example);
+
+    @UpdateProvider(type = AccountSqlProvider.class, method = "updateByExample")
+    int updateByExample(@Param("record") Account record, @Param("example") AccountExample example);
 
     @UpdateProvider(type = AccountSqlProvider.class, method = "updateByPrimaryKeySelective")
     int updateByPrimaryKeySelective(Account record);
