@@ -4,16 +4,16 @@ CREATE TABLE `account`
 (
     `id`            bigint       NOT NULL AUTO_INCREMENT COMMENT 'id',
     `user_id`       bigint       NOT NULL COMMENT '用户id',
-    `identity_type` int          NOT NULL DEFAULT '0' COMMENT '系统用户 1、邮箱 2、手机 3，QQ 4、微信 5、微博 6、GitHub 7、Gitlab 8',
+    `identity_type` int          NOT NULL DEFAULT '0' COMMENT '系统用户 1、邮箱 2、手机 3，QQ 4、微信 5、微博 6、GitHub 7、Gitee 8',
     `identifier`    varchar(100) NOT NULL DEFAULT '' COMMENT '身份唯一标识，如：登录账号、邮箱地址、手机号码、QQ号码、微信号、微博号',
     `credential`    varchar(256) NOT NULL DEFAULT '' COMMENT '站内账号是密码、第三方登录是Token',
     `verified`      int          NOT NULL DEFAULT '0' COMMENT '授权账号是否被验证',
     `status`        int          NOT NULL DEFAULT '0' COMMENT '状态状态',
-    `create_time`   timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    `update_time`   timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    `create_time`   timestamp    NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time`   timestamp    NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
-    KEY             `idx_uid` (`user_id`),
-    KEY             `idx_account_entity` (`identity_type`,`identifier`,`credential`)
+    KEY `idx_uid` (`user_id`),
+    KEY `idx_account_entity` (`identity_type`, `identifier`, `credential`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 

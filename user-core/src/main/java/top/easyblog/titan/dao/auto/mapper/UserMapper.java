@@ -2,9 +2,11 @@ package top.easyblog.titan.dao.auto.mapper;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Mapper;
+
 import top.easyblog.titan.dao.auto.model.User;
 
-
+@Mapper
 public interface UserMapper {
     @Insert({
             "insert into user (id, nick_name, ",
