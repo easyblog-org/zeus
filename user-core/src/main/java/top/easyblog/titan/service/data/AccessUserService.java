@@ -24,12 +24,13 @@ public class AccessUserService {
     @Autowired
     private UserMapper userMapper;
 
-    public long insertSelective(CreateUserRequest request) {
+    public User insertSelective(CreateUserRequest request) {
         User user = new User();
         request.setCreateTime(new Date());
         request.setUpdateTime(new Date());
         BeanUtils.copyProperties(request, user);
-        return userMapper.insertSelective(user);
+        userMapper.insertSelective(user);
+        return user;
     }
 
 

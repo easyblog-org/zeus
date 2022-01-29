@@ -7,6 +7,7 @@ import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.RegisterDetailsBean;
 import top.easyblog.titan.dao.auto.model.User;
+import top.easyblog.titan.enums.Status;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.ResultCode;
@@ -52,13 +53,17 @@ public class UserNameLoginPolicy implements LoginPolicy {
         }
         //2.新建用户信息
         CreateUserRequest createUserRequest = CreateUserRequest.builder().nickName(request.getIdentifier()).build();
-        accessUserService.insertSelective(createUserRequest);
+        User newUser = accessUserService.insertSelective(createUserRequest);
 
         //3.新建用户账号信息
         CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
-
+                .userId(newUser.getId())
+                .identityType(request.getIdentifierType().intValue())
                 .credential(request.getCredential())
+                .verified(Status.ENABLE.getCode())
+                .verified(Status.ENABLE.getCode())
                 .build();
+        accessAccountService.insertSelective(createAccountRequest);
         return null;
     }
 
