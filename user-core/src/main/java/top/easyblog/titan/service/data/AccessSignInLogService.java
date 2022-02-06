@@ -41,6 +41,14 @@ public class AccessSignInLogService {
     }
 
     public List<SignInLog> querySignInLogListByRequest(QuerySignInLogListRequest request) {
+        return signInLogMapper.selectByExample(generateExamples(request));
+    }
+
+    public long countByRequest(QuerySignInLogListRequest request) {
+        return signInLogMapper.countByExample(generateExamples(request));
+    }
+
+    private SignInLogExample generateExamples(QuerySignInLogListRequest request) {
         SignInLogExample example = new SignInLogExample();
         SignInLogExample.Criteria criteria = example.createCriteria();
         if (Objects.nonNull(request.getId())) {
@@ -65,7 +73,7 @@ public class AccessSignInLogService {
         if (Objects.nonNull(request.getOffset())) {
             example.setOffset(request.getOffset());
         }
-        return signInLogMapper.selectByExample(example);
+        return example;
     }
 
 }

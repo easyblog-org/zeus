@@ -4,12 +4,16 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import top.easyblog.titan.bean.SignInLogBean;
 import top.easyblog.titan.dao.auto.model.SignInLog;
 import top.easyblog.titan.exception.BusinessException;
+import top.easyblog.titan.request.QuerySignInLogListRequest;
 import top.easyblog.titan.request.QuerySignInLogRequest;
+import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.data.AccessSignInLogService;
 
@@ -35,6 +39,22 @@ public class SignInLogService {
         SignInLogBean signInLogBean = new SignInLogBean();
         BeanUtils.copyProperties(signInLog, signInLogBean);
         return signInLogBean;
+    }
+
+    public PageResponse<SignInLogBean> querySignInLogListByRequest(QuerySignInLogListRequest request) {
+        PageResponse<SignInLogBean> response = new PageResponse<>(request.getLimit(), request.getOffset(),
+                0L, Collections.emptyList());
+        long count = accessSignInLogService.countByRequest(request);
+        if (count == 0) {
+            return response;
+        }
+        response.setTotal(count);
+        response.setData(accessSignInLogService.querySignInLogListByRequest(request).stream().map(signInLog -> {
+            SignInLogBean signInLogBean = new SignInLogBean();
+            BeanUtils.copyProperties(signInLog, signInLogBean);
+            return signInLogBean;
+        }).collect(Collectors.toList()));
+        return response;
     }
 
 }
