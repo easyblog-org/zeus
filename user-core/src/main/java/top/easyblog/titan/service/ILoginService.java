@@ -1,11 +1,11 @@
 package top.easyblog.titan.service;
 
+import javax.servlet.http.HttpServletRequest;
+
 import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 系统登录认证
@@ -21,6 +21,6 @@ public interface ILoginService {
 
     void logout(String token);
 
-    void register(RegisterUserRequest request);
+    UserDetailsBean register(RegisterUserRequest request);
 
 }

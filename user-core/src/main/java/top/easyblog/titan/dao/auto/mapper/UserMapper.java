@@ -1,11 +1,21 @@
 package top.easyblog.titan.dao.auto.mapper;
 
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.DeleteProvider;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
+import org.apache.ibatis.annotations.SelectProvider;
+import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.type.JdbcType;
-import top.easyblog.titan.dao.auto.model.User;
-import top.easyblog.titan.dao.auto.model.UserExample;
 
 import java.util.List;
+
+import top.easyblog.titan.dao.auto.model.User;
+import top.easyblog.titan.dao.auto.model.UserExample;
 
 @Mapper
 public interface UserMapper {
@@ -49,4 +59,17 @@ public interface UserMapper {
 
     @UpdateProvider(type = UserSqlProvider.class, method = "updateByExample")
     int updateByExample(@Param("record") User record, @Param("example") UserExample example);
+
+    @Update({
+            "update user",
+            "set nick_name = #{nick_name,jdbcType=VARCHAR},",
+            "integration = #{integration,jdbcType=INTEGER},",
+            "header_img_id = #{header_img_id,jdbcType=INTEGER},",
+            "level = #{level,jdbcType=INTEGER},",
+            "visit = #{visit,jdbcType=INTEGER},",
+            "active = #{active,jdbcType=INTEGER},",
+            "update_time = #{updateTime,jdbcType=TIMESTAMP}",
+            "where id = #{id,jdbcType=BIGINT}"
+    })
+    int updateByPrimaryKey(@Param("record") User record);
 }

@@ -1,6 +1,8 @@
 package top.easyblog.titan.response;
 
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,12 +17,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PageInfoResponse<T> {
-
-    /**
-     * 总记录个数
-     */
-    private Integer total;
+public class PageResponse<T> extends BaseResponse<T> {
 
     /**
      * 分页大小
@@ -33,12 +30,13 @@ public class PageInfoResponse<T> {
     private Integer offset;
 
     /**
-     * 此分页数据量
+     * 总记录个数
      */
-    private Integer amount;
+    private Long total;
+
     /**
      * 分页数据
      */
-    private T data;
+    private List<T> data;
 
 }

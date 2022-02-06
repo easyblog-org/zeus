@@ -50,76 +50,34 @@
                              targetPackage="top.easyblog.titan.dao.auto.mapper"
                              targetProject="src/main/java">
             <!-- enableSubPackages:是否让schema作为包的后缀 -->
-            <property name="enableSubPackages" value="false" />
+            <property name="enableSubPackages" value="false"/>
         </javaClientGenerator>
 
         <!--请根据自己数据库对应的表名进行配置修改，这里仅供参考-->
         <!--生成对应表及类名-->
-        <table tableName="account" domainObjectName="Account"
-               enableCountByExample="true"
-               enableDeleteByExample="true"
-               enableUpdateByExample="true"
-               enableSelectByExample="true"
-               selectByExampleQueryId="true">
-            <!--去除表明前缀tb_,注意严格控制大小写-->
-            <domainObjectRenamingRule searchString="^Tb" replaceString=""/>
-            <!--去除列字段前缀,注意严格控制大小写-->
-            <columnRenamingRule searchString="^sys" replaceString=""/>
+        <table tableName="account">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>
-        <table tableName="phone_area_code" domainObjectName="PhoneAreaCode"
-               enableCountByExample="true"
-               enableDeleteByExample="true"
-               enableUpdateByExample="true"
-               enableSelectByExample="true"
-               selectByExampleQueryId="true">
-            <!--去除表明前缀tb_,注意严格控制大小写-->
-            <domainObjectRenamingRule searchString="^Tb" replaceString=""/>
-            <!--去除列字段前缀,注意严格控制大小写-->
-            <columnRenamingRule searchString="^sys" replaceString=""/>
+        <table tableName="phone_area_code">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>
-        <table tableName="phone_auth" domainObjectName="PhoneAuth"
-               enableCountByExample="true"
-               enableDeleteByExample="true"
-               enableUpdateByExample="true"
-               enableSelectByExample="true"
-               selectByExampleQueryId="true">
-            <!--去除表明前缀tb_,注意严格控制大小写-->
-            <domainObjectRenamingRule searchString="^Tb" replaceString=""/>
-            <!--去除列字段前缀,注意严格控制大小写-->
-            <columnRenamingRule searchString="^sys" replaceString=""/>
+        <table tableName="phone_auth">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>
-        <table tableName="sign_in_log" domainObjectName="SignInLog"
-               enableCountByExample="true"
-               enableDeleteByExample="true"
-               enableUpdateByExample="true"
-               enableSelectByExample="true"
-               selectByExampleQueryId="true">
-            <!--去除表明前缀tb_,注意严格控制大小写-->
-            <domainObjectRenamingRule searchString="^Tb" replaceString=""/>
-            <!--去除列字段前缀,注意严格控制大小写-->
-            <columnRenamingRule searchString="^sys" replaceString=""/>
+        <table tableName="sign_in_log">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>
-        <table tableName="user" domainObjectName="User"
-               enableCountByExample="true"
-               enableDeleteByExample="true"
-               enableUpdateByExample="true"
-               enableSelectByExample="true"
-               selectByExampleQueryId="true">
-            <!--去除表明前缀tb_,注意严格控制大小写-->
-            <domainObjectRenamingRule searchString="^Tb" replaceString=""/>
-            <!--去除列字段前缀,注意严格控制大小写-->
-            <columnRenamingRule searchString="^sys" replaceString=""/>
+        <table tableName="user">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>
-        <table tableName="user_header_img" domainObjectName="UserHeaderImg"
-               enableCountByExample="true"
-               enableDeleteByExample="true"
-               enableUpdateByExample="true"
-               enableSelectByExample="true"
-               selectByExampleQueryId="true">
-            <!--去除表明前缀tb_,注意严格控制大小写-->
-            <domainObjectRenamingRule searchString="^Tb" replaceString=""/>
-            <!--去除列字段前缀,注意严格控制大小写-->
-            <columnRenamingRule searchString="^sys" replaceString=""/>
+        <table tableName="user_header_img">
+            <property name="useActualColumnNames" value="false"/>
+            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>
     </context>
 </generatorConfiguration>

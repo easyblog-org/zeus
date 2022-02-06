@@ -11,6 +11,10 @@ public class SignInLogExample {
 
     protected List<Criteria> oredCriteria;
 
+    private Integer limit;
+
+    private Integer offset;
+
     public SignInLogExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
@@ -33,6 +37,22 @@ public class SignInLogExample {
 
     public List<Criteria> getOredCriteria() {
         return oredCriteria;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
+    }
+
+    public Integer getOffset() {
+        return offset;
     }
 
     public void or(Criteria criteria) {

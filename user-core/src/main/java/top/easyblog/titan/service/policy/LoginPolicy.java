@@ -1,8 +1,9 @@
-package top.easyblog.titan.service.impl.policy;
+package top.easyblog.titan.service.policy;
 
 import org.apache.commons.lang3.StringUtils;
+
 import top.easyblog.titan.bean.LoginDetailsBean;
-import top.easyblog.titan.bean.RegisterDetailsBean;
+import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.constant.LoginConstants;
 import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
@@ -26,7 +27,7 @@ public interface LoginPolicy {
      * @param request
      * @return
      */
-    RegisterDetailsBean doRegister(RegisterUserRequest request);
+    UserDetailsBean doRegister(RegisterUserRequest request);
 
     /**
      * 校验密码是否合法
@@ -45,8 +46,8 @@ public interface LoginPolicy {
             return false;
         }
         char[] chars = password.toCharArray();
-        int[] strength = new int[3];
-        int specialFlag = 0, letterFlag = 1, numberFlag = 2;
+        int[] strength = new int[3];   //密码强度
+        int specialFlag = 2, letterFlag = 1, numberFlag = 0;
         for (char ch : chars) {
             if (strength[specialFlag] == 0 && LoginConstants.PASSWORD_SPECIAL_CHARACTERS.contains(String.valueOf(ch))) {
                 strength[specialFlag] = 1;

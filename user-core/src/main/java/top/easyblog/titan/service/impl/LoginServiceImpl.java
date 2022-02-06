@@ -3,6 +3,12 @@ package top.easyblog.titan.service.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import javax.servlet.http.HttpServletRequest;
+
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
@@ -12,17 +18,12 @@ import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.ILoginService;
-import top.easyblog.titan.service.RedisService;
 import top.easyblog.titan.service.data.AccessAccountService;
 import top.easyblog.titan.service.data.AccessPhoneAuthService;
-import top.easyblog.titan.service.impl.policy.LoginPolicy;
-import top.easyblog.titan.service.impl.policy.LoginPolicyFactory;
+import top.easyblog.titan.service.policy.LoginPolicy;
+import top.easyblog.titan.service.policy.LoginPolicyFactory;
 import top.easyblog.titan.util.IdGenerator;
 import top.easyblog.titan.util.JsonUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author frank.huang
@@ -76,12 +77,12 @@ public class LoginServiceImpl implements ILoginService {
     }
 
     @Override
-    public void register(RegisterUserRequest request) {
+    public UserDetailsBean register(RegisterUserRequest request) {
         LoginPolicy loginPolicy = LoginPolicyFactory.getLoginPolicy(request.getIdentifierType());
         if (Objects.isNull(loginPolicy)) {
             throw new BusinessException(ResultCode.INTERNAL_ERROR);
         }
-        loginPolicy.doRegister(request);
+        return loginPolicy.doRegister(request);
     }
 
 }

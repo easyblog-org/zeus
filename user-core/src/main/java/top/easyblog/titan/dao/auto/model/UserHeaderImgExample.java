@@ -11,6 +11,10 @@ public class UserHeaderImgExample {
 
     protected List<Criteria> oredCriteria;
 
+    private Integer limit;
+
+    private Integer offset;
+
     public UserHeaderImgExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
@@ -33,6 +37,22 @@ public class UserHeaderImgExample {
 
     public List<Criteria> getOredCriteria() {
         return oredCriteria;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setOffset(Integer offset) {
+        this.offset = offset;
+    }
+
+    public Integer getOffset() {
+        return offset;
     }
 
     public void or(Criteria criteria) {
