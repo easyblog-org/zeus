@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.CreateUserRequest;
@@ -28,25 +31,25 @@ public class UserController {
 
     @ResponseWrapper
     @GetMapping
-    public Object query(QueryUserRequest request) {
-        return userService.queryUserByRequest(request);
+    public Object query(@Valid QueryUserRequest request) {
+        return userService.queryUserDetails(request);
     }
 
     @ResponseWrapper
     @PutMapping
-    public void update(UpdateUserRequest request) {
-        userService.updateUserByRequest(request);
+    public void update(@RequestBody @Valid UpdateUserRequest request) {
+        userService.updateUser(request);
     }
 
     @ResponseWrapper
     @GetMapping("/list")
-    public Object queryList(QueryUsersRequest request) {
+    public Object queryList(@Valid QueryUsersRequest request) {
         return userService.queryUserListPage(request);
     }
 
     @ResponseWrapper
     @PostMapping
-    public void create(CreateUserRequest request) {
-        userService.createByRequest(request);
+    public void create(@RequestBody @Valid CreateUserRequest request) {
+        userService.createUser(request);
     }
 }

@@ -1,15 +1,13 @@
 package top.easyblog.titan.request;
 
-import lombok.Builder;
 import lombok.Data;
 
 /**
- * @author: frank.huang
- * @date: 2022-01-29 22:13
+ * @author frank.huang
+ * @date 2022/02/06 09:54
  */
 @Data
-@Builder
-public class CreateAccountRequest {
+public class UpdateAccountRequest {
     private Long id;
 
     private Long userId;
@@ -20,8 +18,7 @@ public class CreateAccountRequest {
 
     private String credential;
 
-    private Integer verified;
-
     private Integer status;
 
+    private Integer verified;
 }

@@ -43,7 +43,7 @@ public class UserService {
     private UserAccountService accountService;
 
     @Autowired
-    private SignInLogService signInLogService;
+    private UserSignInLogService userSignInLogService;
 
     private static final String QUERY_ACCOUNT_LIST_FLAG = "accounts";
 
@@ -56,7 +56,7 @@ public class UserService {
      * @return
      */
     @Transaction
-    public UserDetailsBean queryUserByRequest(QueryUserRequest request) {
+    public UserDetailsBean queryUserDetails(QueryUserRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
@@ -96,7 +96,7 @@ public class UserService {
      *
      * @param request
      */
-    public void updateUserByRequest(UpdateUserRequest request) {
+    public void updateUser(UpdateUserRequest request) {
         User user = new User();
         BeanUtils.copyProperties(request, user);
         userService.updateUser(user);
@@ -132,7 +132,7 @@ public class UserService {
      *
      * @param request
      */
-    public void createByRequest(CreateUserRequest request) {
+    public void createUser(CreateUserRequest request) {
         userService.insertSelective(request);
     }
 

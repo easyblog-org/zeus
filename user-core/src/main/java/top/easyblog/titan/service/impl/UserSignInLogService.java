@@ -22,12 +22,12 @@ import top.easyblog.titan.service.data.AccessSignInLogService;
  * @date 2022/01/30 13:34
  */
 @Service
-public class SignInLogService {
+public class UserSignInLogService {
 
     @Autowired
     private AccessSignInLogService accessSignInLogService;
 
-    public SignInLogBean querySignInLogDetailsByRequest(QuerySignInLogRequest request) {
+    public SignInLogBean querySignInLogDetails(QuerySignInLogRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
@@ -41,7 +41,7 @@ public class SignInLogService {
         return signInLogBean;
     }
 
-    public PageResponse<SignInLogBean> querySignInLogListByRequest(QuerySignInLogListRequest request) {
+    public PageResponse<SignInLogBean> querySignInLogList(QuerySignInLogListRequest request) {
         PageResponse<SignInLogBean> response = new PageResponse<>(request.getLimit(), request.getOffset(),
                 0L, Collections.emptyList());
         long count = accessSignInLogService.countByRequest(request);
