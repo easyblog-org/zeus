@@ -2,6 +2,7 @@ package top.easyblog.titan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,8 +43,9 @@ public class AccountController {
     }
 
     @ResponseWrapper
-    @PutMapping
-    public void update(@RequestBody @Valid UpdateAccountRequest request) {
+    @PutMapping("/{account_id}")
+    public void update(@PathVariable("account_id") Long accountId,
+                       @RequestBody @Valid UpdateAccountRequest request) {
         accountService.updateAccount(request);
     }
 

@@ -68,7 +68,7 @@ public class UserService {
         UserDetailsBean userDetailsBean = new UserDetailsBean();
         BeanUtils.copyProperties(user, userDetailsBean);
         //2.查询user头像
-        userDetailsBean.setUserHeaderImg(headerImgService.queryUserHeaderByRequest(QueryUserHeaderImgRequest.builder()
+        userDetailsBean.setUserHeaderImg(headerImgService.queryUserHeaderDetails(QueryUserHeaderImgRequest.builder()
                 .userId(user.getId()).statuses(Lists.newArrayList(Status.ENABLE.getCode())).build()));
         setSection(request.getSections(), userDetailsBean);
         return userDetailsBean;
@@ -99,7 +99,7 @@ public class UserService {
     public void updateUser(UpdateUserRequest request) {
         User user = new User();
         BeanUtils.copyProperties(request, user);
-        userService.updateUser(user);
+        userService.updateUserByPrimaryKey(user);
     }
 
     /**

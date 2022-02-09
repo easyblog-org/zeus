@@ -72,7 +72,7 @@ public class AccessUserService {
         return example;
     }
 
-    public void updateUser(User user) {
+    public void updateUserByPrimaryKey(User user) {
         user.setUpdateTime(new Date());
         userMapper.updateByPrimaryKey(user);
     }

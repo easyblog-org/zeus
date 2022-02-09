@@ -21,7 +21,7 @@ import top.easyblog.titan.service.ILoginService;
  * @date 2022/01/29 15:44
  */
 @RestController
-@RequestMapping("/v1/auth")
+@RequestMapping("/v1/in/auth")
 public class AuthController {
 
     @Autowired
