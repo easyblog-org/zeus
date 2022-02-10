@@ -1,22 +1,15 @@
 package top.easyblog.titan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-
+import org.springframework.web.bind.annotation.*;
 import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.CreateUserRequest;
+import top.easyblog.titan.request.QueryUserListRequest;
 import top.easyblog.titan.request.QueryUserRequest;
-import top.easyblog.titan.request.QueryUsersRequest;
 import top.easyblog.titan.request.UpdateUserRequest;
 import top.easyblog.titan.service.impl.UserService;
+
+import javax.validation.Valid;
 
 /**
  * @author frank.huang
@@ -28,7 +21,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
 
     @ResponseWrapper
     @GetMapping
@@ -46,7 +38,7 @@ public class UserController {
 
     @ResponseWrapper
     @GetMapping("/list")
-    public Object queryList(@Valid QueryUsersRequest request) {
+    public Object queryList(@Valid QueryUserListRequest request) {
         return userService.queryUserListPage(request);
     }
 

@@ -1,29 +1,42 @@
 package top.easyblog.titan.service.data;
 
 import com.google.common.collect.Iterables;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Objects;
-
 import top.easyblog.titan.dao.auto.mapper.SignInLogMapper;
 import top.easyblog.titan.dao.auto.model.SignInLog;
 import top.easyblog.titan.dao.auto.model.SignInLogExample;
+import top.easyblog.titan.request.CreateSignInLogRequest;
 import top.easyblog.titan.request.QuerySignInLogListRequest;
 import top.easyblog.titan.request.QuerySignInLogRequest;
+import top.easyblog.titan.util.JsonUtils;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author frank.huang
  * @date 2022/01/29 16:11
  */
+@Slf4j
 @Service
 public class AccessSignInLogService {
     @Autowired
     private SignInLogMapper signInLogMapper;
 
+
+    public void insertSignInLogByRequest(CreateSignInLogRequest request) {
+        SignInLog signInLog = new SignInLog();
+        signInLog.setCreateTime(new Date());
+        signInLog.setUpdateTime(new Date());
+        BeanUtils.copyProperties(request, signInLog);
+        signInLogMapper.insertSelective(signInLog);
+        log.info("[DB] insert new sign in log:{}", JsonUtils.toJSONString(signInLog));
+    }
 
     public SignInLog querySignLogByRequest(QuerySignInLogRequest request) {
         SignInLogExample example = new SignInLogExample();

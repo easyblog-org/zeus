@@ -1,30 +1,25 @@
 package top.easyblog.titan.service.impl;
 
 import com.google.common.collect.Lists;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.easyblog.titan.annotation.Transaction;
+import top.easyblog.titan.bean.UserDetailsBean;
+import top.easyblog.titan.constant.Constants;
+import top.easyblog.titan.dao.auto.model.User;
+import top.easyblog.titan.enums.Status;
+import top.easyblog.titan.exception.BusinessException;
+import top.easyblog.titan.request.*;
+import top.easyblog.titan.response.PageResponse;
+import top.easyblog.titan.response.ResultCode;
+import top.easyblog.titan.service.data.AccessUserService;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import top.easyblog.titan.annotation.Transaction;
-import top.easyblog.titan.bean.UserDetailsBean;
-import top.easyblog.titan.dao.auto.model.User;
-import top.easyblog.titan.enums.Status;
-import top.easyblog.titan.exception.BusinessException;
-import top.easyblog.titan.request.CreateUserRequest;
-import top.easyblog.titan.request.QueryUserHeaderImgRequest;
-import top.easyblog.titan.request.QueryUserRequest;
-import top.easyblog.titan.request.QueryUsersRequest;
-import top.easyblog.titan.request.UpdateUserRequest;
-import top.easyblog.titan.response.PageResponse;
-import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.data.AccessUserService;
 
 /**
  * @author frank.huang
@@ -81,11 +76,13 @@ public class UserService {
      * @param userDetailsBean
      */
     private void setSection(String section, UserDetailsBean userDetailsBean) {
-        if (StringUtils.isNoneBlank(section)) {
+        if (StringUtils.isNotBlank(section)) {
             if (section.contains(QUERY_ACCOUNT_LIST_FLAG)) {
+                //TODO
                 userDetailsBean.setAccounts(null);
             }
             if (section.contains(QUERY_SIGN_LOG_LIST_FLAG)) {
+                // TODO
                 userDetailsBean.setSignInLogs(null);
             }
         }
@@ -108,7 +105,16 @@ public class UserService {
      * @param request
      * @return
      */
-    public PageResponse<UserDetailsBean> queryUserListPage(QueryUsersRequest request) {
+    public Object queryUserListPage(QueryUserListRequest request) {
+        if (Objects.isNull(request)) {
+            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+        }
+        if (Objects.isNull(request.getOffset()) || Objects.isNull(request.getLimit())) {
+            //不分页，默认查询1000条数据
+            request.setOffset(Constants.DEFAULT_OFFSET);
+            request.setLimit(Objects.isNull(request.getLimit()) ? Constants.DEFAULT_LIMIT : request.getLimit());
+            return buildUserDetailsBeanList(request);
+        }
         PageResponse<UserDetailsBean> response = new PageResponse<>(request.getLimit(), request.getOffset(),
                 0L, Collections.emptyList());
         long count = userService.countByRequest(request);
@@ -116,14 +122,17 @@ public class UserService {
             return response;
         }
         response.setTotal(count);
-        List<UserDetailsBean> userList = userService.queryUserListByRequest(request).stream().map(user -> {
+        response.setData(buildUserDetailsBeanList(request));
+        return response;
+    }
+
+    private List<UserDetailsBean> buildUserDetailsBeanList(QueryUserListRequest request) {
+        return userService.queryUserListByRequest(request).stream().map(user -> {
             UserDetailsBean userDetailsBean = new UserDetailsBean();
             BeanUtils.copyProperties(user, userDetailsBean);
             setSection(request.getSections(), userDetailsBean);
             return userDetailsBean;
         }).collect(Collectors.toList());
-        response.setData(userList);
-        return response;
     }
 
 

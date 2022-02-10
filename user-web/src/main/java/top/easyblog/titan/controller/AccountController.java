@@ -1,22 +1,15 @@
 package top.easyblog.titan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-
+import org.springframework.web.bind.annotation.*;
 import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.CreateAccountRequest;
 import top.easyblog.titan.request.QueryAccountListRequest;
 import top.easyblog.titan.request.QueryAccountRequest;
 import top.easyblog.titan.request.UpdateAccountRequest;
 import top.easyblog.titan.service.impl.UserAccountService;
+
+import javax.validation.Valid;
 
 /**
  * @author frank.huang
