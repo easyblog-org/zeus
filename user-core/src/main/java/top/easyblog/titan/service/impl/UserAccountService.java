@@ -3,11 +3,7 @@ package top.easyblog.titan.service.impl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.dao.auto.model.Account;
 import top.easyblog.titan.exception.BusinessException;
@@ -17,6 +13,10 @@ import top.easyblog.titan.request.QueryAccountRequest;
 import top.easyblog.titan.request.UpdateAccountRequest;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.data.AccessAccountService;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author frank.huang
@@ -28,6 +28,7 @@ public class UserAccountService {
     @Autowired
     private AccessAccountService accessAccountService;
 
+    @Transaction
     public void createAccount(CreateAccountRequest request) {
         AccountBean account = queryAccountDetails(QueryAccountRequest.builder()
                 .userId(request.getUserId())
@@ -40,6 +41,7 @@ public class UserAccountService {
         accessAccountService.insertSelective(request);
     }
 
+    @Transaction
     public AccountBean queryAccountDetails(QueryAccountRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
@@ -53,6 +55,7 @@ public class UserAccountService {
         return accountBean;
     }
 
+    @Transaction
     public List<AccountBean> queryAccountList(QueryAccountListRequest request) {
         return accessAccountService.queryAccountListByRequest(request).stream().map(account -> {
             AccountBean accountBean = new AccountBean();
@@ -61,6 +64,7 @@ public class UserAccountService {
         }).collect(Collectors.toList());
     }
 
+    @Transaction
     public void updateAccount(UpdateAccountRequest request) {
         Account account = buildUpdateAccount(request);
         accessAccountService.updateAccountByRequest(account);

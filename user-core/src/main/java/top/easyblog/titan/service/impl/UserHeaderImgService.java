@@ -3,20 +3,23 @@ package top.easyblog.titan.service.impl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+import top.easyblog.titan.annotation.Transaction;
+import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.bean.UserHeaderImgBean;
+import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.dao.auto.model.UserHeaderImg;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.CreateUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
+import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.data.AccessUserHeaderImgService;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author frank.huang
@@ -29,13 +32,15 @@ public class UserHeaderImgService {
     private AccessUserHeaderImgService headerImgService;
 
 
+    @Transaction
     public void createUserHeaderImg(CreateUserHeaderImgRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-
+        headerImgService.createUserHeaderImgSelective(request);
     }
 
+    @Transaction
     public UserHeaderImgBean queryUserHeaderDetails(QueryUserHeaderImgRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
@@ -49,15 +54,31 @@ public class UserHeaderImgService {
         return userHeaderImgBean;
     }
 
-    public List<UserHeaderImgBean> queryUserHeaderList(QueryUserHeaderImgsRequest request) {
+    @Transaction
+    public Object queryUserHeaderList(QueryUserHeaderImgsRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        List<UserHeaderImg> userHeaderImgs = headerImgService.queryHeaderImgList(request);
-        if (CollectionUtils.isEmpty(userHeaderImgs)) {
-            throw new BusinessException(ResultCode.USER_HEADER_IMGS_NOT_FOUND);
+        if (Objects.isNull(request.getOffset()) || Objects.isNull(request.getLimit())) {
+            //不分页，默认查询1000条数据
+            request.setOffset(Constants.DEFAULT_OFFSET);
+            request.setLimit(Objects.isNull(request.getLimit()) ? Constants.DEFAULT_LIMIT : request.getLimit());
+            return buildUserHeaderImgBeans(request);
         }
-        return userHeaderImgs.stream().map(header -> {
+        PageResponse<UserDetailsBean> response = new PageResponse<>(request.getLimit(), request.getOffset(),
+                0L, Collections.emptyList());
+        long count = headerImgService.countByRequest(request);
+        if (count == 0) {
+            return response;
+        }
+        response.setTotal(count);
+        response.setData(buildUserHeaderImgBeans(request));
+        return response;
+    }
+
+
+    private List<UserHeaderImgBean> buildUserHeaderImgBeans(QueryUserHeaderImgsRequest request) {
+        return headerImgService.queryHeaderImgListByRequest(request).stream().map(header -> {
             UserHeaderImgBean userHeaderImgBean = new UserHeaderImgBean();
             BeanUtils.copyProperties(header, userHeaderImgBean);
             return userHeaderImgBean;

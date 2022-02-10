@@ -1,20 +1,20 @@
 package top.easyblog.titan.service.data;
 
 import com.google.common.collect.Iterables;
-
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.easyblog.titan.dao.auto.mapper.UserHeaderImgMapper;
+import top.easyblog.titan.dao.auto.model.UserHeaderImg;
+import top.easyblog.titan.dao.auto.model.UserHeaderImgExample;
+import top.easyblog.titan.request.CreateUserHeaderImgRequest;
+import top.easyblog.titan.request.QueryUserHeaderImgRequest;
+import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
-import top.easyblog.titan.dao.auto.mapper.UserHeaderImgMapper;
-import top.easyblog.titan.dao.auto.model.UserHeaderImg;
-import top.easyblog.titan.dao.auto.model.UserHeaderImgExample;
-import top.easyblog.titan.request.QueryUserHeaderImgRequest;
-import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
 
 /**
  * @author frank.huang
@@ -25,6 +25,15 @@ public class AccessUserHeaderImgService {
 
     @Autowired
     private UserHeaderImgMapper userHeaderImgMapper;
+
+
+    public void createUserHeaderImgSelective(CreateUserHeaderImgRequest request) {
+        UserHeaderImg userHeaderImg = new UserHeaderImg();
+        userHeaderImg.setCreateTime(new Date());
+        userHeaderImg.setUpdateTime(new Date());
+        BeanUtils.copyProperties(request, userHeaderImg);
+        userHeaderImgMapper.insertSelective(userHeaderImg);
+    }
 
 
     public UserHeaderImg queryByRequest(QueryUserHeaderImgRequest request) {
@@ -43,7 +52,16 @@ public class AccessUserHeaderImgService {
     }
 
 
-    public List<UserHeaderImg> queryHeaderImgList(QueryUserHeaderImgsRequest request) {
+    public List<UserHeaderImg> queryHeaderImgListByRequest(QueryUserHeaderImgsRequest request) {
+        UserHeaderImgExample example = generateUserHeaderImgExamples(request);
+        return userHeaderImgMapper.selectByExample(example);
+    }
+
+    public long countByRequest(QueryUserHeaderImgsRequest request) {
+        return userHeaderImgMapper.countByExample(generateUserHeaderImgExamples(request));
+    }
+
+    private UserHeaderImgExample generateUserHeaderImgExamples(QueryUserHeaderImgsRequest request) {
         UserHeaderImgExample example = new UserHeaderImgExample();
         UserHeaderImgExample.Criteria criteria = example.createCriteria();
         if (Objects.nonNull(request.getId())) {
@@ -59,14 +77,14 @@ public class AccessUserHeaderImgService {
         if (Objects.nonNull(request.getStatus())) {
             criteria.andStatusEqualTo(request.getStatus());
         }
-        
+
         if (Objects.nonNull(request.getLimit())) {
             example.setLimit(request.getLimit());
         }
         if (Objects.nonNull(request.getOffset())) {
             example.setOffset(request.getOffset());
         }
-        return userHeaderImgMapper.selectByExample(example);
+        return example;
     }
 
     public void updateHeaderImgByRequest(UserHeaderImg img) {

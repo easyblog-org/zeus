@@ -105,6 +105,7 @@ public class UserService {
      * @param request
      * @return
      */
+    @Transaction
     public Object queryUserListPage(QueryUserListRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
@@ -141,6 +142,7 @@ public class UserService {
      *
      * @param request
      */
+    @Transaction
     public void createUser(CreateUserRequest request) {
         userService.insertSelective(request);
     }

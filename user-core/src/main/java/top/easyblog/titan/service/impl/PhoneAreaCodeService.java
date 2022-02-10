@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.PhoneAreaCodeBean;
 import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.dao.auto.model.PhoneAreaCode;
@@ -32,7 +33,7 @@ public class PhoneAreaCodeService {
     @Autowired
     private AccessPhoneAreaCodeService accessPhoneAreaCodeService;
 
-
+    @Transaction
     public void createPhoneAreaCode(CreatePhoneAreaCodeRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
@@ -40,6 +41,7 @@ public class PhoneAreaCodeService {
         accessPhoneAreaCodeService.insertPhoneAreaCodeByRequest(request);
     }
 
+    @Transaction
     public PhoneAreaCodeBean queryPhoneAreaCodeDetails(QueryPhoneAreaCodeRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
@@ -53,7 +55,7 @@ public class PhoneAreaCodeService {
         return phoneAreaCodeBean;
     }
 
-
+    @Transaction
     public Object queryPhoneAreaCodePage(QueryPhoneAreaCodeListRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
@@ -85,7 +87,7 @@ public class PhoneAreaCodeService {
         }).collect(Collectors.toList());
     }
 
-
+    @Transaction
     public void updatePhoneAreaCode(UpdatePhoneAreaCodeRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);

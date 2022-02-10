@@ -3,6 +3,7 @@ package top.easyblog.titan.service.impl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.SignInLogBean;
 import top.easyblog.titan.dao.auto.model.SignInLog;
 import top.easyblog.titan.exception.BusinessException;
@@ -27,7 +28,7 @@ public class UserSignInLogService {
     @Autowired
     private AccessSignInLogService accessSignInLogService;
 
-
+    @Transaction
     public void createSignInLog(CreateSignInLogRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
@@ -35,6 +36,7 @@ public class UserSignInLogService {
         accessSignInLogService.insertSignInLogByRequest(request);
     }
 
+    @Transaction
     public SignInLogBean querySignInLogDetails(QuerySignInLogRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
@@ -49,6 +51,7 @@ public class UserSignInLogService {
         return signInLogBean;
     }
 
+    @Transaction
     public PageResponse<SignInLogBean> querySignInLogList(QuerySignInLogListRequest request) {
         PageResponse<SignInLogBean> response = new PageResponse<>(request.getLimit(), request.getOffset(),
                 0L, Collections.emptyList());
