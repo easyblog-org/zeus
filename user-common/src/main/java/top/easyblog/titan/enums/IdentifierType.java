@@ -15,8 +15,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum IdentifierType {
 
-    UNKNOWN((byte) 0, "未知类型", "top.easyblog.titan.service.impl.policy.UnknownLoginPolicy"),
-
     USER_NAME((byte) 1, "账号密码登录", "top.easyblog.titan.service.impl.policy.UserNameLoginPolicy"),
 
     E_MAIL((byte) 2, "邮箱账号登录", "top.easyblog.titan.service.impl.policy.EmailLoginPolicy"),
@@ -40,6 +38,6 @@ public enum IdentifierType {
 
 
     public static IdentifierType codeOf(Byte code) {
-        return Arrays.stream(IdentifierType.values()).filter(type -> type.code == code).findAny().orElse(UNKNOWN);
+        return Arrays.stream(IdentifierType.values()).filter(type -> type.code == code).findAny().orElse(null);
     }
 }

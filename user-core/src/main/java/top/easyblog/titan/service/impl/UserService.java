@@ -1,25 +1,33 @@
 package top.easyblog.titan.service.impl;
 
-import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import top.easyblog.titan.annotation.Transaction;
-import top.easyblog.titan.bean.UserDetailsBean;
-import top.easyblog.titan.constant.Constants;
-import top.easyblog.titan.dao.auto.model.User;
-import top.easyblog.titan.enums.Status;
-import top.easyblog.titan.exception.BusinessException;
-import top.easyblog.titan.request.*;
-import top.easyblog.titan.response.PageResponse;
-import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.data.AccessUserService;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import top.easyblog.titan.annotation.Transaction;
+import top.easyblog.titan.bean.AccountBean;
+import top.easyblog.titan.bean.SignInLogBean;
+import top.easyblog.titan.bean.UserDetailsBean;
+import top.easyblog.titan.constant.Constants;
+import top.easyblog.titan.dao.auto.model.User;
+import top.easyblog.titan.enums.Status;
+import top.easyblog.titan.exception.BusinessException;
+import top.easyblog.titan.request.CreateUserRequest;
+import top.easyblog.titan.request.QueryAccountListRequest;
+import top.easyblog.titan.request.QuerySignInLogListRequest;
+import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
+import top.easyblog.titan.request.QueryUserListRequest;
+import top.easyblog.titan.request.QueryUserRequest;
+import top.easyblog.titan.request.UpdateUserRequest;
+import top.easyblog.titan.response.PageResponse;
+import top.easyblog.titan.response.ResultCode;
+import top.easyblog.titan.service.data.AccessUserService;
 
 /**
  * @author frank.huang
@@ -40,9 +48,11 @@ public class UserService {
     @Autowired
     private UserSignInLogService userSignInLogService;
 
-    private static final String QUERY_ACCOUNT_LIST_FLAG = "accounts";
+    private static final String QUERY_HEADER_IMG = "header_img";
 
-    private static final String QUERY_SIGN_LOG_LIST_FLAG = "sign_log";
+    private static final String QUERY_ACCOUNTS = "accounts";
+
+    private static final String QUERY_SIGN_LOG = "sign_log";
 
     /**
      * 查询用户详情
@@ -55,16 +65,14 @@ public class UserService {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        //1.根据request查询user信息
+        //1.根据request查询user基本信息
         User user = userService.queryByRequest(request);
         if (Objects.isNull(user)) {
             throw new BusinessException(ResultCode.USER_NOT_FOUND);
         }
         UserDetailsBean userDetailsBean = new UserDetailsBean();
         BeanUtils.copyProperties(user, userDetailsBean);
-        //2.查询user头像
-        userDetailsBean.setUserHeaderImg(headerImgService.queryUserHeaderDetails(QueryUserHeaderImgRequest.builder()
-                .userId(user.getId()).statuses(Lists.newArrayList(Status.ENABLE.getCode())).build()));
+        //查询其他选项参数
         setSection(request.getSections(), userDetailsBean);
         return userDetailsBean;
     }
@@ -77,13 +85,23 @@ public class UserService {
      */
     private void setSection(String section, UserDetailsBean userDetailsBean) {
         if (StringUtils.isNotBlank(section)) {
-            if (section.contains(QUERY_ACCOUNT_LIST_FLAG)) {
-                //TODO
-                userDetailsBean.setAccounts(null);
+            if (section.contains(QUERY_HEADER_IMG)) {
+                QueryUserHeaderImgsRequest queryUserHeaderImgsRequest = QueryUserHeaderImgsRequest.builder().userId(userDetailsBean.getId()).build();
+                userDetailsBean.setUserHeaderImg(headerImgService.buildUserHeaderImgBeans(queryUserHeaderImgsRequest));
             }
-            if (section.contains(QUERY_SIGN_LOG_LIST_FLAG)) {
-                // TODO
-                userDetailsBean.setSignInLogs(null);
+            if (section.contains(QUERY_ACCOUNTS)) {
+                QueryAccountListRequest queryAccountListRequest = QueryAccountListRequest.builder().userId(userDetailsBean.getId()).status(Status.ENABLE.getCode()).build();
+                List<AccountBean> accounts = accountService.queryAccountList(queryAccountListRequest);
+                userDetailsBean.setAccounts(accounts);
+            }
+            if (section.contains(QUERY_SIGN_LOG)) {
+                QuerySignInLogListRequest querySignInLogListRequest = new QuerySignInLogListRequest();
+                querySignInLogListRequest.setUserId(userDetailsBean.getId());
+                querySignInLogListRequest.setStatus(Status.ENABLE.getCode());
+                querySignInLogListRequest.setOffset(Constants.DEFAULT_OFFSET);
+                querySignInLogListRequest.setLimit(Constants.DEFAULT_LIMIT);
+                PageResponse<SignInLogBean> signInLogBeanPageResponse = userSignInLogService.querySignInLogList(querySignInLogListRequest);
+                userDetailsBean.setSignInLogs(signInLogBeanPageResponse.getData());
             }
         }
     }

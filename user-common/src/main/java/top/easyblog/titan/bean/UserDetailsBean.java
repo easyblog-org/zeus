@@ -34,7 +34,7 @@ public class UserDetailsBean {
     /**
      * 头像
      */
-    private UserHeaderImgBean userHeaderImg;
+    private List<UserHeaderImgBean> userHeaderImg;
 
     /**
      * 账号列表

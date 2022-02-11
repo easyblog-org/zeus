@@ -3,8 +3,13 @@ package top.easyblog.titan.service.impl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import top.easyblog.titan.annotation.Transaction;
-import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.bean.UserHeaderImgBean;
 import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.dao.auto.model.UserHeaderImg;
@@ -12,14 +17,10 @@ import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.CreateUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
+import top.easyblog.titan.request.UpdateUserHeaderImgRequest;
 import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.data.AccessUserHeaderImgService;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author frank.huang
@@ -38,6 +39,12 @@ public class UserHeaderImgService {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
         headerImgService.createUserHeaderImgSelective(request);
+    }
+
+    @Transaction
+    public UserHeaderImgBean updateUserHeaderImg(UpdateUserHeaderImgRequest request) {
+        headerImgService.updateHeaderImgByRequest(request);
+        return null;
     }
 
     @Transaction
@@ -65,7 +72,7 @@ public class UserHeaderImgService {
             request.setLimit(Objects.isNull(request.getLimit()) ? Constants.DEFAULT_LIMIT : request.getLimit());
             return buildUserHeaderImgBeans(request);
         }
-        PageResponse<UserDetailsBean> response = new PageResponse<>(request.getLimit(), request.getOffset(),
+        PageResponse<UserHeaderImgBean> response = new PageResponse<>(request.getLimit(), request.getOffset(),
                 0L, Collections.emptyList());
         long count = headerImgService.countByRequest(request);
         if (count == 0) {
@@ -77,7 +84,7 @@ public class UserHeaderImgService {
     }
 
 
-    private List<UserHeaderImgBean> buildUserHeaderImgBeans(QueryUserHeaderImgsRequest request) {
+    public List<UserHeaderImgBean> buildUserHeaderImgBeans(QueryUserHeaderImgsRequest request) {
         return headerImgService.queryHeaderImgListByRequest(request).stream().map(header -> {
             UserHeaderImgBean userHeaderImgBean = new UserHeaderImgBean();
             BeanUtils.copyProperties(header, userHeaderImgBean);

@@ -1,6 +1,6 @@
 package top.easyblog.titan.service;
 
-import top.easyblog.titan.enums.ThirdPartAppType;
+import top.easyblog.titan.enums.IdentifierType;
 
 /**
  * 第三方登录认证
@@ -64,5 +64,5 @@ public interface IAuthService<T> {
      * @param appType app_type, 比如 : QQ、GitHub
      * @return T
      */
-    T getUserByOpenIdAndAppType(String openId, ThirdPartAppType appType);
+    T getUserByOpenIdAndAppType(String openId, IdentifierType appType);
 }

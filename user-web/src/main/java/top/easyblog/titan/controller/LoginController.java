@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.LoginRequest;
+import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.service.ILoginService;
 
 /**
@@ -22,7 +23,7 @@ import top.easyblog.titan.service.ILoginService;
  */
 @RestController
 @RequestMapping("/v1/in/auth")
-public class AuthController {
+public class LoginController {
 
     @Autowired
     private ILoginService loginService;
@@ -33,10 +34,22 @@ public class AuthController {
         return loginService.login(request, httpServletRequest);
     }
 
-    @GetMapping("/login/health")
-    public Object validateLogin(@RequestParam("token") String token) {
+    @ResponseWrapper
+    @GetMapping("/health")
+    public Object validateLoginStatus(@RequestParam("token") String token) {
         return loginService.checkLoginHealth(token);
     }
 
+    @ResponseWrapper
+    @GetMapping("/logout")
+    public void logout(@RequestParam("token") String token, HttpServletRequest httpServletRequest) {
+        loginService.logout(token, httpServletRequest);
+    }
+
+    @ResponseWrapper
+    @PostMapping("/register")
+    public Object register(@RequestBody RegisterUserRequest request, HttpServletRequest httpServletRequest) {
+        return loginService.register(request, httpServletRequest);
+    }
 
 }

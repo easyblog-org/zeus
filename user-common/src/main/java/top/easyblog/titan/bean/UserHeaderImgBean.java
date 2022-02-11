@@ -15,8 +15,8 @@ public class UserHeaderImgBean {
     private String headerImgUrl;
 
     private Long userId;
-
-    private Integer status;
+    
+    private boolean currentHeader;
 
     private Date createTime;
 

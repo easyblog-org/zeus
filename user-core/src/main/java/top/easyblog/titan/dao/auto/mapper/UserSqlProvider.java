@@ -1,12 +1,14 @@
 package top.easyblog.titan.dao.auto.mapper;
 
+import org.apache.ibatis.jdbc.SQL;
+
 import java.util.List;
 import java.util.Map;
-import org.apache.ibatis.jdbc.SQL;
+
 import top.easyblog.titan.dao.auto.model.User;
+import top.easyblog.titan.dao.auto.model.UserExample;
 import top.easyblog.titan.dao.auto.model.UserExample.Criteria;
 import top.easyblog.titan.dao.auto.model.UserExample.Criterion;
-import top.easyblog.titan.dao.auto.model.UserExample;
 
 public class UserSqlProvider {
 
@@ -38,10 +40,6 @@ public class UserSqlProvider {
         
         if (record.getIntegration() != null) {
             sql.VALUES("integration", "#{integration,jdbcType=INTEGER}");
-        }
-        
-        if (record.getHeaderImgId() != null) {
-            sql.VALUES("header_img_id", "#{headerImgId,jdbcType=INTEGER}");
         }
         
         if (record.getLevel() != null) {
@@ -111,10 +109,6 @@ public class UserSqlProvider {
             sql.SET("integration = #{record.integration,jdbcType=INTEGER}");
         }
         
-        if (record.getHeaderImgId() != null) {
-            sql.SET("header_img_id = #{record.headerImgId,jdbcType=INTEGER}");
-        }
-        
         if (record.getLevel() != null) {
             sql.SET("level = #{record.level,jdbcType=INTEGER}");
         }
@@ -146,7 +140,6 @@ public class UserSqlProvider {
         sql.SET("id = #{record.id,jdbcType=BIGINT}");
         sql.SET("nick_name = #{record.nickName,jdbcType=VARCHAR}");
         sql.SET("integration = #{record.integration,jdbcType=INTEGER}");
-        sql.SET("header_img_id = #{record.headerImgId,jdbcType=INTEGER}");
         sql.SET("level = #{record.level,jdbcType=INTEGER}");
         sql.SET("visit = #{record.visit,jdbcType=INTEGER}");
         sql.SET("active = #{record.active,jdbcType=INTEGER}");

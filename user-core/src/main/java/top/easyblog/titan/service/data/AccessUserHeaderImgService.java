@@ -1,20 +1,24 @@
 package top.easyblog.titan.service.data;
 
 import com.google.common.collect.Iterables;
+
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
 import top.easyblog.titan.dao.auto.mapper.UserHeaderImgMapper;
 import top.easyblog.titan.dao.auto.model.UserHeaderImg;
 import top.easyblog.titan.dao.auto.model.UserHeaderImgExample;
 import top.easyblog.titan.request.CreateUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import top.easyblog.titan.request.UpdateUserHeaderImgRequest;
 
 /**
  * @author frank.huang
@@ -87,8 +91,22 @@ public class AccessUserHeaderImgService {
         return example;
     }
 
-    public void updateHeaderImgByRequest(UserHeaderImg img) {
-        img.setUpdateTime(new Date());
-        userHeaderImgMapper.updateByPrimaryKey(img);
+    public void updateHeaderImgByRequest(UpdateUserHeaderImgRequest request) {
+        userHeaderImgMapper.updateByPrimaryKey(buildUpdateUserHeaderImg(request));
+    }
+
+    private UserHeaderImg buildUpdateUserHeaderImg(UpdateUserHeaderImgRequest request) {
+        UserHeaderImg userHeaderImg = new UserHeaderImg();
+        if (Objects.nonNull(request.getStatus())) {
+            userHeaderImg.setStatus(request.getStatus());
+        }
+        if (StringUtils.isNotBlank(request.getHeaderImgUrl())) {
+            userHeaderImg.setHeaderImgUrl(request.getHeaderImgUrl());
+        }
+        if (Objects.nonNull(request.getUserId())) {
+            userHeaderImg.setUserId(request.getUserId());
+        }
+        userHeaderImg.setUpdateTime(new Date());
+        return userHeaderImg;
     }
 }

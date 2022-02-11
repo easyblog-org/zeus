@@ -26,6 +26,6 @@ public class LoginRequest implements BaseRequest {
 
 
     public boolean validate() {
-        return !IdentifierType.codeOf(identifierType).equals(IdentifierType.UNKNOWN);
+        return IdentifierType.codeOf(identifierType) != null;
     }
 }

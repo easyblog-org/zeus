@@ -19,8 +19,8 @@ public interface ILoginService {
 
     UserDetailsBean checkLoginHealth(String token);
 
-    void logout(String token);
+    void logout(String token, HttpServletRequest httpServletRequest);
 
-    UserDetailsBean register(RegisterUserRequest request);
+    UserDetailsBean register(RegisterUserRequest request, HttpServletRequest httpServletRequest);
 
 }

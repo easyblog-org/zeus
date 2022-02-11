@@ -18,7 +18,7 @@ public enum ResultCode {
     NOT_FOUND,
     INTERNAL_ERROR,
     DATA_ACCESS_FAIL,
-
+    ERROR_LOGIN_POLICY,
 
     //parameter
     PARAMETER_VALIDATE_FAILED,

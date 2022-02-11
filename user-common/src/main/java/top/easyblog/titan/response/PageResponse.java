@@ -1,12 +1,12 @@
 package top.easyblog.titan.response;
 
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 /**
  * Paging response parameters
@@ -17,7 +17,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PageResponse<T> extends BaseResponse {
+public class PageResponse<T> {
 
     /**
      * 分页大小

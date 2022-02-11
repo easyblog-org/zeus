@@ -62,7 +62,6 @@ CREATE TABLE `user`
     `id`            bigint NOT NULL AUTO_INCREMENT COMMENT '用户id',
     `nick_name`     varchar(20) DEFAULT '' COMMENT '昵称',
     `integration`   int         DEFAULT '0' COMMENT '积分',
-    `header_img_id` int         DEFAULT '0' COMMENT '头像',
     `level`         int         DEFAULT '1' COMMENT '等级',
     `visit`         int         DEFAULT '0' COMMENT '用户文章访问量',
     `active`        int         DEFAULT '1' COMMENT '用户账户状态',
