@@ -29,9 +29,11 @@ public interface PhoneAuthMapper {
             "#{phone,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, ",
             "#{updateTime,jdbcType=TIMESTAMP})"
     })
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insert(PhoneAuth record);
 
     @InsertProvider(type = PhoneAuthSqlProvider.class, method = "insertSelective")
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insertSelective(PhoneAuth record);
 
     @SelectProvider(type = PhoneAuthSqlProvider.class, method = "selectByExample")

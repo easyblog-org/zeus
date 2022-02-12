@@ -4,12 +4,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.bean.SignInLogBean;
@@ -18,16 +12,15 @@ import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.dao.auto.model.User;
 import top.easyblog.titan.enums.Status;
 import top.easyblog.titan.exception.BusinessException;
-import top.easyblog.titan.request.CreateUserRequest;
-import top.easyblog.titan.request.QueryAccountListRequest;
-import top.easyblog.titan.request.QuerySignInLogListRequest;
-import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
-import top.easyblog.titan.request.QueryUserListRequest;
-import top.easyblog.titan.request.QueryUserRequest;
-import top.easyblog.titan.request.UpdateUserRequest;
+import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.data.AccessUserService;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author frank.huang
@@ -68,7 +61,7 @@ public class UserService {
         //1.根据request查询user基本信息
         User user = userService.queryByRequest(request);
         if (Objects.isNull(user)) {
-            throw new BusinessException(ResultCode.USER_NOT_FOUND);
+            return null;
         }
         UserDetailsBean userDetailsBean = new UserDetailsBean();
         BeanUtils.copyProperties(user, userDetailsBean);
@@ -161,8 +154,8 @@ public class UserService {
      * @param request
      */
     @Transaction
-    public void createUser(CreateUserRequest request) {
-        userService.insertSelective(request);
+    public User createUser(CreateUserRequest request) {
+        return userService.insertSelective(request);
     }
 
 

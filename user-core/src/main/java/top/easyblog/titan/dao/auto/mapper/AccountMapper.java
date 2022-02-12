@@ -33,9 +33,11 @@ public interface AccountMapper {
             "#{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, ",
             "#{updateTime,jdbcType=TIMESTAMP})"
     })
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insert(Account record);
 
     @InsertProvider(type = AccountSqlProvider.class, method = "insertSelective")
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insertSelective(Account record);
 
     @SelectProvider(type = AccountSqlProvider.class, method = "selectByExample")

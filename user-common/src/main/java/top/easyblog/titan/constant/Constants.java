@@ -28,7 +28,7 @@ public final class Constants {
     public static final String UNKNOWN_IP = "unknown";
     public static final String REQUEST_URL = "url";
     public static final String SIGN = "sign";
-    public static final String APP_ID="app_id";
+    public static final String APP_ID = "app_id";
     public static final String SECRET = "secret";
     public static final String TIMESTAMP = "timestamp";
     public static final String LOCAL_HOST = "localhost";
@@ -40,7 +40,10 @@ public final class Constants {
     //时间
     public static final long TEN_MINUS = 10 * 60 * 1000;
 
-
+    //默认值
     public static final int DEFAULT_OFFSET = 0;
     public static final int DEFAULT_LIMIT = 1000;
+
+    //用户密码加密秘钥
+    public static final String USER_PASSWORD_SECRET_KEY = "5BBKtYReAR34zuXZ95I9";
 }

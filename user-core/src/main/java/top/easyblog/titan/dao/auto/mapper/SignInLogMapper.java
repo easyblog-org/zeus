@@ -31,9 +31,11 @@ public interface SignInLogMapper {
             "#{operationSystem,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, ",
             "#{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})"
     })
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insert(SignInLog record);
 
     @InsertProvider(type = SignInLogSqlProvider.class, method = "insertSelective")
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insertSelective(SignInLog record);
 
     @SelectProvider(type = SignInLogSqlProvider.class, method = "selectByExample")

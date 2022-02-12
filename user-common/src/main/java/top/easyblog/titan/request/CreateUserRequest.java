@@ -14,7 +14,6 @@ import java.util.Date;
 public class CreateUserRequest {
     private String nickName;
     private Integer integration;
-    private Integer headerImgId;
     private Integer level;
     private Integer visit;
     private Integer active;

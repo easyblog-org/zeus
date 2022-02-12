@@ -1,23 +1,11 @@
 package top.easyblog.titan.dao.auto.mapper;
 
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
-
-import java.util.List;
-
 import top.easyblog.titan.dao.auto.model.UserHeaderImg;
 import top.easyblog.titan.dao.auto.model.UserHeaderImgExample;
+
+import java.util.List;
 
 @Mapper
 public interface UserHeaderImgMapper {
@@ -41,9 +29,11 @@ public interface UserHeaderImgMapper {
             "#{userId,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, ",
             "#{updateTime,jdbcType=TIMESTAMP})"
     })
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insert(UserHeaderImg record);
 
     @InsertProvider(type = UserHeaderImgSqlProvider.class, method = "insertSelective")
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insertSelective(UserHeaderImg record);
 
     @SelectProvider(type = UserHeaderImgSqlProvider.class, method = "selectByExample")

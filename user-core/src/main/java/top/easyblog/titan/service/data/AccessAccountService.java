@@ -1,17 +1,11 @@
 package top.easyblog.titan.service.data;
 
 import com.google.common.collect.Iterables;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-
-import lombok.extern.slf4j.Slf4j;
 import top.easyblog.titan.dao.auto.mapper.AccountMapper;
 import top.easyblog.titan.dao.auto.model.Account;
 import top.easyblog.titan.dao.auto.model.AccountExample;
@@ -19,6 +13,10 @@ import top.easyblog.titan.request.CreateAccountRequest;
 import top.easyblog.titan.request.QueryAccountListRequest;
 import top.easyblog.titan.request.QueryAccountRequest;
 import top.easyblog.titan.util.JsonUtils;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author frank.huang
@@ -31,11 +29,12 @@ public class AccessAccountService {
     @Autowired
     private AccountMapper accountMapper;
 
-    public long insertSelective(CreateAccountRequest request) {
+    public Account insertSelective(CreateAccountRequest request) {
         Account account = new Account();
         BeanUtils.copyProperties(request, account);
         log.info("[DB] Insert account:{}", JsonUtils.toJSONString(account));
-        return accountMapper.insertSelective(account);
+        accountMapper.insertSelective(account);
+        return account;
     }
 
     public Account queryAccountByRequest(QueryAccountRequest request) {

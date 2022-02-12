@@ -31,9 +31,11 @@ public interface PhoneAreaCodeMapper {
             "#{areaName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, ",
             "#{updateTime,jdbcType=TIMESTAMP})"
     })
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insert(PhoneAreaCode record);
 
     @InsertProvider(type = PhoneAreaCodeSqlProvider.class, method = "insertSelective")
+    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
     int insertSelective(PhoneAreaCode record);
 
     @SelectProvider(type = PhoneAreaCodeSqlProvider.class, method = "selectByExample")

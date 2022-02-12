@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 /**
  * 用户注册请求参数
  *
@@ -19,14 +22,17 @@ public class RegisterUserRequest {
     /**
      * 账号类型
      */
+    @NotNull(message = "Required parameter `identifier_type` is not present")
     private Byte identifierType;
     /**
      * 账号
      */
+    @NotBlank(message = "Required parameter `identifier` is not present")
     private String identifier;
     /**
-     * 账号密码
+     * 账号密码 或者 token
      */
+    @NotBlank(message = "Required parameter `credential` is not present")
     private String credential;
     /**
      * 账号密码验证

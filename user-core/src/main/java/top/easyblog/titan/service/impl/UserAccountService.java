@@ -29,16 +29,15 @@ public class UserAccountService {
     private AccessAccountService accessAccountService;
 
     @Transaction
-    public void createAccount(CreateAccountRequest request) {
-        AccountBean account = queryAccountDetails(QueryAccountRequest.builder()
-                .userId(request.getUserId())
+    public Account createAccount(CreateAccountRequest request) {
+        QueryAccountRequest queryAccountRequest = QueryAccountRequest.builder()
                 .identityType(request.getIdentityType())
-                .identifier(request.getIdentifier())
-                .build());
+                .identifier(request.getIdentifier()).build();
+        Account account = accessAccountService.queryAccountByRequest(queryAccountRequest);
         if (Objects.nonNull(account)) {
             throw new BusinessException(ResultCode.USER_ACCOUNT_EXISTS);
         }
-        accessAccountService.insertSelective(request);
+        return accessAccountService.insertSelective(request);
     }
 
     @Transaction
@@ -48,7 +47,7 @@ public class UserAccountService {
         }
         Account account = accessAccountService.queryAccountByRequest(request);
         if (Objects.isNull(account)) {
-            throw new BusinessException(ResultCode.USER_ACCOUNT_NOT_FOUND);
+            return null;
         }
         AccountBean accountBean = new AccountBean();
         BeanUtils.copyProperties(account, accountBean);
