@@ -4,13 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-
+import top.easyblog.titan.annotation.RequestParamAlias;
 import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.QuerySignInLogListRequest;
 import top.easyblog.titan.request.QuerySignInLogRequest;
 import top.easyblog.titan.service.impl.UserSignInLogService;
+
+import javax.validation.Valid;
 
 /**
  * @author frank.huang
@@ -25,13 +25,13 @@ public class SignInLogController {
 
     @ResponseWrapper
     @GetMapping
-    public Object query(@Valid QuerySignInLogRequest request) {
+    public Object query(@Valid @RequestParamAlias QuerySignInLogRequest request) {
         return userSignInLogService.querySignInLogDetails(request);
     }
 
     @ResponseWrapper
     @GetMapping("/list")
-    public Object queryList(@Valid QuerySignInLogListRequest request) {
+    public Object queryList(@Valid @RequestParamAlias QuerySignInLogListRequest request) {
         return userSignInLogService.querySignInLogList(request);
     }
 

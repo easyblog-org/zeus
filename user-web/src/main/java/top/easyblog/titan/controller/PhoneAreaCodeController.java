@@ -40,7 +40,7 @@ public class PhoneAreaCodeController {
 
     @ResponseWrapper
     @GetMapping("/list")
-    public Object queryList(@Valid QueryPhoneAreaCodeListRequest request) {
+    public Object queryList(@Valid @RequestParamAlias QueryPhoneAreaCodeListRequest request) {
         return phoneAreaCodeService.queryPhoneAreaCodePage(request);
     }
 

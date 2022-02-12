@@ -87,7 +87,7 @@ public class AccessPhoneAreaCodeService {
 
     public void updatePhoneAreaCodeByRequest(PhoneAreaCode areaCode) {
         areaCode.setUpdateTime(new Date());
-        phoneAreaCodeMapper.updateByPrimaryKey(areaCode);
+        phoneAreaCodeMapper.updateByPrimaryKeySelective(areaCode);
         log.info("[DB] update area code:{}", JsonUtils.toJSONString(areaCode));
     }
 }

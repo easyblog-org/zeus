@@ -2,6 +2,7 @@ package top.easyblog.titan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import top.easyblog.titan.annotation.RequestParamAlias;
 import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.CreateAccountRequest;
 import top.easyblog.titan.request.QueryAccountListRequest;
@@ -31,7 +32,7 @@ public class AccountController {
 
     @ResponseWrapper
     @GetMapping
-    public Object query(@Valid QueryAccountRequest request) {
+    public Object query(@Valid @RequestParamAlias QueryAccountRequest request) {
         return accountService.queryAccountDetails(request);
     }
 
@@ -44,7 +45,7 @@ public class AccountController {
 
     @ResponseWrapper
     @GetMapping("/list")
-    public Object queryList(@Valid QueryAccountListRequest request) {
+    public Object queryList(@Valid @RequestParamAlias QueryAccountListRequest request) {
         return accountService.queryAccountList(request);
     }
 }

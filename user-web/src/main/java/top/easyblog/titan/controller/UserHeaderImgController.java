@@ -1,19 +1,15 @@
 package top.easyblog.titan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-
+import org.springframework.web.bind.annotation.*;
+import top.easyblog.titan.annotation.RequestParamAlias;
 import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.QueryUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
 import top.easyblog.titan.request.UpdateUserHeaderImgRequest;
 import top.easyblog.titan.service.impl.UserHeaderImgService;
+
+import javax.validation.Valid;
 
 /**
  * @author: frank.huang
@@ -29,13 +25,13 @@ public class UserHeaderImgController {
 
     @ResponseWrapper
     @GetMapping
-    public Object query(@Valid QueryUserHeaderImgRequest request) {
+    public Object query(@Valid @RequestParamAlias QueryUserHeaderImgRequest request) {
         return headerImgService.queryUserHeaderDetails(request);
     }
 
     @ResponseWrapper
     @GetMapping("/list")
-    public Object queryList(@Valid QueryUserHeaderImgsRequest request) {
+    public Object queryList(@Valid @RequestParamAlias QueryUserHeaderImgsRequest request) {
         return headerImgService.queryUserHeaderList(request);
     }
 

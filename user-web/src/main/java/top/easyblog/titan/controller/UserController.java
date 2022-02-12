@@ -2,6 +2,7 @@ package top.easyblog.titan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import top.easyblog.titan.annotation.RequestParamAlias;
 import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.CreateUserRequest;
 import top.easyblog.titan.request.QueryUserListRequest;
@@ -24,7 +25,7 @@ public class UserController {
 
     @ResponseWrapper
     @GetMapping
-    public Object query(@Valid QueryUserRequest request) {
+    public Object query(@Valid @RequestParamAlias QueryUserRequest request) {
         return userService.queryUserDetails(request);
     }
 
@@ -38,7 +39,7 @@ public class UserController {
 
     @ResponseWrapper
     @GetMapping("/list")
-    public Object queryList(@Valid QueryUserListRequest request) {
+    public Object queryList(@Valid @RequestParamAlias QueryUserListRequest request) {
         return userService.queryUserListPage(request);
     }
 
