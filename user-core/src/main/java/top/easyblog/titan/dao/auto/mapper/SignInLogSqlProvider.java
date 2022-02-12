@@ -1,12 +1,13 @@
 package top.easyblog.titan.dao.auto.mapper;
 
-import java.util.List;
-import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;
 import top.easyblog.titan.dao.auto.model.SignInLog;
+import top.easyblog.titan.dao.auto.model.SignInLogExample;
 import top.easyblog.titan.dao.auto.model.SignInLogExample.Criteria;
 import top.easyblog.titan.dao.auto.model.SignInLogExample.Criterion;
-import top.easyblog.titan.dao.auto.model.SignInLogExample;
+
+import java.util.List;
+import java.util.Map;
 
 public class SignInLogSqlProvider {
 
@@ -84,12 +85,19 @@ public class SignInLogSqlProvider {
         sql.SELECT("update_time");
         sql.FROM("sign_in_log");
         applyWhere(sql, example, false);
-        
+
         if (example != null && example.getOrderByClause() != null) {
             sql.ORDER_BY(example.getOrderByClause());
         }
-        
-        return sql.toString();
+
+        StringBuilder sqlBuilder = new StringBuilder(sql.toString());
+        if (example != null && example.getOffset() != null && example.getLimit() >= 0) {
+            sqlBuilder.append(" LIMIT ").append(example.getOffset());
+            if (example.getLimit() != null && example.getLimit() > 0) {
+                sqlBuilder.append(",").append(example.getLimit());
+            }
+        }
+        return sqlBuilder.toString();
     }
 
     public String updateByExampleSelective(Map<String, Object> parameter) {

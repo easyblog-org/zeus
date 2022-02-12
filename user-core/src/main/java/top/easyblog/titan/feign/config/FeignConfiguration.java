@@ -61,7 +61,7 @@ public abstract class FeignConfiguration {
 
     @Bean
     public RequestInterceptor requestHeader() {
-        return requestTemplate -> requestTemplate.header(Constants.HEADER_Request_ID, MDC.get(Constants.REQUEST_ID));
+        return requestTemplate -> requestTemplate.header(Constants.HEADER_REQUEST_ID, MDC.get(Constants.REQUEST_ID));
     }
 
 

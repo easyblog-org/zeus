@@ -47,11 +47,11 @@ public class AccessPhoneAreaCodeService {
         if (StringUtils.isNotBlank(request.getCrownCode())) {
             criteria.andCountryCodeEqualTo(request.getCountryCode());
         }
-        if (StringUtils.isNotBlank(request.getAreaCode())) {
-            criteria.andAreaCodeEqualTo(request.getAreaCode());
-        }
         if (StringUtils.isNotBlank(request.getCountryCode())) {
             criteria.andCountryCodeEqualTo(request.getCountryCode());
+        }
+        if (StringUtils.isNotBlank(request.getAreaName())) {
+            criteria.andAreaNameEqualTo(request.getAreaName());
         }
         return Iterables.getFirst(phoneAreaCodeMapper.selectByExample(example), null);
     }
@@ -71,6 +71,9 @@ public class AccessPhoneAreaCodeService {
         PhoneAreaCodeExample.Criteria criteria = example.createCriteria();
         if (CollectionUtils.isNotEmpty(request.getIds())) {
             criteria.andIdIn(request.getIds());
+        }
+        if (StringUtils.isNotBlank(request.getAreaName())) {
+            criteria.andAreaNameLike("%" + request.getAreaName() + "%");
         }
         if (Objects.nonNull(request.getLimit())) {
             example.setLimit(request.getLimit());

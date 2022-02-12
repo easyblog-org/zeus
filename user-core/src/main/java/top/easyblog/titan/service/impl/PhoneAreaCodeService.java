@@ -38,6 +38,11 @@ public class PhoneAreaCodeService {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
+        PhoneAreaCodeBean phoneAreaCodeBean = queryPhoneAreaCodeDetails(QueryPhoneAreaCodeRequest.builder()
+                .crownCode(request.getCrownCode()).countryCode(request.getCountryCode()).build());
+        if (Objects.nonNull(phoneAreaCodeBean)) {
+            throw new BusinessException(ResultCode.PHONE_AREA_CODE_ALREADY_EXISTS);
+        }
         accessPhoneAreaCodeService.insertPhoneAreaCodeByRequest(request);
     }
 
@@ -48,7 +53,7 @@ public class PhoneAreaCodeService {
         }
         PhoneAreaCode phoneAreaCode = accessPhoneAreaCodeService.queryPhoneAreaCodeByRequest(request);
         if (Objects.isNull(phoneAreaCode)) {
-            throw new BusinessException(ResultCode.PHONE_AREA_CODE_NOT_FOUND);
+            return null;
         }
         PhoneAreaCodeBean phoneAreaCodeBean = new PhoneAreaCodeBean();
         BeanUtils.copyProperties(phoneAreaCode, phoneAreaCodeBean);

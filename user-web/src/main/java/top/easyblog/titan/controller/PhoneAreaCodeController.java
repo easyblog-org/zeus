@@ -2,6 +2,7 @@ package top.easyblog.titan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import top.easyblog.titan.annotation.RequestParamAlias;
 import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.CreatePhoneAreaCodeRequest;
 import top.easyblog.titan.request.QueryPhoneAreaCodeListRequest;
@@ -25,7 +26,7 @@ public class PhoneAreaCodeController {
 
     @ResponseWrapper
     @GetMapping
-    public Object query(@Valid QueryPhoneAreaCodeRequest request) {
+    public Object query(@Valid @RequestParamAlias QueryPhoneAreaCodeRequest request) {
         return phoneAreaCodeService.queryPhoneAreaCodeDetails(request);
     }
 

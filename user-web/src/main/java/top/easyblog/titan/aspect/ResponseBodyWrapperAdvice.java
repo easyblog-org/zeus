@@ -23,29 +23,23 @@ import java.util.Objects;
  */
 @Slf4j
 @ControllerAdvice
-public class ResponseResultHandlerAdvice implements ResponseBodyAdvice<Object>, Ordered {
+public class ResponseBodyWrapperAdvice implements ResponseBodyAdvice<Object>, Ordered {
     @Override
     public boolean supports(MethodParameter returnType, @NotNull Class converterType) {
         return returnType.getAnnotatedElement().isAnnotationPresent(ResponseWrapper.class);
     }
 
     @Override
-    public Object beforeBodyWrite(Object body,
-                                  @NotNull MethodParameter returnType,
-                                  @NotNull MediaType mediaType,
-                                  @NotNull Class selectedClassType,
-                                  @NotNull ServerHttpRequest request,
-                                  @NotNull ServerHttpResponse response) {
-        if (Objects.nonNull(body)) {
-            if (body instanceof BaseResponse) {
-                log.info("Writing " + JsonUtils.toJSONString(body));
-                return body;
-            }
-            BaseResponse<Object> responseBody = BaseResponse.ok(body);
-            log.info("Writing " + JsonUtils.toJSONString(responseBody));
-            return responseBody;
+    public Object beforeBodyWrite(Object body, @NotNull MethodParameter returnType,
+                                  @NotNull MediaType mediaType, @NotNull Class selectedClassType,
+                                  @NotNull ServerHttpRequest request, @NotNull ServerHttpResponse response) {
+        if (Objects.nonNull(body) && body instanceof BaseResponse) {
+            log.info("Writing " + JsonUtils.toJSONString(body));
+            return body;
         }
-        return null;
+        BaseResponse<Object> responseBody = BaseResponse.ok(body);
+        log.info("Writing " + JsonUtils.toJSONString(responseBody));
+        return responseBody;
     }
 
     @Override

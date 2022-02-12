@@ -19,7 +19,7 @@ public final class Constants {
 
     //请求类
     public static final String REQUEST_ID = "RequestId";
-    public static final String HEADER_Request_ID = "X-Request-Id";
+    public static final String HEADER_REQUEST_ID = "X-Request-Id";
     public static final String TX_ID = "TxId";
     public static final String TRACE_ID = "TraceId";
     public static final String SPAN_ID = "SpanId";

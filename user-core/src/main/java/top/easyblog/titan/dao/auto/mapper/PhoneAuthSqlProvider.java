@@ -1,12 +1,13 @@
 package top.easyblog.titan.dao.auto.mapper;
 
-import java.util.List;
-import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;
 import top.easyblog.titan.dao.auto.model.PhoneAuth;
+import top.easyblog.titan.dao.auto.model.PhoneAuthExample;
 import top.easyblog.titan.dao.auto.model.PhoneAuthExample.Criteria;
 import top.easyblog.titan.dao.auto.model.PhoneAuthExample.Criterion;
-import top.easyblog.titan.dao.auto.model.PhoneAuthExample;
+
+import java.util.List;
+import java.util.Map;
 
 public class PhoneAuthSqlProvider {
 
@@ -64,12 +65,19 @@ public class PhoneAuthSqlProvider {
         sql.SELECT("update_time");
         sql.FROM("phone_auth");
         applyWhere(sql, example, false);
-        
+
         if (example != null && example.getOrderByClause() != null) {
             sql.ORDER_BY(example.getOrderByClause());
         }
-        
-        return sql.toString();
+
+        StringBuilder sqlBuilder = new StringBuilder(sql.toString());
+        if (example != null && example.getOffset() != null && example.getLimit() >= 0) {
+            sqlBuilder.append(" LIMIT ").append(example.getOffset());
+            if (example.getLimit() != null && example.getLimit() > 0) {
+                sqlBuilder.append(",").append(example.getLimit());
+            }
+        }
+        return sqlBuilder.toString();
     }
 
     public String updateByExampleSelective(Map<String, Object> parameter) {

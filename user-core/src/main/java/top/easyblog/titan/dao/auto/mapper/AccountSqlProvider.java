@@ -1,12 +1,13 @@
 package top.easyblog.titan.dao.auto.mapper;
 
-import java.util.List;
-import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;
 import top.easyblog.titan.dao.auto.model.Account;
+import top.easyblog.titan.dao.auto.model.AccountExample;
 import top.easyblog.titan.dao.auto.model.AccountExample.Criteria;
 import top.easyblog.titan.dao.auto.model.AccountExample.Criterion;
-import top.easyblog.titan.dao.auto.model.AccountExample;
+
+import java.util.List;
+import java.util.Map;
 
 public class AccountSqlProvider {
 
@@ -84,12 +85,19 @@ public class AccountSqlProvider {
         sql.SELECT("update_time");
         sql.FROM("account");
         applyWhere(sql, example, false);
-        
+
         if (example != null && example.getOrderByClause() != null) {
             sql.ORDER_BY(example.getOrderByClause());
         }
-        
-        return sql.toString();
+
+        StringBuilder sqlBuilder = new StringBuilder(sql.toString());
+        if (example != null && example.getOffset() != null && example.getLimit() >= 0) {
+            sqlBuilder.append(" LIMIT ").append(example.getOffset());
+            if (example.getLimit() != null && example.getLimit() > 0) {
+                sqlBuilder.append(",").append(example.getLimit());
+            }
+        }
+        return sqlBuilder.toString();
     }
 
     public String updateByExampleSelective(Map<String, Object> parameter) {

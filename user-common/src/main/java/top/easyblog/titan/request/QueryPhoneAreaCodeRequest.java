@@ -20,7 +20,5 @@ public class QueryPhoneAreaCodeRequest {
 
     private String countryCode;
 
-    private String areaCode;
-
     private String areaName;
 }

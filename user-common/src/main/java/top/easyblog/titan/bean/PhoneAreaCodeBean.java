@@ -20,8 +20,6 @@ public class PhoneAreaCodeBean {
 
     private String countryCode;
 
-    private String areaCode;
-
     private String areaName;
 
     private Date createTime;

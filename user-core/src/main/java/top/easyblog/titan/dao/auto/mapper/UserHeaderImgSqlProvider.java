@@ -1,12 +1,13 @@
 package top.easyblog.titan.dao.auto.mapper;
 
-import java.util.List;
-import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;
 import top.easyblog.titan.dao.auto.model.UserHeaderImg;
+import top.easyblog.titan.dao.auto.model.UserHeaderImgExample;
 import top.easyblog.titan.dao.auto.model.UserHeaderImgExample.Criteria;
 import top.easyblog.titan.dao.auto.model.UserHeaderImgExample.Criterion;
-import top.easyblog.titan.dao.auto.model.UserHeaderImgExample;
+
+import java.util.List;
+import java.util.Map;
 
 public class UserHeaderImgSqlProvider {
 
@@ -69,12 +70,19 @@ public class UserHeaderImgSqlProvider {
         sql.SELECT("update_time");
         sql.FROM("user_header_img");
         applyWhere(sql, example, false);
-        
+
         if (example != null && example.getOrderByClause() != null) {
             sql.ORDER_BY(example.getOrderByClause());
         }
-        
-        return sql.toString();
+
+        StringBuilder sqlBuilder = new StringBuilder(sql.toString());
+        if (example != null && example.getOffset() != null && example.getLimit() >= 0) {
+            sqlBuilder.append(" LIMIT ").append(example.getOffset());
+            if (example.getLimit() != null && example.getLimit() > 0) {
+                sqlBuilder.append(",").append(example.getLimit());
+            }
+        }
+        return sqlBuilder.toString();
     }
 
     public String updateByExampleSelective(Map<String, Object> parameter) {

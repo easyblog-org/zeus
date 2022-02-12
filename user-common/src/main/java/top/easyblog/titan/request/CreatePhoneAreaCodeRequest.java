@@ -27,11 +27,6 @@ public class CreatePhoneAreaCodeRequest {
     @NotBlank(message = "Required parameter `countryCode` is not present!")
     private String countryCode;
     /**
-     * 区域码
-     */
-    @NotBlank(message = "Required parameter `areaCode` is not present!")
-    private String areaCode;
-    /**
      * 区域名称
      */
     @NotBlank(message = "Required parameter `areaName` is not present!")
