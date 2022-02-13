@@ -1,11 +1,11 @@
 package top.easyblog.titan.service;
 
-import javax.servlet.http.HttpServletRequest;
-
 import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
+import top.easyblog.titan.util.EncryptUtils;
+import top.easyblog.titan.util.IdGenerator;
 
 /**
  * 系统登录认证
@@ -15,12 +15,20 @@ import top.easyblog.titan.request.RegisterUserRequest;
  */
 public interface ILoginService {
 
-    LoginDetailsBean login(LoginRequest request, HttpServletRequest httpServletRequest);
+    LoginDetailsBean login(LoginRequest request);
 
     UserDetailsBean checkLoginHealth(String token);
 
-    void logout(String token, HttpServletRequest httpServletRequest);
+    void logout(String token);
 
-    UserDetailsBean register(RegisterUserRequest request, HttpServletRequest httpServletRequest);
+    UserDetailsBean register(RegisterUserRequest request);
 
+    /**
+     * 生成登录token
+     *
+     * @return
+     */
+    default String generateLoginToken() {
+        return EncryptUtils.MD5(IdGenerator.getUUID() + System.currentTimeMillis());
+    }
 }

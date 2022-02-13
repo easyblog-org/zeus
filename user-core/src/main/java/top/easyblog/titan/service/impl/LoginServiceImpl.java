@@ -1,15 +1,9 @@
 package top.easyblog.titan.service.impl;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
-import javax.servlet.http.HttpServletRequest;
-
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.SignInLogBean;
@@ -22,12 +16,12 @@ import top.easyblog.titan.request.QuerySignInLogRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.ILoginService;
-import top.easyblog.titan.service.data.AccessAccountService;
-import top.easyblog.titan.service.data.AccessPhoneAuthService;
 import top.easyblog.titan.service.policy.LoginPolicy;
 import top.easyblog.titan.service.policy.LoginPolicyFactory;
-import top.easyblog.titan.util.IdGenerator;
 import top.easyblog.titan.util.JsonUtils;
+
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author frank.huang
@@ -37,12 +31,6 @@ import top.easyblog.titan.util.JsonUtils;
 public class LoginServiceImpl implements ILoginService {
 
     @Autowired
-    private AccessAccountService accessAccountService;
-
-    @Autowired
-    private AccessPhoneAuthService phoneAuthService;
-
-    @Autowired
     private UserSignInLogService signInLogService;
 
     @Autowired
@@ -50,23 +38,32 @@ public class LoginServiceImpl implements ILoginService {
 
     @Override
     @Transaction
-    public LoginDetailsBean login(LoginRequest request, HttpServletRequest httpServletRequest) {
+    public LoginDetailsBean login(LoginRequest request) {
         LoginPolicy loginPolicy = LoginPolicyFactory.getLoginPolicy(request.getIdentifierType());
         if (Objects.isNull(loginPolicy)) {
             throw new BusinessException(ResultCode.INTERNAL_ERROR);
         }
-        LoginDetailsBean loginDetailsBean = loginPolicy.doLogin(request);
-        if (Objects.isNull(loginDetailsBean) || Objects.isNull(loginDetailsBean.getUser())) {
+        UserDetailsBean userDetailsBean = loginPolicy.doLogin(request);
+        if (Objects.isNull(userDetailsBean)) {
             throw new BusinessException(ResultCode.LOGIN_FAILED);
         }
-        loginDetailsBean.setToken(IdGenerator.getLoginToken());
-        storageToken(loginDetailsBean);
+        LoginDetailsBean loginDetailsBean = new LoginDetailsBean();
+        loginDetailsBean.setUser(userDetailsBean);
+        loginDetailsBean.setToken(generateLoginToken());
+        storageToken(request, loginDetailsBean);
         return loginDetailsBean;
     }
 
 
-    private void storageToken(LoginDetailsBean loginDetailsBean) {
-        redisService.set(loginDetailsBean.getToken(), JsonUtils.toJSONString(loginDetailsBean.getUser()), LoginConstants.LOG_IN_EXPIRE, TimeUnit.SECONDS);
+    private void storageToken(LoginRequest request, LoginDetailsBean loginDetailsBean) {
+        String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, request.getIdentifierType(), request.getIdentifier());
+        String userKey = String.format(LoginConstants.USER_INFO_PREFIX, loginDetailsBean.getToken());
+        String token = redisService.storageToken(Lists.newArrayList(accountKey, userKey), loginDetailsBean.getToken(),
+                JsonUtils.toJSONString(loginDetailsBean.getUser()), String.valueOf(LoginConstants.LOGIN_TOKEN_MAX_EXPIRE));
+        if (StringUtils.isBlank(token)) {
+            throw new BusinessException(ResultCode.INTERNAL_ERROR);
+        }
+        loginDetailsBean.setToken(token);
     }
 
     public UserDetailsBean checkLoginHealth(String token) {
@@ -78,7 +75,7 @@ public class LoginServiceImpl implements ILoginService {
     }
 
     @Override
-    public void logout(String token, HttpServletRequest httpServletRequest) {
+    public void logout(String token) {
         if (StringUtils.isEmpty(token)) {
             throw new BusinessException(ResultCode.REQUIRED_PARAM_TOKEN_NOT_EXISTS);
         }
@@ -89,15 +86,16 @@ public class LoginServiceImpl implements ILoginService {
         }
         UserDetailsBean userDetailsBean = JsonUtils.parseObject(userInfoJsonStr, UserDetailsBean.class);
         Long id = userDetailsBean.getId();
-        
+
         List<SignInLogBean> signInLogs = userDetailsBean.getSignInLogs();
         SignInLogBean signInLogBean = signInLogService.querySignInLogDetails(QuerySignInLogRequest.builder()
                 .userId(id).status(Status.ENABLE.getCode()).build());
-        redisService.delete(token);
+        String key = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, token);
+        redisService.delete(key);
     }
 
     @Override
-    public UserDetailsBean register(RegisterUserRequest request, HttpServletRequest httpServletRequest) {
+    public UserDetailsBean register(RegisterUserRequest request) {
         LoginPolicy loginPolicy = LoginPolicyFactory.getLoginPolicy(request.getIdentifierType());
         if (Objects.isNull(loginPolicy)) {
             throw new BusinessException(ResultCode.INTERNAL_ERROR);

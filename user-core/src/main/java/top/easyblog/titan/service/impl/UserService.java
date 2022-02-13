@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static top.easyblog.titan.constant.LoginConstants.*;
+
 /**
  * @author frank.huang
  * @date 2022/01/30 10:43
@@ -40,12 +42,6 @@ public class UserService {
 
     @Autowired
     private UserSignInLogService userSignInLogService;
-
-    private static final String QUERY_HEADER_IMG = "header_img";
-
-    private static final String QUERY_ACCOUNTS = "accounts";
-
-    private static final String QUERY_SIGN_LOG = "sign_log";
 
     /**
      * 查询用户详情

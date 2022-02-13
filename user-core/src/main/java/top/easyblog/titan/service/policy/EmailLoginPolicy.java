@@ -2,8 +2,6 @@ package top.easyblog.titan.service.policy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
@@ -22,7 +20,7 @@ public class EmailLoginPolicy implements LoginPolicy {
     private AccessAccountService accessAccountService;
 
     @Override
-    public LoginDetailsBean doLogin(LoginRequest request) {
+    public UserDetailsBean doLogin(LoginRequest request) {
 
         return null;
     }

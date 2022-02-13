@@ -1,25 +1,26 @@
 package top.easyblog.titan.service.policy;
 
 import org.apache.commons.lang3.StringUtils;
-
-import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
+import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.constant.LoginConstants;
 import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
+import top.easyblog.titan.util.EncryptUtils;
 
 /**
  * @author frank.huang
  * @date 2022/01/29 16:19
  */
 public interface LoginPolicy {
+
     /**
      * 登录策略
      *
      * @param request
      * @return
      */
-    LoginDetailsBean doLogin(LoginRequest request);
+    UserDetailsBean doLogin(LoginRequest request);
 
     /**
      * 注册策略
@@ -59,5 +60,9 @@ public interface LoginPolicy {
         }
 
         return strength[specialFlag] + strength[letterFlag] + strength[numberFlag] >= 2;
+    }
+
+    default String encryptPassword(String originalPassword) {
+        return EncryptUtils.SHA256(originalPassword, Constants.USER_PASSWORD_SECRET_KEY);
     }
 }

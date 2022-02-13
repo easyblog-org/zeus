@@ -1,19 +1,13 @@
 package top.easyblog.titan.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-
+import org.springframework.web.bind.annotation.*;
 import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.service.ILoginService;
+
+import javax.validation.Valid;
 
 /**
  * 用户登录注册认证控制器
@@ -30,8 +24,8 @@ public class LoginController {
 
     @ResponseWrapper
     @PostMapping("/login")
-    public Object login(@RequestBody LoginRequest request, HttpServletRequest httpServletRequest) {
-        return loginService.login(request, httpServletRequest);
+    public Object login(@RequestBody @Valid LoginRequest request) {
+        return loginService.login(request);
     }
 
     @ResponseWrapper
@@ -42,14 +36,14 @@ public class LoginController {
 
     @ResponseWrapper
     @GetMapping("/logout")
-    public void logout(@RequestParam("token") String token, HttpServletRequest httpServletRequest) {
-        loginService.logout(token, httpServletRequest);
+    public void logout(@RequestParam("token") String token) {
+        loginService.logout(token);
     }
 
     @ResponseWrapper
     @PostMapping("/register")
-    public Object register(@RequestBody RegisterUserRequest request, HttpServletRequest httpServletRequest) {
-        return loginService.register(request, httpServletRequest);
+    public Object register(@RequestBody @Valid RegisterUserRequest request) {
+        return loginService.register(request);
     }
 
 }

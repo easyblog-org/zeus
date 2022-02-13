@@ -20,14 +20,6 @@ public class IdGenerator {
         return getUUID();
     }
 
-    /**
-     * 生成登录token
-     *
-     * @return
-     */
-    public static String getLoginToken() {
-        return EncryptUtils.SHA256(getUUID() + System.currentTimeMillis());
-    }
 
     public static String getTraceId() {
         return getUUID() + ((int) ((Math.random() * 9 + 1) * 100000));

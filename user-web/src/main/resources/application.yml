@@ -24,10 +24,8 @@ spring:
 
 urls:
   demo: http://127.0.0.1:8001
-mybatis:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
+debug: true
 
 ---
 spring:

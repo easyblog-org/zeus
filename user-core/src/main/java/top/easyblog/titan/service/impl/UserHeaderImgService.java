@@ -3,12 +3,6 @@ package top.easyblog.titan.service.impl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.UserHeaderImgBean;
 import top.easyblog.titan.constant.Constants;
@@ -21,6 +15,11 @@ import top.easyblog.titan.request.UpdateUserHeaderImgRequest;
 import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.data.AccessUserHeaderImgService;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author frank.huang
@@ -54,7 +53,7 @@ public class UserHeaderImgService {
         }
         UserHeaderImg userHeaderImg = headerImgService.queryByRequest(request);
         if (Objects.isNull(userHeaderImg)) {
-            throw new BusinessException(ResultCode.USER_HEADER_IMG_NOT_FOUND);
+            return null;
         }
         UserHeaderImgBean userHeaderImgBean = new UserHeaderImgBean();
         BeanUtils.copyProperties(userHeaderImg, userHeaderImgBean);

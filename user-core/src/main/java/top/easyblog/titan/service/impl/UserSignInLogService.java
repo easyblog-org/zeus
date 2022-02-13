@@ -3,11 +3,6 @@ package top.easyblog.titan.service.impl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.SignInLogBean;
 import top.easyblog.titan.dao.auto.model.SignInLog;
@@ -19,6 +14,10 @@ import top.easyblog.titan.request.UpdateSignInLogRequest;
 import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.data.AccessSignInLogService;
+
+import java.util.Collections;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author frank.huang
@@ -45,7 +44,7 @@ public class UserSignInLogService {
         }
         SignInLog signInLog = accessSignInLogService.querySignLogByRequest(request);
         if (Objects.isNull(signInLog)) {
-            throw new BusinessException(ResultCode.SIGN_IN_LOG_NOT_FOUND);
+            return null;
         }
 
         SignInLogBean signInLogBean = new SignInLogBean();

@@ -1,11 +1,12 @@
 package top.easyblog.titan.service.impl;
 
 import com.google.common.base.Preconditions;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -14,8 +15,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author: frank.huang
@@ -27,6 +26,9 @@ public class RedisService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private DefaultRedisScript<String> saveTokenRedisScript;
 
     /**
      * 指定缓存失效时间，单位s
@@ -135,27 +137,17 @@ public class RedisService {
      */
     public boolean set(String key, String value, Long time, TimeUnit timeUnit) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(key), "key can not be null");
-        try {
-            if (Objects.isNull(time) || time > 0) {
-                stringRedisTemplate.opsForValue().set(key, value, time, timeUnit);
-            } else {
-                stringRedisTemplate.opsForValue().set(key, value);
-            }
-            return true;
-        } catch (Exception e) {
-            log.error(e.getMessage());
+        if (Objects.isNull(time) || time > 0) {
+            stringRedisTemplate.opsForValue().set(key, value, time, timeUnit);
+        } else {
+            stringRedisTemplate.opsForValue().set(key, value);
         }
-        return false;
+        return true;
     }
 
     public String getAndSet(String key, String value) {
         Preconditions.checkArgument(StringUtils.isNotEmpty(key), "key can not be null");
-        try {
-            return stringRedisTemplate.opsForValue().getAndSet(key, value);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return null;
-        }
+        return stringRedisTemplate.opsForValue().getAndSet(key, value);
     }
 
     /**
@@ -705,6 +697,20 @@ public class RedisService {
             log.error(e.getMessage());
             return null;
         }
+    }
+
+
+    //==========================================Lua 定制化脚本========================================================//
+
+    /**
+     * 保存登录token脚本
+     *
+     * @param keys
+     * @param args
+     * @return
+     */
+    public String storageToken(List<String> keys, Object... args) {
+        return stringRedisTemplate.execute(saveTokenRedisScript, keys, args);
     }
 
 
