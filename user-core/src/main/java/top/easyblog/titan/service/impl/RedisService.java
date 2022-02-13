@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -28,7 +29,12 @@ public class RedisService {
     private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
-    private DefaultRedisScript<String> saveTokenRedisScript;
+    @Qualifier("loginRedisScript")
+    private DefaultRedisScript<String> loginRedisScript;
+
+    @Autowired
+    @Qualifier("logoutRedisScript")
+    private DefaultRedisScript<String> logoutRedisScript;
 
     /**
      * 指定缓存失效时间，单位s
@@ -710,7 +716,18 @@ public class RedisService {
      * @return
      */
     public String storageToken(List<String> keys, Object... args) {
-        return stringRedisTemplate.execute(saveTokenRedisScript, keys, args);
+        return stringRedisTemplate.execute(loginRedisScript, keys, args);
+    }
+
+    /**
+     * 删除token
+     *
+     * @param keys
+     * @param args
+     * @return
+     */
+    public String logout(List<String> keys, Object... args) {
+        return stringRedisTemplate.execute(logoutRedisScript, keys, args);
     }
 
 

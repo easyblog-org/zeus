@@ -1,6 +1,7 @@
 package top.easyblog.titan.service.impl;
 
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,24 +10,24 @@ import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.SignInLogBean;
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.constant.LoginConstants;
-import top.easyblog.titan.enums.Status;
+import top.easyblog.titan.enums.LoginStatus;
 import top.easyblog.titan.exception.BusinessException;
-import top.easyblog.titan.request.LoginRequest;
-import top.easyblog.titan.request.QuerySignInLogRequest;
-import top.easyblog.titan.request.RegisterUserRequest;
+import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.ILoginService;
-import top.easyblog.titan.service.policy.LoginPolicy;
-import top.easyblog.titan.service.policy.LoginPolicyFactory;
+import top.easyblog.titan.service.policy.LoginStrategy;
+import top.easyblog.titan.service.policy.LoginStrategyFactory;
 import top.easyblog.titan.util.JsonUtils;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author frank.huang
  * @date 2022/01/29 14:09
  */
+@Slf4j
 @Service
 public class LoginServiceImpl implements ILoginService {
 
@@ -39,7 +40,7 @@ public class LoginServiceImpl implements ILoginService {
     @Override
     @Transaction
     public LoginDetailsBean login(LoginRequest request) {
-        LoginPolicy loginPolicy = LoginPolicyFactory.getLoginPolicy(request.getIdentifierType());
+        LoginStrategy loginPolicy = LoginStrategyFactory.getLoginPolicy(request.getIdentifierType());
         if (Objects.isNull(loginPolicy)) {
             throw new BusinessException(ResultCode.INTERNAL_ERROR);
         }
@@ -50,6 +51,19 @@ public class LoginServiceImpl implements ILoginService {
         LoginDetailsBean loginDetailsBean = new LoginDetailsBean();
         loginDetailsBean.setUser(userDetailsBean);
         loginDetailsBean.setToken(generateLoginToken());
+
+        //保存用户登录日志
+        CreateSignInLogRequest createSignInLogRequest = CreateSignInLogRequest.builder()
+                .userId(userDetailsBean.getId())
+                .status(LoginStatus.ACTIVE.getCode())
+                .device(request.getDevice())
+                .operationSystem(request.getOperationSystem())
+                .ip(request.getIp())
+                .location(request.getLocation())
+                .build();
+        SignInLogBean signInLog = signInLogService.createSignInLog(createSignInLogRequest);
+        loginDetailsBean.setSignInLog(signInLog);
+
         storageToken(request, loginDetailsBean);
         return loginDetailsBean;
     }
@@ -57,10 +71,11 @@ public class LoginServiceImpl implements ILoginService {
 
     private void storageToken(LoginRequest request, LoginDetailsBean loginDetailsBean) {
         String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, request.getIdentifierType(), request.getIdentifier());
-        String userKey = String.format(LoginConstants.USER_INFO_PREFIX, loginDetailsBean.getToken());
-        String token = redisService.storageToken(Lists.newArrayList(accountKey, userKey), loginDetailsBean.getToken(),
-                JsonUtils.toJSONString(loginDetailsBean.getUser()), String.valueOf(LoginConstants.LOGIN_TOKEN_MAX_EXPIRE));
+        String userInfoKey = String.format(LoginConstants.USER_INFO_PREFIX, loginDetailsBean.getToken());
+        String token = redisService.storageToken(Lists.newArrayList(accountKey, userInfoKey), loginDetailsBean.getToken(),
+                JsonUtils.toJSONString(loginDetailsBean), String.valueOf(LoginConstants.LOGIN_TOKEN_MAX_EXPIRE));
         if (StringUtils.isBlank(token)) {
+            log.info("Login failed: internal error,root cause: redis return value is {}", token);
             throw new BusinessException(ResultCode.INTERNAL_ERROR);
         }
         loginDetailsBean.setToken(token);
@@ -75,28 +90,35 @@ public class LoginServiceImpl implements ILoginService {
     }
 
     @Override
-    public void logout(String token) {
-        if (StringUtils.isEmpty(token)) {
-            throw new BusinessException(ResultCode.REQUIRED_PARAM_TOKEN_NOT_EXISTS);
+    public void logout(LogoutRequest request) {
+        if (Objects.isNull(request)) {
+            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        String userInfoJsonStr = redisService.get(token);
-        if (StringUtils.isEmpty(userInfoJsonStr)) {
-            //检查是否过期或者token无效，如果token找不到直接返回
+        //将redis登录时保存的token（如果还未过期）删除
+        String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, request.getIdentifierType(), request.getIdentifier());
+        String userInfoJsonStr = redisService.logout(Lists.newArrayList(accountKey));
+        if (StringUtils.isBlank(userInfoJsonStr)) {
+            log.info("Logout failed: internal error,root cause: redis return value is {}", userInfoJsonStr);
             return;
         }
-        UserDetailsBean userDetailsBean = JsonUtils.parseObject(userInfoJsonStr, UserDetailsBean.class);
-        Long id = userDetailsBean.getId();
 
-        List<SignInLogBean> signInLogs = userDetailsBean.getSignInLogs();
-        SignInLogBean signInLogBean = signInLogService.querySignInLogDetails(QuerySignInLogRequest.builder()
-                .userId(id).status(Status.ENABLE.getCode()).build());
-        String key = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, token);
-        redisService.delete(key);
+        //退出成功
+        CompletableFuture.runAsync(() -> {
+            //更新用户账户状态为退出
+            LoginDetailsBean loginDetailsBean = JsonUtils.parseObject(userInfoJsonStr, LoginDetailsBean.class);
+            SignInLogBean signInLog = loginDetailsBean.getSignInLog();
+            Optional.ofNullable(signInLog).ifPresent(signInLogBean -> {
+                signInLogService.updateSignLog(UpdateSignInLogRequest.builder()
+                        .id(signInLog.getId())
+                        .status(LoginStatus.UN_ACTIVE.getCode())
+                        .build());
+            });
+        });
     }
 
     @Override
     public UserDetailsBean register(RegisterUserRequest request) {
-        LoginPolicy loginPolicy = LoginPolicyFactory.getLoginPolicy(request.getIdentifierType());
+        LoginStrategy loginPolicy = LoginStrategyFactory.getLoginPolicy(request.getIdentifierType());
         if (Objects.isNull(loginPolicy)) {
             throw new BusinessException(ResultCode.INTERNAL_ERROR);
         }

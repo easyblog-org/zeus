@@ -17,10 +17,18 @@ public class RedisLuaConfigurer {
 
 
     @Bean
-    public DefaultRedisScript<String> saveTokenRedisScript() {
+    public DefaultRedisScript<String> loginRedisScript() {
         DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
         redisScript.setResultType(String.class);
-        redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("scripts/save_token.lua")));
+        redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("scripts/login.lua")));
+        return redisScript;
+    }
+
+    @Bean
+    public DefaultRedisScript<String> logoutRedisScript() {
+        DefaultRedisScript<String> redisScript = new DefaultRedisScript<>();
+        redisScript.setResultType(String.class);
+        redisScript.setScriptSource(new ResourceScriptSource(new ClassPathResource("scripts/logout.lua")));
         return redisScript;
     }
 }

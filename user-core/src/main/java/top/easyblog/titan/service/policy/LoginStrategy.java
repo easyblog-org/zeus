@@ -12,7 +12,7 @@ import top.easyblog.titan.util.EncryptUtils;
  * @author frank.huang
  * @date 2022/01/29 16:19
  */
-public interface LoginPolicy {
+public interface LoginStrategy {
 
     /**
      * 登录策略

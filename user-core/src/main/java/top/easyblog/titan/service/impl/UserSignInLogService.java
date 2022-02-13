@@ -30,11 +30,14 @@ public class UserSignInLogService {
     private AccessSignInLogService accessSignInLogService;
 
     @Transaction
-    public void createSignInLog(CreateSignInLogRequest request) {
+    public SignInLogBean createSignInLog(CreateSignInLogRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        accessSignInLogService.insertSignInLogByRequest(request);
+        SignInLog signInLog = accessSignInLogService.insertSignInLogByRequest(request);
+        SignInLogBean signInLogBean = new SignInLogBean();
+        BeanUtils.copyProperties(signInLog, signInLogBean);
+        return signInLogBean;
     }
 
     @Transaction
@@ -75,7 +78,7 @@ public class UserSignInLogService {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        accessSignInLogService.updateSignInLogByRequest(request);
+        accessSignInLogService.updateSignInLogByRequestSelective(request);
     }
 
 }

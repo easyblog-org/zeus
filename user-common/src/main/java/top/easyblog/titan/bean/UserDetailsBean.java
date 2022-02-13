@@ -1,12 +1,12 @@
 package top.easyblog.titan.bean;
 
-import java.util.Date;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * Demo Bean
@@ -35,6 +35,11 @@ public class UserDetailsBean {
      * 头像
      */
     private List<UserHeaderImgBean> userHeaderImg;
+
+    /**
+     * 当前账户
+     */
+    private AccountBean currAccount;
 
     /**
      * 账号列表

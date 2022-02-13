@@ -2,7 +2,6 @@ package top.easyblog.titan.service.policy;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
@@ -27,32 +26,25 @@ import java.util.Objects;
  */
 @Slf4j
 @Component
-public class UserNameLoginPolicy implements LoginPolicy {
+public class UserNameLoginStrategy extends AbstractLoginStrategy {
 
-    @Autowired
-    private UserAccountService accountService;
-    @Autowired
-    private UserService userService;
+
+    public UserNameLoginStrategy(UserAccountService accountService, UserService userService) {
+        super(accountService, userService);
+    }
 
     @Override
     public UserDetailsBean doLogin(LoginRequest request) {
-        QueryAccountRequest queryAccountRequest = QueryAccountRequest.builder()
-                .identityType(request.getIdentifierType().intValue())
-                .identifier(request.getIdentifier())
-                .build();
-        AccountBean accountBean = accountService.queryAccountDetails(queryAccountRequest);
-        if (Objects.isNull(accountBean)) {
-            //check and found that the account is not exists
-            throw new BusinessException(ResultCode.USER_ACCOUNT_NOT_FOUND);
-        }
+        UserDetailsBean userDetailsBean = super.doLogin(request);
+        AccountBean currAccount = userDetailsBean.getCurrAccount();
         //check request password and database password
-        String databasePassword = accountBean.getCredential();
+        String databasePassword = currAccount.getCredential();
         String requestPassword = encryptPassword(request.getCredential());
         if (StringUtils.isEmpty(requestPassword) || Boolean.FALSE.equals(requestPassword.equalsIgnoreCase(databasePassword))) {
             throw new BusinessException(ResultCode.PASSWORD_VALID_FAILED);
         }
         QueryUserRequest queryUserRequest = QueryUserRequest.builder()
-                .id(accountBean.getUserId())
+                .id(currAccount.getUserId())
                 .sections(LoginConstants.QUERY_HEADER_IMG)
                 .build();
         return userService.queryUserDetails(queryUserRequest);

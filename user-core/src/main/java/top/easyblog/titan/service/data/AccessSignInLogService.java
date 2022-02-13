@@ -1,17 +1,11 @@
 package top.easyblog.titan.service.data;
 
 import com.google.common.collect.Iterables;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-
-import lombok.extern.slf4j.Slf4j;
 import top.easyblog.titan.dao.auto.mapper.SignInLogMapper;
 import top.easyblog.titan.dao.auto.model.SignInLog;
 import top.easyblog.titan.dao.auto.model.SignInLogExample;
@@ -20,6 +14,10 @@ import top.easyblog.titan.request.QuerySignInLogListRequest;
 import top.easyblog.titan.request.QuerySignInLogRequest;
 import top.easyblog.titan.request.UpdateSignInLogRequest;
 import top.easyblog.titan.util.JsonUtils;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author frank.huang
@@ -32,13 +30,14 @@ public class AccessSignInLogService {
     private SignInLogMapper signInLogMapper;
 
 
-    public void insertSignInLogByRequest(CreateSignInLogRequest request) {
+    public SignInLog insertSignInLogByRequest(CreateSignInLogRequest request) {
         SignInLog signInLog = new SignInLog();
         signInLog.setCreateTime(new Date());
         signInLog.setUpdateTime(new Date());
         BeanUtils.copyProperties(request, signInLog);
         signInLogMapper.insertSelective(signInLog);
         log.info("[DB] insert new sign in log:{}", JsonUtils.toJSONString(signInLog));
+        return signInLog;
     }
 
     public SignInLog querySignLogByRequest(QuerySignInLogRequest request) {
@@ -92,10 +91,10 @@ public class AccessSignInLogService {
         return example;
     }
 
-    public void updateSignInLogByRequest(UpdateSignInLogRequest request) {
+    public void updateSignInLogByRequestSelective(UpdateSignInLogRequest request) {
         SignInLog signInLog = new SignInLog();
         BeanUtils.copyProperties(request, signInLog);
-        signInLogMapper.updateByPrimaryKey(signInLog);
+        signInLogMapper.updateByPrimaryKeySelective(signInLog);
     }
 
 }

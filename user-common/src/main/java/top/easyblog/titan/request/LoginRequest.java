@@ -36,6 +36,25 @@ public class LoginRequest implements BaseRequest {
     @NotBlank(message = "Required parameter `credential` is not present")
     private String credential;
 
+    /**
+     * 登录设备信息
+     */
+    private String device;
+
+    /**
+     * 登录设备操作系统信息
+     */
+    private String operationSystem;
+
+    /**
+     * 登录设备物理定位
+     */
+    private String location;
+
+    /**
+     * 登录设备IP信息
+     */
+    private String ip;
 
     public boolean validate() {
         return IdentifierType.codeOf(identifierType) != null;

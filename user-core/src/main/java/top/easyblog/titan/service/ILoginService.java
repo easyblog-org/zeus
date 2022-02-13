@@ -3,6 +3,7 @@ package top.easyblog.titan.service;
 import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.request.LoginRequest;
+import top.easyblog.titan.request.LogoutRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.util.EncryptUtils;
 import top.easyblog.titan.util.IdGenerator;
@@ -19,7 +20,7 @@ public interface ILoginService {
 
     UserDetailsBean checkLoginHealth(String token);
 
-    void logout(String token);
+    void logout(LogoutRequest request);
 
     UserDetailsBean register(RegisterUserRequest request);
 

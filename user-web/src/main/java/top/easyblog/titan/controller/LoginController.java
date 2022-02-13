@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.LoginRequest;
+import top.easyblog.titan.request.LogoutRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.service.ILoginService;
 
@@ -35,9 +36,9 @@ public class LoginController {
     }
 
     @ResponseWrapper
-    @GetMapping("/logout")
-    public void logout(@RequestParam("token") String token) {
-        loginService.logout(token);
+    @PostMapping("/logout")
+    public void logout(@RequestBody @Valid LogoutRequest request) {
+        loginService.logout(request);
     }
 
     @ResponseWrapper
