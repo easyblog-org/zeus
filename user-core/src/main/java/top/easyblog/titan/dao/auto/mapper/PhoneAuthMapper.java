@@ -25,7 +25,7 @@ public interface PhoneAuthMapper {
             "insert into phone_auth (id, phone_area_code, ",
             "phone, create_time, ",
             "update_time)",
-            "values (#{id,jdbcType=BIGINT}, #{phoneAreaCode,jdbcType=INTEGER}, ",
+            "values (#{id,jdbcType=BIGINT}, #{phoneAreaCode,jdbcType=VARCHAR}, ",
             "#{phone,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, ",
             "#{updateTime,jdbcType=TIMESTAMP})"
     })
@@ -39,7 +39,7 @@ public interface PhoneAuthMapper {
     @SelectProvider(type = PhoneAuthSqlProvider.class, method = "selectByExample")
     @Results({
             @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
-            @Result(column = "phone_area_code", property = "phoneAreaCode", jdbcType = JdbcType.INTEGER),
+            @Result(column = "phone_area_code", property = "phoneAreaCode", jdbcType = JdbcType.VARCHAR),
             @Result(column = "phone", property = "phone", jdbcType = JdbcType.VARCHAR),
             @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.TIMESTAMP),
             @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.TIMESTAMP)
@@ -54,7 +54,7 @@ public interface PhoneAuthMapper {
     })
     @Results({
             @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
-            @Result(column = "phone_area_code", property = "phoneAreaCode", jdbcType = JdbcType.INTEGER),
+            @Result(column = "phone_area_code", property = "phoneAreaCode", jdbcType = JdbcType.VARCHAR),
             @Result(column = "phone", property = "phone", jdbcType = JdbcType.VARCHAR),
             @Result(column = "create_time", property = "createTime", jdbcType = JdbcType.TIMESTAMP),
             @Result(column = "update_time", property = "updateTime", jdbcType = JdbcType.TIMESTAMP)
@@ -72,7 +72,7 @@ public interface PhoneAuthMapper {
 
     @Update({
             "update phone_auth",
-            "set phone_area_code = #{phoneAreaCode,jdbcType=INTEGER},",
+            "set phone_area_code = #{phoneAreaCode,jdbcType=VARCHAR},",
             "phone = #{phone,jdbcType=VARCHAR},",
             "create_time = #{createTime,jdbcType=TIMESTAMP},",
             "update_time = #{updateTime,jdbcType=TIMESTAMP}",

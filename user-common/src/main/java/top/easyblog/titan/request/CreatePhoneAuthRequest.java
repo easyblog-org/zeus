@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreatePhoneAuthRequest {
-    private Integer phoneAreaCode;
+    private String phoneAreaCode;
 
     private String phone;
 }

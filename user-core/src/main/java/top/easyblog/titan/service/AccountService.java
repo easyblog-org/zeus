@@ -84,6 +84,9 @@ public class AccountService {
         if (Objects.nonNull(request.getId())) {
             account.setId(request.getId());
         }
+        if (Objects.nonNull(request.getUserId())) {
+            account.setUserId(request.getUserId());
+        }
         if (Objects.nonNull(request.getStatus())) {
             account.setStatus(request.getStatus());
         }

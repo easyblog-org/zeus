@@ -33,7 +33,6 @@ public class LoginRequest implements BaseRequest {
     /**
      * 账户密码 或  token
      */
-    @NotBlank(message = "Required parameter `credential` is not present")
     private String credential;
 
     /**

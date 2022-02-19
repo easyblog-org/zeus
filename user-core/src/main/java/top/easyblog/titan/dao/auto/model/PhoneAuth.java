@@ -1,14 +1,14 @@
 package top.easyblog.titan.dao.auto.model;
 
-import java.util.Date;
-
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class PhoneAuth {
     private Long id;
 
-    private Integer phoneAreaCode;
+    private String phoneAreaCode;
 
     private String phone;
 

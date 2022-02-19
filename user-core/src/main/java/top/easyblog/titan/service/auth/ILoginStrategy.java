@@ -1,4 +1,4 @@
-package top.easyblog.titan.service.auth.policy;
+package top.easyblog.titan.service.auth;
 
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.request.LoginRequest;
@@ -8,7 +8,7 @@ import top.easyblog.titan.request.RegisterUserRequest;
  * @author frank.huang
  * @date 2022/01/29 16:19
  */
-public interface LoginStrategy {
+public interface ILoginStrategy {
 
     /**
      * 登录策略

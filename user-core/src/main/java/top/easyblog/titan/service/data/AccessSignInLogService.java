@@ -51,7 +51,7 @@ public class AccessSignInLogService {
             criteria.andUserIdEqualTo(request.getUserId());
         }
         if (StringUtils.isNotBlank(request.getToken())) {
-
+           criteria.andTokenEqualTo(request.getToken());
         }
         if (Objects.nonNull(request.getStatus())) {
             criteria.andStatusEqualTo(request.getStatus());

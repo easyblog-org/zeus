@@ -1,4 +1,4 @@
-package top.easyblog.titan.service.auth.policy;
+package top.easyblog.titan.service.auth;
 
 import lombok.extern.slf4j.Slf4j;
 import top.easyblog.titan.enums.IdentifierType;
@@ -13,14 +13,14 @@ import java.util.Objects;
  */
 @Slf4j
 public class LoginStrategyFactory {
-    public static LoginStrategy getLoginPolicy(Byte identifierType) {
+    public static ILoginStrategy getLoginPolicy(Byte identifierType) {
         try {
-            IdentifierType type = IdentifierType.codeOf(identifierType);
-            if (Objects.isNull(type)) {
+            IdentifierType type = IdentifierType.subCodeOf(identifierType);
+            if (Objects.isNull(type) || Objects.equals(IdentifierType.UNKNOWN, type)) {
                 throw new UnsupportedOperationException(ResultCode.ERROR_LOGIN_POLICY.getCode());
             }
-            String className = IdentifierType.codeOf(identifierType).getPolicyClassName();
-            return ApplicationContextBeanHelper.getBean(className, LoginStrategy.class);
+            String className = type.getPolicyClassName();
+            return ApplicationContextBeanHelper.getBean(className, ILoginStrategy.class);
         } catch (Exception e) {
             log.error("Get login policy failed,error:{},cause:{}", e.getMessage(), e.getCause());
         }

@@ -18,7 +18,7 @@ import java.util.Date;
 public class QueryPhoneAuthRequest {
     private Long id;
 
-    private Integer phoneAreaCode;
+    private String phoneAreaCode;
 
     private String phone;
 

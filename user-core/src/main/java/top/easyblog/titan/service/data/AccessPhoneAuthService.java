@@ -27,13 +27,14 @@ public class AccessPhoneAuthService {
     private PhoneAuthMapper phoneAuthMapper;
 
 
-    public void insertByRequestSelective(CreatePhoneAuthRequest request) {
+    public Long insertByRequestSelective(CreatePhoneAuthRequest request) {
         PhoneAuth phoneAuth = new PhoneAuth();
         phoneAuth.setCreateTime(new Date());
         phoneAuth.setUpdateTime(new Date());
         BeanUtils.copyProperties(request, phoneAuth);
         phoneAuthMapper.insertSelective(phoneAuth);
         log.info("[DB] insert new phone auth account:{}", JsonUtils.toJSONString(phoneAuth));
+        return phoneAuth.getId();
     }
 
 
@@ -43,7 +44,7 @@ public class AccessPhoneAuthService {
         if (Objects.nonNull(request.getId())) {
             criteria.andIdEqualTo(request.getId());
         }
-        if (Objects.nonNull(request.getPhoneAreaCode())) {
+        if (StringUtils.isNotBlank(request.getPhoneAreaCode())) {
             criteria.andPhoneAreaCodeEqualTo(request.getPhoneAreaCode());
         }
         if (StringUtils.isNotBlank(request.getPhone())) {

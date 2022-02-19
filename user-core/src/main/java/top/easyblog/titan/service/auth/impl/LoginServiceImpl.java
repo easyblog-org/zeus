@@ -10,15 +10,18 @@ import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.SignInLogBean;
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.constant.LoginConstants;
+import top.easyblog.titan.dao.auto.model.PhoneAuth;
+import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.enums.LoginStatus;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.ResultCode;
+import top.easyblog.titan.service.PhoneAuthService;
 import top.easyblog.titan.service.RedisService;
 import top.easyblog.titan.service.UserSignInLogService;
 import top.easyblog.titan.service.auth.ILoginService;
-import top.easyblog.titan.service.auth.policy.LoginStrategy;
-import top.easyblog.titan.service.auth.policy.LoginStrategyFactory;
+import top.easyblog.titan.service.auth.ILoginStrategy;
+import top.easyblog.titan.service.auth.LoginStrategyFactory;
 import top.easyblog.titan.util.JsonUtils;
 
 import java.util.Objects;
@@ -39,10 +42,13 @@ public class LoginServiceImpl implements ILoginService {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private PhoneAuthService phoneAuthService;
+
     @Override
     @Transaction
     public LoginDetailsBean login(LoginRequest request) {
-        LoginStrategy loginPolicy = LoginStrategyFactory.getLoginPolicy(request.getIdentifierType());
+        ILoginStrategy loginPolicy = LoginStrategyFactory.getLoginPolicy(request.getIdentifierType());
         if (Objects.isNull(loginPolicy)) {
             throw new BusinessException(ResultCode.INTERNAL_ERROR);
         }
@@ -78,7 +84,7 @@ public class LoginServiceImpl implements ILoginService {
 
 
     private void storageToken(LoginRequest request, LoginDetailsBean loginDetailsBean) {
-        String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, request.getIdentifierType(), request.getIdentifier());
+        String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, IdentifierType.subCodeOf(request.getIdentifierType()).getCode(), request.getIdentifier());
         String userInfoKey = String.format(LoginConstants.USER_INFO_PREFIX, loginDetailsBean.getToken());
         String token = redisService.storageToken(Lists.newArrayList(accountKey, userInfoKey), loginDetailsBean.getToken(),
                 JsonUtils.toJSONString(loginDetailsBean), String.valueOf(LoginConstants.LOGIN_TOKEN_MAX_EXPIRE));
@@ -102,8 +108,16 @@ public class LoginServiceImpl implements ILoginService {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
+        byte identifierType = IdentifierType.subCodeOf(request.getIdentifierType()).getCode();
+        if (Objects.equals(IdentifierType.PHONE.getCode(), identifierType)) {
+            String[] phoneIdentifier = request.getIdentifier().split("-");
+            PhoneAuth phoneAuth = phoneAuthService.queryPhoneAuthDetails(QueryPhoneAuthRequest.builder()
+                    .phoneAreaCode(phoneIdentifier[0])
+                    .phone(phoneIdentifier[1]).build());
+            request.setIdentifier(String.valueOf(phoneAuth.getId()));
+        }
         //将redis登录时保存的token（如果还未过期）删除
-        String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, request.getIdentifierType(), request.getIdentifier());
+        String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, identifierType, request.getIdentifier());
         String token = redisService.get(accountKey);
         if (StringUtils.isNotBlank(token)) {
             String userInfoJsonStr = redisService.logout(Lists.newArrayList(accountKey));
@@ -128,7 +142,7 @@ public class LoginServiceImpl implements ILoginService {
 
     @Override
     public UserDetailsBean register(RegisterUserRequest request) {
-        LoginStrategy loginPolicy = LoginStrategyFactory.getLoginPolicy(request.getIdentifierType());
+        ILoginStrategy loginPolicy = LoginStrategyFactory.getLoginPolicy(request.getIdentifierType());
         if (Objects.isNull(loginPolicy)) {
             throw new BusinessException(ResultCode.INTERNAL_ERROR);
         }

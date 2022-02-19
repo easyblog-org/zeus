@@ -195,52 +195,52 @@ public class PhoneAuthExample {
             return (Criteria) this;
         }
 
-        public Criteria andPhoneAreaCodeEqualTo(Integer value) {
+        public Criteria andPhoneAreaCodeEqualTo(String value) {
             addCriterion("phone_area_code =", value, "phoneAreaCode");
             return (Criteria) this;
         }
 
-        public Criteria andPhoneAreaCodeNotEqualTo(Integer value) {
+        public Criteria andPhoneAreaCodeNotEqualTo(String value) {
             addCriterion("phone_area_code <>", value, "phoneAreaCode");
             return (Criteria) this;
         }
 
-        public Criteria andPhoneAreaCodeGreaterThan(Integer value) {
+        public Criteria andPhoneAreaCodeGreaterThan(String value) {
             addCriterion("phone_area_code >", value, "phoneAreaCode");
             return (Criteria) this;
         }
 
-        public Criteria andPhoneAreaCodeGreaterThanOrEqualTo(Integer value) {
+        public Criteria andPhoneAreaCodeGreaterThanOrEqualTo(String value) {
             addCriterion("phone_area_code >=", value, "phoneAreaCode");
             return (Criteria) this;
         }
 
-        public Criteria andPhoneAreaCodeLessThan(Integer value) {
+        public Criteria andPhoneAreaCodeLessThan(String value) {
             addCriterion("phone_area_code <", value, "phoneAreaCode");
             return (Criteria) this;
         }
 
-        public Criteria andPhoneAreaCodeLessThanOrEqualTo(Integer value) {
+        public Criteria andPhoneAreaCodeLessThanOrEqualTo(String value) {
             addCriterion("phone_area_code <=", value, "phoneAreaCode");
             return (Criteria) this;
         }
 
-        public Criteria andPhoneAreaCodeIn(List<Integer> values) {
+        public Criteria andPhoneAreaCodeIn(List<String> values) {
             addCriterion("phone_area_code in", values, "phoneAreaCode");
             return (Criteria) this;
         }
 
-        public Criteria andPhoneAreaCodeNotIn(List<Integer> values) {
+        public Criteria andPhoneAreaCodeNotIn(List<String> values) {
             addCriterion("phone_area_code not in", values, "phoneAreaCode");
             return (Criteria) this;
         }
 
-        public Criteria andPhoneAreaCodeBetween(Integer value1, Integer value2) {
+        public Criteria andPhoneAreaCodeBetween(String value1, String value2) {
             addCriterion("phone_area_code between", value1, value2, "phoneAreaCode");
             return (Criteria) this;
         }
 
-        public Criteria andPhoneAreaCodeNotBetween(Integer value1, Integer value2) {
+        public Criteria andPhoneAreaCodeNotBetween(String value1, String value2) {
             addCriterion("phone_area_code not between", value1, value2, "phoneAreaCode");
             return (Criteria) this;
         }

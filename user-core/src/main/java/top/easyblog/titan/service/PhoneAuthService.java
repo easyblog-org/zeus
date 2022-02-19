@@ -27,7 +27,7 @@ public class PhoneAuthService {
     private AccessPhoneAuthService phoneAuthService;
 
     @Transaction
-    public void createPhoneAuth(CreatePhoneAuthRequest request) {
+    public Long createPhoneAuth(CreatePhoneAuthRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
@@ -35,7 +35,7 @@ public class PhoneAuthService {
         if (Objects.nonNull(phoneAuth)) {
             throw new BusinessException(ResultCode.PHONE_ACCOUNT_ALREADY_EXISTS);
         }
-        phoneAuthService.insertByRequestSelective(request);
+        return phoneAuthService.insertByRequestSelective(request);
     }
 
     @Transaction

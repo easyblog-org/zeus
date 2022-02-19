@@ -1,12 +1,14 @@
 package top.easyblog.titan.service.auth.policy;
 
 import org.apache.commons.lang3.StringUtils;
+import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.constant.LoginConstants;
 import top.easyblog.titan.dao.auto.model.User;
 import top.easyblog.titan.enums.AccountStatus;
+import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.enums.Status;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.*;
@@ -14,6 +16,7 @@ import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.AccountService;
 import top.easyblog.titan.service.RandomNicknameService;
 import top.easyblog.titan.service.UserService;
+import top.easyblog.titan.service.auth.ILoginStrategy;
 import top.easyblog.titan.util.EncryptUtils;
 
 import java.util.Objects;
@@ -22,7 +25,7 @@ import java.util.Objects;
  * @author: frank.huang
  * @date: 2022-02-13 21:55
  */
-public abstract class AbstractLoginStrategy implements LoginStrategy {
+public abstract class AbstractLoginStrategy implements ILoginStrategy {
 
     protected AccountService accountService;
 
@@ -43,9 +46,10 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
      * @param request
      * @return
      */
+    @Transaction
     public UserDetailsBean preLoginVerify(LoginRequest request) {
         QueryAccountRequest queryAccountRequest = QueryAccountRequest.builder()
-                .identityType(request.getIdentifierType().intValue())
+                .identityType((int) IdentifierType.subCodeOf(request.getIdentifierType()).getCode())
                 .identifier(request.getIdentifier())
                 .build();
         AccountBean accountBean = accountService.queryAccountDetails(queryAccountRequest);
@@ -72,11 +76,11 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
     /**
      * 默认用户名密码登录
      *
-     * @param request
+     * @param userDetailsBean
      * @return
      */
-    public UserDetailsBean processLogin(LoginRequest request) {
-        UserDetailsBean userDetailsBean = preLoginVerify(request);
+    @Transaction
+    public UserDetailsBean processLogin(UserDetailsBean userDetailsBean, LoginRequest request) {
         AccountBean currAccount = userDetailsBean.getCurrAccount();
         //check request password and database password
         String databasePassword = currAccount.getCredential();
@@ -91,11 +95,12 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
     }
 
     /**
-     * 注册时创建User以及Account
+     * 注册创建User以及Account
      *
      * @param request
      * @return
      */
+    @Transaction
     public UserDetailsBean processRegister(RegisterUserRequest request) {
         //3.创建User
         CreateUserRequest createUserRequest = CreateUserRequest.builder()
@@ -107,7 +112,7 @@ public abstract class AbstractLoginStrategy implements LoginStrategy {
         //4. 创建账户并绑定user_id
         CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
                 .userId(newUser.getId())
-                .identityType((int) request.getIdentifierType())
+                .identityType((int) IdentifierType.subCodeOf(request.getIdentifierType()).getCode())
                 .identifier(request.getIdentifier())
                 .credential(encryptPassword(request.getCredential()))
                 .verified(Status.DISABLE.getCode())

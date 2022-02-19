@@ -255,56 +255,55 @@ public class SignInLogExample {
             return (Criteria) this;
         }
 
-        public Criteria andTokenEqualTo(Long value) {
+        public Criteria andTokenEqualTo(String value) {
             addCriterion("token =", value, "token");
             return (Criteria) this;
         }
 
-        public Criteria andTokenNotEqualTo(Long value) {
+        public Criteria andTokenNotEqualTo(String value) {
             addCriterion("token <>", value, "token");
             return (Criteria) this;
         }
 
-        public Criteria andTokenGreaterThan(Long value) {
+        public Criteria andTokenGreaterThan(String value) {
             addCriterion("token >", value, "token");
             return (Criteria) this;
         }
 
-        public Criteria andTokenGreaterThanOrEqualTo(Long value) {
+        public Criteria andTokenGreaterThanOrEqualTo(String value) {
             addCriterion("token >=", value, "token");
             return (Criteria) this;
         }
 
-        public Criteria andTokenLessThan(Long value) {
+        public Criteria andTokenLessThan(String value) {
             addCriterion("token <", value, "token");
             return (Criteria) this;
         }
 
-        public Criteria andTokenLessThanOrEqualTo(Long value) {
+        public Criteria andTokenLessThanOrEqualTo(String value) {
             addCriterion("token <=", value, "token");
             return (Criteria) this;
         }
 
-        public Criteria andTokenIn(List<Long> values) {
+        public Criteria andTokenIn(List<String> values) {
             addCriterion("token in", values, "token");
             return (Criteria) this;
         }
 
-        public Criteria andTokenNotIn(List<Long> values) {
+        public Criteria andTokenNotIn(List<String> values) {
             addCriterion("token not in", values, "token");
             return (Criteria) this;
         }
 
-        public Criteria andTokenBetween(Long value1, Long value2) {
+        public Criteria andTokenBetween(String value1, String value2) {
             addCriterion("token between", value1, value2, "token");
             return (Criteria) this;
         }
 
-        public Criteria andTokenNotBetween(Long value1, Long value2) {
+        public Criteria andTokenNotBetween(String value1, String value2) {
             addCriterion("token not between", value1, value2, "token");
             return (Criteria) this;
         }
-
 
         public Criteria andStatusIsNull() {
             addCriterion("status is null");

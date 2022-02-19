@@ -33,7 +33,8 @@ public class EmailLoginStrategy extends AbstractLoginStrategy {
     @Transaction
     @Override
     public UserDetailsBean doLogin(LoginRequest request) {
-        return processLogin(request);
+        UserDetailsBean userDetailsBean = super.preLoginVerify(request);
+        return processLogin(userDetailsBean, request);
     }
 
     @Transaction

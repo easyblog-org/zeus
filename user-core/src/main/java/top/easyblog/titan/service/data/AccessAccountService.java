@@ -72,7 +72,7 @@ public class AccessAccountService {
 
     public void updateAccountByRequest(Account account) {
         account.setUpdateTime(new Date());
-        accountMapper.updateByPrimaryKey(account);
+        accountMapper.updateByPrimaryKeySelective(account);
         log.info("[DB] update account[id={}]:{}", account.getId(), JsonUtils.toJSONString(account));
     }
 

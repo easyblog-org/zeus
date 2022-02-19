@@ -11,10 +11,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum AccountStatus {
 
+    PRE_ACTIVE(0, "待激活", true),
     ACTIVE(1, "激活/有效", false),
-    PRE_ACTIVE(2, "待激活", true),
     FREEZE(2, "冻结/禁用", false),
-    DELETE(4, "删除", false);
+    DELETE(3, "删除", false);
 
     private final Integer code;
     private final String desc;

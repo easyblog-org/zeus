@@ -34,7 +34,7 @@ public class PhoneAuthSqlProvider {
         }
         
         if (record.getPhoneAreaCode() != null) {
-            sql.VALUES("phone_area_code", "#{phoneAreaCode,jdbcType=INTEGER}");
+            sql.VALUES("phone_area_code", "#{phoneAreaCode,jdbcType=VARCHAR}");
         }
         
         if (record.getPhone() != null) {
@@ -92,7 +92,7 @@ public class PhoneAuthSqlProvider {
         }
         
         if (record.getPhoneAreaCode() != null) {
-            sql.SET("phone_area_code = #{record.phoneAreaCode,jdbcType=INTEGER}");
+            sql.SET("phone_area_code = #{record.phoneAreaCode,jdbcType=VARCHAR}");
         }
         
         if (record.getPhone() != null) {
@@ -114,9 +114,9 @@ public class PhoneAuthSqlProvider {
     public String updateByExample(Map<String, Object> parameter) {
         SQL sql = new SQL();
         sql.UPDATE("phone_auth");
-        
+
         sql.SET("id = #{record.id,jdbcType=BIGINT}");
-        sql.SET("phone_area_code = #{record.phoneAreaCode,jdbcType=INTEGER}");
+        sql.SET("phone_area_code = #{record.phoneAreaCode,jdbcType=VARCHAR}");
         sql.SET("phone = #{record.phone,jdbcType=VARCHAR}");
         sql.SET("create_time = #{record.createTime,jdbcType=TIMESTAMP}");
         sql.SET("update_time = #{record.updateTime,jdbcType=TIMESTAMP}");
@@ -131,7 +131,7 @@ public class PhoneAuthSqlProvider {
         sql.UPDATE("phone_auth");
         
         if (record.getPhoneAreaCode() != null) {
-            sql.SET("phone_area_code = #{phoneAreaCode,jdbcType=INTEGER}");
+            sql.SET("phone_area_code = #{phoneAreaCode,jdbcType=VARCHAR}");
         }
         
         if (record.getPhone() != null) {

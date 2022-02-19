@@ -40,6 +40,7 @@ public class AccountController {
     @PutMapping("/{account_id}")
     public void update(@PathVariable("account_id") Long accountId,
                        @RequestBody @Valid UpdateAccountRequest request) {
+        request.setId(accountId);
         accountService.updateAccount(request);
     }
 
