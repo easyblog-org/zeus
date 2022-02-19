@@ -24,4 +24,5 @@ public class CreateAccountRequest {
 
     private Integer status;
 
+    private Boolean createDirect;
 }

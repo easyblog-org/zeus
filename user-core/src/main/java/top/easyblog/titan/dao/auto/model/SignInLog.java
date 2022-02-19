@@ -1,14 +1,16 @@
 package top.easyblog.titan.dao.auto.model;
 
-import java.util.Date;
-
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class SignInLog {
     private Long id;
 
     private Long userId;
+
+    private String token;
 
     private Integer status;
 

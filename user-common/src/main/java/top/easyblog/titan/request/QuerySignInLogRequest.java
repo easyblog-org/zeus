@@ -18,5 +18,7 @@ public class QuerySignInLogRequest {
 
     private Long userId;
 
+    private String token;
+
     private Integer status;
 }

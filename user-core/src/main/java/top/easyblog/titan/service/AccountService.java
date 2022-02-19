@@ -1,5 +1,6 @@
-package top.easyblog.titan.service.impl;
+package top.easyblog.titan.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,22 +23,31 @@ import java.util.stream.Collectors;
  * @author frank.huang
  * @date 2022/01/30 13:33
  */
+@Slf4j
 @Service
-public class UserAccountService {
+public class AccountService {
 
     @Autowired
     private AccessAccountService accessAccountService;
 
     @Transaction
     public Account createAccount(CreateAccountRequest request) {
-        QueryAccountRequest queryAccountRequest = QueryAccountRequest.builder()
-                .identityType(request.getIdentityType())
-                .identifier(request.getIdentifier()).build();
-        Account account = accessAccountService.queryAccountByRequest(queryAccountRequest);
-        if (Objects.nonNull(account)) {
-            throw new BusinessException(ResultCode.USER_ACCOUNT_EXISTS);
+        if (Objects.isNull(request)) {
+            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        return accessAccountService.insertSelective(request);
+        Account account = null;
+        if (Objects.isNull(request.getCreateDirect()) || Boolean.FALSE.equals(request.getCreateDirect())) {
+            QueryAccountRequest queryAccountRequest = QueryAccountRequest.builder()
+                    .identityType(request.getIdentityType())
+                    .identifier(request.getIdentifier()).build();
+            account = accessAccountService.queryAccountByRequest(queryAccountRequest);
+            if (Objects.nonNull(account)) {
+                throw new BusinessException(ResultCode.USER_ACCOUNT_EXISTS);
+            }
+        }
+        account = accessAccountService.insertSelective(request);
+        log.info("Create new user account id={} successfully", account.getId());
+        return account;
     }
 
     @Transaction

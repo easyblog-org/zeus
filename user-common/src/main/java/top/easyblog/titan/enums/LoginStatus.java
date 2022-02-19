@@ -10,8 +10,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum LoginStatus {
-    ACTIVE(1, "登录/在线"),
-    UN_ACTIVE(0, "退出/离线");
+    ONLINE(1, "登录/在线"),
+    OFFLINE(0, "退出/离线");
 
     private final int code;
     private final String desc;

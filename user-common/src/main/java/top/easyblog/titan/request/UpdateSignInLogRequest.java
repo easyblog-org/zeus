@@ -1,11 +1,11 @@
 package top.easyblog.titan.request;
 
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 /**
  * @author frank.huang
@@ -19,6 +19,8 @@ public class UpdateSignInLogRequest {
     private Long id;
 
     private Long userId;
+
+    private String token;
 
     private Integer status;
 

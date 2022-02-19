@@ -19,10 +19,6 @@ public class LoginDetailsBean {
      */
     private String token;
     /**
-     * 登录记录信息
-     */
-    private SignInLogBean signInLog;
-    /**
      * 登录用户详情
      */
     private UserDetailsBean user;

@@ -1,4 +1,4 @@
-package top.easyblog.titan.service;
+package top.easyblog.titan.service.auth;
 
 import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
@@ -16,13 +16,37 @@ import top.easyblog.titan.util.IdGenerator;
  */
 public interface ILoginService {
 
+    /**
+     * 登录
+     *
+     * @param request
+     * @return
+     */
     LoginDetailsBean login(LoginRequest request);
 
+    /**
+     * 检查登录状态
+     *
+     * @param token
+     * @return
+     */
     UserDetailsBean checkLoginHealth(String token);
 
+    /**
+     * 退出
+     *
+     * @param request
+     */
     void logout(LogoutRequest request);
 
+    /**
+     * 注册
+     *
+     * @param request
+     * @return
+     */
     UserDetailsBean register(RegisterUserRequest request);
+
 
     /**
      * 生成登录token

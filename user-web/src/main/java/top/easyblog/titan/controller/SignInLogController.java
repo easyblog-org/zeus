@@ -8,7 +8,7 @@ import top.easyblog.titan.annotation.RequestParamAlias;
 import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.QuerySignInLogListRequest;
 import top.easyblog.titan.request.QuerySignInLogRequest;
-import top.easyblog.titan.service.impl.UserSignInLogService;
+import top.easyblog.titan.service.UserSignInLogService;
 
 import javax.validation.Valid;
 

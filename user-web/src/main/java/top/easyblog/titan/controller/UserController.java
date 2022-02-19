@@ -8,7 +8,7 @@ import top.easyblog.titan.request.CreateUserRequest;
 import top.easyblog.titan.request.QueryUserListRequest;
 import top.easyblog.titan.request.QueryUserRequest;
 import top.easyblog.titan.request.UpdateUserRequest;
-import top.easyblog.titan.service.impl.UserService;
+import top.easyblog.titan.service.UserService;
 
 import javax.validation.Valid;
 

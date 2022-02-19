@@ -1,4 +1,4 @@
-package top.easyblog.titan.service.impl;
+package top.easyblog.titan.service;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -32,23 +32,27 @@ public class SignInLogSqlProvider {
         if (record.getId() != null) {
             sql.VALUES("id", "#{id,jdbcType=BIGINT}");
         }
-        
+
         if (record.getUserId() != null) {
             sql.VALUES("user_id", "#{userId,jdbcType=BIGINT}");
         }
-        
+
         if (record.getStatus() != null) {
             sql.VALUES("status", "#{status,jdbcType=INTEGER}");
         }
-        
+
+        if (record.getToken() != null) {
+            sql.VALUES("token", "#{token,jdbcType=VARCHAR}");
+        }
+
         if (record.getIp() != null) {
             sql.VALUES("ip", "#{ip,jdbcType=VARCHAR}");
         }
-        
+
         if (record.getDevice() != null) {
             sql.VALUES("device", "#{device,jdbcType=VARCHAR}");
         }
-        
+
         if (record.getOperationSystem() != null) {
             sql.VALUES("operation_system", "#{operationSystem,jdbcType=VARCHAR}");
         }
@@ -76,6 +80,7 @@ public class SignInLogSqlProvider {
             sql.SELECT("id");
         }
         sql.SELECT("user_id");
+        sql.SELECT("token");
         sql.SELECT("status");
         sql.SELECT("ip");
         sql.SELECT("device");
@@ -103,26 +108,30 @@ public class SignInLogSqlProvider {
     public String updateByExampleSelective(Map<String, Object> parameter) {
         SignInLog record = (SignInLog) parameter.get("record");
         SignInLogExample example = (SignInLogExample) parameter.get("example");
-        
+
         SQL sql = new SQL();
         sql.UPDATE("sign_in_log");
-        
+
         if (record.getId() != null) {
             sql.SET("id = #{record.id,jdbcType=BIGINT}");
         }
-        
+
         if (record.getUserId() != null) {
             sql.SET("user_id = #{record.userId,jdbcType=BIGINT}");
         }
-        
+
+        if (record.getToken() != null) {
+            sql.VALUES("token", "#{token,jdbcType=VARCHAR}");
+        }
+
         if (record.getStatus() != null) {
             sql.SET("status = #{record.status,jdbcType=INTEGER}");
         }
-        
+
         if (record.getIp() != null) {
             sql.SET("ip = #{record.ip,jdbcType=VARCHAR}");
         }
-        
+
         if (record.getDevice() != null) {
             sql.SET("device = #{record.device,jdbcType=VARCHAR}");
         }
@@ -153,6 +162,7 @@ public class SignInLogSqlProvider {
         
         sql.SET("id = #{record.id,jdbcType=BIGINT}");
         sql.SET("user_id = #{record.userId,jdbcType=BIGINT}");
+        sql.SET("token = #{record.token,jdbcType=VARCHAR}");
         sql.SET("status = #{record.status,jdbcType=INTEGER}");
         sql.SET("ip = #{record.ip,jdbcType=VARCHAR}");
         sql.SET("device = #{record.device,jdbcType=VARCHAR}");
@@ -169,19 +179,23 @@ public class SignInLogSqlProvider {
     public String updateByPrimaryKeySelective(SignInLog record) {
         SQL sql = new SQL();
         sql.UPDATE("sign_in_log");
-        
+
         if (record.getUserId() != null) {
             sql.SET("user_id = #{userId,jdbcType=BIGINT}");
         }
-        
+
+        if (record.getToken() != null) {
+            sql.VALUES("token", "#{token,jdbcType=VARCHAR}");
+        }
+
         if (record.getStatus() != null) {
             sql.SET("status = #{status,jdbcType=INTEGER}");
         }
-        
+
         if (record.getIp() != null) {
             sql.SET("ip = #{ip,jdbcType=VARCHAR}");
         }
-        
+
         if (record.getDevice() != null) {
             sql.SET("device = #{device,jdbcType=VARCHAR}");
         }

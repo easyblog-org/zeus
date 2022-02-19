@@ -1,8 +1,8 @@
 package top.easyblog.titan.bean;
 
-import java.util.Date;
-
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @author frank.huang
@@ -13,6 +13,8 @@ public class SignInLogBean {
     private Long id;
 
     private Long userId;
+
+    private String token;
 
     private Integer status;
 

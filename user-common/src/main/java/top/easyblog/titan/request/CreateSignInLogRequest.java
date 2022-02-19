@@ -19,6 +19,10 @@ public class CreateSignInLogRequest {
      */
     private Long userId;
     /**
+     * 登录token
+     */
+    private String token;
+    /**
      * 登录状态
      */
     private Integer status;

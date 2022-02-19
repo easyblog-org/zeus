@@ -1,4 +1,4 @@
-package top.easyblog.titan.service;
+package top.easyblog.titan.service.auth;
 
 import top.easyblog.titan.enums.IdentifierType;
 

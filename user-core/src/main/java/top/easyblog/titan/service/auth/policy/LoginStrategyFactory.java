@@ -1,4 +1,4 @@
-package top.easyblog.titan.service.policy;
+package top.easyblog.titan.service.auth.policy;
 
 import lombok.extern.slf4j.Slf4j;
 import top.easyblog.titan.enums.IdentifierType;

@@ -7,7 +7,7 @@ import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.QueryUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
 import top.easyblog.titan.request.UpdateUserHeaderImgRequest;
-import top.easyblog.titan.service.impl.UserHeaderImgService;
+import top.easyblog.titan.service.UserHeaderImgService;
 
 import javax.validation.Valid;
 

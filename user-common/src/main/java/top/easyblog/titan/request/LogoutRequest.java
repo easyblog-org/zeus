@@ -17,6 +17,13 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LogoutRequest {
+
+    /**
+     *
+     */
+    @NotNull(message = "Required parameter `user_id` is not present")
+    private Long userId;
+
     /**
      * 登录账户类型
      */

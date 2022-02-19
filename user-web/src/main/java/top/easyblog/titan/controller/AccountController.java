@@ -8,7 +8,7 @@ import top.easyblog.titan.request.CreateAccountRequest;
 import top.easyblog.titan.request.QueryAccountListRequest;
 import top.easyblog.titan.request.QueryAccountRequest;
 import top.easyblog.titan.request.UpdateAccountRequest;
-import top.easyblog.titan.service.impl.UserAccountService;
+import top.easyblog.titan.service.AccountService;
 
 import javax.validation.Valid;
 
@@ -21,7 +21,7 @@ import javax.validation.Valid;
 public class AccountController {
 
     @Autowired
-    private UserAccountService accountService;
+    private AccountService accountService;
 
 
     @ResponseWrapper

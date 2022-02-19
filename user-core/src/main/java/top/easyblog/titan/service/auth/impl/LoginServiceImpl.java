@@ -1,4 +1,4 @@
-package top.easyblog.titan.service.impl;
+package top.easyblog.titan.service.auth.impl;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +14,11 @@ import top.easyblog.titan.enums.LoginStatus;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.ILoginService;
-import top.easyblog.titan.service.policy.LoginStrategy;
-import top.easyblog.titan.service.policy.LoginStrategyFactory;
+import top.easyblog.titan.service.RedisService;
+import top.easyblog.titan.service.UserSignInLogService;
+import top.easyblog.titan.service.auth.ILoginService;
+import top.easyblog.titan.service.auth.policy.LoginStrategy;
+import top.easyblog.titan.service.auth.policy.LoginStrategyFactory;
 import top.easyblog.titan.util.JsonUtils;
 
 import java.util.Objects;
@@ -52,19 +54,25 @@ public class LoginServiceImpl implements ILoginService {
         loginDetailsBean.setUser(userDetailsBean);
         loginDetailsBean.setToken(generateLoginToken());
 
-        //保存用户登录日志
-        CreateSignInLogRequest createSignInLogRequest = CreateSignInLogRequest.builder()
-                .userId(userDetailsBean.getId())
-                .status(LoginStatus.ACTIVE.getCode())
-                .device(request.getDevice())
-                .operationSystem(request.getOperationSystem())
-                .ip(request.getIp())
-                .location(request.getLocation())
-                .build();
-        SignInLogBean signInLog = signInLogService.createSignInLog(createSignInLogRequest);
-        loginDetailsBean.setSignInLog(signInLog);
-
         storageToken(request, loginDetailsBean);
+
+        //保存用户登录日志
+        CompletableFuture.runAsync(() -> {
+            CreateSignInLogRequest createSignInLogRequest = CreateSignInLogRequest.builder()
+                    .userId(userDetailsBean.getId())
+                    .token(loginDetailsBean.getToken())
+                    .status(LoginStatus.ONLINE.getCode())
+                    .build();
+            Optional.ofNullable(request.getExtra()).ifPresent(extra -> {
+                createSignInLogRequest.setDevice(extra.getDevice());
+                createSignInLogRequest.setOperationSystem(extra.getOperationSystem());
+                createSignInLogRequest.setIp(extra.getIp());
+                createSignInLogRequest.setLocation(extra.getLocation());
+            });
+            SignInLogBean signInLog = signInLogService.createSignInLog(createSignInLogRequest);
+            log.info("Create sign log:{}", JsonUtils.toJSONString(signInLog));
+        });
+
         return loginDetailsBean;
     }
 
@@ -96,23 +104,25 @@ public class LoginServiceImpl implements ILoginService {
         }
         //将redis登录时保存的token（如果还未过期）删除
         String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, request.getIdentifierType(), request.getIdentifier());
-        String userInfoJsonStr = redisService.logout(Lists.newArrayList(accountKey));
-        if (StringUtils.isBlank(userInfoJsonStr)) {
-            log.info("Logout failed: internal error,root cause: redis return value is {}", userInfoJsonStr);
-            return;
+        String token = redisService.get(accountKey);
+        if (StringUtils.isNotBlank(token)) {
+            String userInfoJsonStr = redisService.logout(Lists.newArrayList(accountKey));
+            if (StringUtils.isBlank(userInfoJsonStr)) {
+                log.info("Logout failed: internal error,root cause: redis return value is {}", userInfoJsonStr);
+                throw new BusinessException(ResultCode.LOGOUT_FAILED);
+            }
         }
 
         //退出成功
         CompletableFuture.runAsync(() -> {
             //更新用户账户状态为退出
-            LoginDetailsBean loginDetailsBean = JsonUtils.parseObject(userInfoJsonStr, LoginDetailsBean.class);
-            SignInLogBean signInLog = loginDetailsBean.getSignInLog();
-            Optional.ofNullable(signInLog).ifPresent(signInLogBean -> {
-                signInLogService.updateSignLog(UpdateSignInLogRequest.builder()
-                        .id(signInLog.getId())
-                        .status(LoginStatus.UN_ACTIVE.getCode())
-                        .build());
-            });
+            Optional.ofNullable(signInLogService.querySignInLogDetails(QuerySignInLogRequest.builder()
+                            .userId(request.getUserId()).token(token).build()))
+                    .ifPresent(signInLogBean -> {
+                        signInLogService.updateSignLog(UpdateSignInLogRequest.builder()
+                                .id(signInLogBean.getId()).status(LoginStatus.OFFLINE.getCode()).build());
+                        log.info("Update the account {} of user [id={}] log out successfully!", request.getIdentifier(), request.getUserId());
+                    });
         });
     }
 

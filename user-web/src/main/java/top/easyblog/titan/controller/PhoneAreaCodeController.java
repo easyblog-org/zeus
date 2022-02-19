@@ -8,7 +8,7 @@ import top.easyblog.titan.request.CreatePhoneAreaCodeRequest;
 import top.easyblog.titan.request.QueryPhoneAreaCodeListRequest;
 import top.easyblog.titan.request.QueryPhoneAreaCodeRequest;
 import top.easyblog.titan.request.UpdatePhoneAreaCodeRequest;
-import top.easyblog.titan.service.impl.PhoneAreaCodeService;
+import top.easyblog.titan.service.PhoneAreaCodeService;
 
 import javax.validation.Valid;
 

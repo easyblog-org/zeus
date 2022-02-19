@@ -37,24 +37,10 @@ public class LoginRequest implements BaseRequest {
     private String credential;
 
     /**
-     * 登录设备信息
+     * 登录时关于用户的其他详细信息
      */
-    private String device;
-
-    /**
-     * 登录设备操作系统信息
-     */
-    private String operationSystem;
-
-    /**
-     * 登录设备物理定位
-     */
-    private String location;
-
-    /**
-     * 登录设备IP信息
-     */
-    private String ip;
+    private CreateSignInLogRequest extra;
+    
 
     public boolean validate() {
         return IdentifierType.codeOf(identifierType) != null;

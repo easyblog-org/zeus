@@ -1,4 +1,4 @@
-package top.easyblog.titan.service.impl;
+package top.easyblog.titan.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -38,7 +38,7 @@ public class UserService {
     private UserHeaderImgService headerImgService;
 
     @Autowired
-    private UserAccountService accountService;
+    private AccountService accountService;
 
     @Autowired
     private UserSignInLogService userSignInLogService;
