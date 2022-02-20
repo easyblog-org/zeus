@@ -3,6 +3,7 @@ package top.easyblog.titan.service.auth.policy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.easyblog.titan.annotation.Transaction;
+import top.easyblog.titan.bean.AuthenticationDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.dao.auto.model.PhoneAuth;
 import top.easyblog.titan.exception.BusinessException;
@@ -36,11 +37,12 @@ public class PhoneLoginStrategy extends AbstractLoginStrategy {
 
     @Transaction
     @Override
-    public UserDetailsBean doLogin(LoginRequest request) {
+    public AuthenticationDetailsBean doLogin(LoginRequest request) {
         PhoneAuth phoneAuth = checkAndGetPhoneInfo(request);
         request.setIdentifier(String.valueOf(phoneAuth.getId()));
         UserDetailsBean userDetailsBean = super.preLoginVerify(request);
-        return processLogin(userDetailsBean, request);
+        userDetailsBean = processLogin(userDetailsBean, request);
+        return AuthenticationDetailsBean.builder().user(userDetailsBean).build();
     }
 
     public PhoneAuth checkAndGetPhoneInfo(LoginRequest request) {
@@ -56,7 +58,7 @@ public class PhoneLoginStrategy extends AbstractLoginStrategy {
 
     @Transaction
     @Override
-    public UserDetailsBean doRegister(RegisterUserRequest request) {
+    public AuthenticationDetailsBean doRegister(RegisterUserRequest request) {
         String[] phoneIdentifier = request.getIdentifier().split("-");
         if (phoneIdentifier.length != 2 || Boolean.FALSE.equals(RegexUtils.isPhone(phoneIdentifier[1]))) {
             throw new BusinessException(ResultCode.IDENTIFIER_NOT_PHONE);
@@ -67,6 +69,7 @@ public class PhoneLoginStrategy extends AbstractLoginStrategy {
                 .build());
         request.setIdentifier(String.valueOf(phoneAuthId));
         //创建 User & Account
-        return processRegister(request);
+        UserDetailsBean userDetailsBean = processRegister(request);
+        return AuthenticationDetailsBean.builder().user(userDetailsBean).build();
     }
 }

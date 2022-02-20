@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.easyblog.titan.annotation.Transaction;
+import top.easyblog.titan.bean.AuthenticationDetailsBean;
 import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.SignInLogBean;
 import top.easyblog.titan.bean.UserDetailsBean;
@@ -47,39 +48,50 @@ public class LoginServiceImpl implements ILoginService {
 
     @Override
     @Transaction
-    public LoginDetailsBean login(LoginRequest request) {
+    public AuthenticationDetailsBean login(LoginRequest request) {
         ILoginStrategy loginPolicy = LoginStrategyFactory.getLoginPolicy(request.getIdentifierType());
         if (Objects.isNull(loginPolicy)) {
             throw new BusinessException(ResultCode.INTERNAL_ERROR);
         }
-        UserDetailsBean userDetailsBean = loginPolicy.doLogin(request);
+        AuthenticationDetailsBean userDetailsBean = loginPolicy.doLogin(request);
         if (Objects.isNull(userDetailsBean)) {
             throw new BusinessException(ResultCode.LOGIN_FAILED);
         }
         LoginDetailsBean loginDetailsBean = new LoginDetailsBean();
-        loginDetailsBean.setUser(userDetailsBean);
+        loginDetailsBean.setUser(userDetailsBean.getUser());
         loginDetailsBean.setToken(generateLoginToken());
 
         storageToken(request, loginDetailsBean);
 
         //保存用户登录日志
         CompletableFuture.runAsync(() -> {
-            CreateSignInLogRequest createSignInLogRequest = CreateSignInLogRequest.builder()
-                    .userId(userDetailsBean.getId())
-                    .token(loginDetailsBean.getToken())
-                    .status(LoginStatus.ONLINE.getCode())
-                    .build();
-            Optional.ofNullable(request.getExtra()).ifPresent(extra -> {
-                createSignInLogRequest.setDevice(extra.getDevice());
-                createSignInLogRequest.setOperationSystem(extra.getOperationSystem());
-                createSignInLogRequest.setIp(extra.getIp());
-                createSignInLogRequest.setLocation(extra.getLocation());
-            });
-            SignInLogBean signInLog = signInLogService.createSignInLog(createSignInLogRequest);
-            log.info("Create sign log:{}", JsonUtils.toJSONString(signInLog));
+            saveLoginLog(request, loginDetailsBean);
         });
 
         return loginDetailsBean;
+    }
+
+    /**
+     * 保存登录日志
+     *
+     * @param request
+     * @param loginDetailsBean
+     */
+    private void saveLoginLog(LoginRequest request, LoginDetailsBean loginDetailsBean) {
+        UserDetailsBean userDetailsBean = loginDetailsBean.getUser();
+        CreateSignInLogRequest createSignInLogRequest = CreateSignInLogRequest.builder()
+                .userId(userDetailsBean.getId())
+                .token(loginDetailsBean.getToken())
+                .status(LoginStatus.ONLINE.getCode())
+                .build();
+        Optional.ofNullable(request.getExtra()).ifPresent(extra -> {
+            createSignInLogRequest.setDevice(extra.getDevice());
+            createSignInLogRequest.setOperationSystem(extra.getOperationSystem());
+            createSignInLogRequest.setIp(extra.getIp());
+            createSignInLogRequest.setLocation(extra.getLocation());
+        });
+        SignInLogBean signInLog = signInLogService.createSignInLog(createSignInLogRequest);
+        log.info("Create sign log:{}", JsonUtils.toJSONString(signInLog));
     }
 
 
@@ -95,12 +107,13 @@ public class LoginServiceImpl implements ILoginService {
         loginDetailsBean.setToken(token);
     }
 
-    public UserDetailsBean checkLoginHealth(String token) {
+    public AuthenticationDetailsBean checkLoginHealth(String token) {
         if (StringUtils.isEmpty(token)) {
             throw new BusinessException(ResultCode.REQUIRED_PARAM_TOKEN_NOT_EXISTS);
         }
         String userInfoJsonStr = redisService.get(token);
-        return StringUtils.isNotBlank(userInfoJsonStr) ? JsonUtils.parseObject(userInfoJsonStr, UserDetailsBean.class) : null;
+        return StringUtils.isNotBlank(userInfoJsonStr) ?
+                AuthenticationDetailsBean.builder().user(JsonUtils.parseObject(userInfoJsonStr, UserDetailsBean.class)).build() : null;
     }
 
     @Override
@@ -108,7 +121,7 @@ public class LoginServiceImpl implements ILoginService {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        byte identifierType = IdentifierType.subCodeOf(request.getIdentifierType()).getCode();
+        int identifierType = IdentifierType.subCodeOf(request.getIdentifierType()).getCode();
         if (Objects.equals(IdentifierType.PHONE.getCode(), identifierType)) {
             String[] phoneIdentifier = request.getIdentifier().split("-");
             PhoneAuth phoneAuth = phoneAuthService.queryPhoneAuthDetails(QueryPhoneAuthRequest.builder()
@@ -141,7 +154,7 @@ public class LoginServiceImpl implements ILoginService {
     }
 
     @Override
-    public UserDetailsBean register(RegisterUserRequest request) {
+    public AuthenticationDetailsBean register(RegisterUserRequest request) {
         ILoginStrategy loginPolicy = LoginStrategyFactory.getLoginPolicy(request.getIdentifierType());
         if (Objects.isNull(loginPolicy)) {
             throw new BusinessException(ResultCode.INTERNAL_ERROR);

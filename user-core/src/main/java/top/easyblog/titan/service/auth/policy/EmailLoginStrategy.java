@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
+import top.easyblog.titan.bean.AuthenticationDetailsBean;
+import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.LoginRequest;
@@ -32,19 +34,20 @@ public class EmailLoginStrategy extends AbstractLoginStrategy {
 
     @Transaction
     @Override
-    public UserDetailsBean doLogin(LoginRequest request) {
+    public AuthenticationDetailsBean doLogin(LoginRequest request) {
         UserDetailsBean userDetailsBean = super.preLoginVerify(request);
-        return processLogin(userDetailsBean, request);
+        userDetailsBean = processLogin(userDetailsBean, request);
+        return LoginDetailsBean.builder().user(userDetailsBean).build();
     }
 
     @Transaction
     @Override
-    public UserDetailsBean doRegister(RegisterUserRequest request) {
+    public AuthenticationDetailsBean doRegister(RegisterUserRequest request) {
         if (Boolean.FALSE.equals(RegexUtils.isEmail(request.getIdentifier()))) {
             throw new BusinessException(ResultCode.IDENTIFIER_NOT_EMAIL);
         }
         QueryAccountRequest queryAccountRequest = QueryAccountRequest.builder()
-                .identityType(request.getIdentifierType().intValue())
+                .identityType(request.getIdentifierType())
                 .identifier(request.getIdentifier()).build();
         AccountBean account = accountService.queryAccountDetails(queryAccountRequest);
         if (Objects.nonNull(account)) {
@@ -58,7 +61,8 @@ public class EmailLoginStrategy extends AbstractLoginStrategy {
             throw new BusinessException(ResultCode.PASSWORD_NOT_EQUAL);
         }
         //创建 User & Account
-        return processRegister(request);
+        UserDetailsBean userDetailsBean = processRegister(request);
+        return AuthenticationDetailsBean.builder().user(userDetailsBean).build();
     }
 
 }

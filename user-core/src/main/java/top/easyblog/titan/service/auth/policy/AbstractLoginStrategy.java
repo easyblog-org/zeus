@@ -49,7 +49,7 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
     @Transaction
     public UserDetailsBean preLoginVerify(LoginRequest request) {
         QueryAccountRequest queryAccountRequest = QueryAccountRequest.builder()
-                .identityType((int) IdentifierType.subCodeOf(request.getIdentifierType()).getCode())
+                .identityType(IdentifierType.subCodeOf(request.getIdentifierType()).getCode())
                 .identifier(request.getIdentifier())
                 .build();
         AccountBean accountBean = accountService.queryAccountDetails(queryAccountRequest);
@@ -115,8 +115,8 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
                 .identityType((int) IdentifierType.subCodeOf(request.getIdentifierType()).getCode())
                 .identifier(request.getIdentifier())
                 .credential(encryptPassword(request.getCredential()))
-                .verified(Status.DISABLE.getCode())
-                .status(AccountStatus.PRE_ACTIVE.getCode())
+                .verified(Objects.isNull(request.getVerified()) ? Status.DISABLE.getCode() : request.getVerified())
+                .status(Objects.isNull(request.getStatus()) ? AccountStatus.PRE_ACTIVE.getCode() : request.getStatus())
                 .createDirect(Boolean.TRUE)
                 .build();
         accountService.createAccount(createAccountRequest);
@@ -159,6 +159,9 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
     }
 
     public String encryptPassword(String originalPassword) {
+        if (StringUtils.isBlank(originalPassword)) {
+            return "";
+        }
         return EncryptUtils.SHA256(originalPassword, Constants.USER_PASSWORD_SECRET_KEY);
     }
 }

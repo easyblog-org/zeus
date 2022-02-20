@@ -1,7 +1,6 @@
 package top.easyblog.titan.service.auth;
 
-import top.easyblog.titan.bean.LoginDetailsBean;
-import top.easyblog.titan.bean.UserDetailsBean;
+import top.easyblog.titan.bean.AuthenticationDetailsBean;
 import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.LogoutRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
@@ -22,7 +21,7 @@ public interface ILoginService {
      * @param request
      * @return
      */
-    LoginDetailsBean login(LoginRequest request);
+    AuthenticationDetailsBean login(LoginRequest request);
 
     /**
      * 检查登录状态
@@ -30,7 +29,7 @@ public interface ILoginService {
      * @param token
      * @return
      */
-    UserDetailsBean checkLoginHealth(String token);
+    AuthenticationDetailsBean checkLoginHealth(String token);
 
     /**
      * 退出
@@ -45,7 +44,7 @@ public interface ILoginService {
      * @param request
      * @return
      */
-    UserDetailsBean register(RegisterUserRequest request);
+    AuthenticationDetailsBean register(RegisterUserRequest request);
 
 
     /**

@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 public class LogoutRequest {
 
     /**
-     *
+     * 用户id
      */
     @NotNull(message = "Required parameter `user_id` is not present")
     private Long userId;
@@ -28,7 +28,7 @@ public class LogoutRequest {
      * 登录账户类型
      */
     @NotNull(message = "Required parameter `identifier_type` is not present")
-    private Byte identifierType;
+    private Integer identifierType;
 
     /**
      * 登录账号

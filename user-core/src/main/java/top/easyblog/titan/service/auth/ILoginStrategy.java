@@ -1,6 +1,6 @@
 package top.easyblog.titan.service.auth;
 
-import top.easyblog.titan.bean.UserDetailsBean;
+import top.easyblog.titan.bean.AuthenticationDetailsBean;
 import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 
@@ -16,7 +16,7 @@ public interface ILoginStrategy {
      * @param request
      * @return
      */
-    UserDetailsBean doLogin(LoginRequest request);
+    AuthenticationDetailsBean doLogin(LoginRequest request);
 
     /**
      * 注册策略
@@ -24,6 +24,6 @@ public interface ILoginStrategy {
      * @param request
      * @return
      */
-    UserDetailsBean doRegister(RegisterUserRequest request);
+    AuthenticationDetailsBean doRegister(RegisterUserRequest request);
 
 }

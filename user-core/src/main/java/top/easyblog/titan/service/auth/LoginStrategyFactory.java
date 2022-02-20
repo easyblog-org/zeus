@@ -13,7 +13,7 @@ import java.util.Objects;
  */
 @Slf4j
 public class LoginStrategyFactory {
-    public static ILoginStrategy getLoginPolicy(Byte identifierType) {
+    public static ILoginStrategy getLoginPolicy(Integer identifierType) {
         try {
             IdentifierType type = IdentifierType.subCodeOf(identifierType);
             if (Objects.isNull(type) || Objects.equals(IdentifierType.UNKNOWN, type)) {

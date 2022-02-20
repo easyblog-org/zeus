@@ -22,7 +22,7 @@ public class LoginRequest implements BaseRequest {
      * 登录账户类型
      */
     @NotNull(message = "Required parameter `identifier_type` is not present")
-    private Byte identifierType;
+    private Integer identifierType;
 
     /**
      * 登录账号

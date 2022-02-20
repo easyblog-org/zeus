@@ -23,7 +23,7 @@ public class RegisterUserRequest {
      * 账号类型
      */
     @NotNull(message = "Required parameter `identifier_type` is not present")
-    private Byte identifierType;
+    private Integer identifierType;
     /**
      * 账号
      */
@@ -38,4 +38,12 @@ public class RegisterUserRequest {
      * 账号密码验证
      */
     private String credentialAgain;
+    /**
+     * 账户状态
+     */
+    private Integer status;
+    /**
+     * 是否验证
+     */
+    private Integer verified;
 }
