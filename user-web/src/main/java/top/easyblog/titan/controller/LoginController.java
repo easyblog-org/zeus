@@ -13,7 +13,7 @@ import top.easyblog.titan.annotation.ResponseWrapper;
 import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.LogoutRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
-import top.easyblog.titan.service.auth.ILoginService;
+import top.easyblog.titan.service.oauth.ILoginService;
 
 /**
  * 用户登录注册认证控制器

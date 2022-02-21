@@ -1,4 +1,4 @@
-package top.easyblog.titan.service.auth.impl;
+package top.easyblog.titan.service.oauth.impl;
 
 import com.google.common.collect.Lists;
 
@@ -32,9 +32,9 @@ import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.PhoneAuthService;
 import top.easyblog.titan.service.RedisService;
 import top.easyblog.titan.service.UserSignInLogService;
-import top.easyblog.titan.service.auth.ILoginService;
-import top.easyblog.titan.service.auth.ILoginStrategy;
-import top.easyblog.titan.service.auth.LoginStrategyFactory;
+import top.easyblog.titan.service.oauth.ILoginService;
+import top.easyblog.titan.service.oauth.ILoginStrategy;
+import top.easyblog.titan.service.oauth.LoginStrategyFactory;
 import top.easyblog.titan.util.JsonUtils;
 
 /**

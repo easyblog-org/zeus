@@ -1,11 +1,11 @@
-package top.easyblog.titan.service.auth;
+package top.easyblog.titan.service.oauth;
+
+import java.util.Objects;
 
 import lombok.extern.slf4j.Slf4j;
 import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.util.ApplicationContextBeanHelper;
-
-import java.util.Objects;
 
 /**
  * @author frank.huang

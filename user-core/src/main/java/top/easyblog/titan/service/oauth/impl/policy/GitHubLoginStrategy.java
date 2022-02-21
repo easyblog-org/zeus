@@ -1,8 +1,11 @@
-package top.easyblog.titan.service.auth.policy;
+package top.easyblog.titan.service.oauth.impl.policy;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
+
+import lombok.extern.slf4j.Slf4j;
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.bean.AuthenticationDetailsBean;
@@ -18,9 +21,7 @@ import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.service.AccountService;
 import top.easyblog.titan.service.RandomNicknameService;
 import top.easyblog.titan.service.UserService;
-import top.easyblog.titan.service.auth.ILoginService;
-
-import java.util.Objects;
+import top.easyblog.titan.service.oauth.ILoginService;
 
 /**
  * GitHub第三方登录

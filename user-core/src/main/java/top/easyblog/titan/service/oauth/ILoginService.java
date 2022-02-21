@@ -1,4 +1,4 @@
-package top.easyblog.titan.service.auth;
+package top.easyblog.titan.service.oauth;
 
 import top.easyblog.titan.bean.AuthenticationDetailsBean;
 import top.easyblog.titan.request.LoginRequest;

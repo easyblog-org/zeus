@@ -1,7 +1,10 @@
-package top.easyblog.titan.service.auth.policy;
+package top.easyblog.titan.service.oauth.impl.policy;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
+
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AuthenticationDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
@@ -17,8 +20,6 @@ import top.easyblog.titan.service.PhoneAuthService;
 import top.easyblog.titan.service.RandomNicknameService;
 import top.easyblog.titan.service.UserService;
 import top.easyblog.titan.util.RegexUtils;
-
-import java.util.Objects;
 
 /**
  * @author: frank.huang
