@@ -26,10 +26,10 @@ public interface ILoginService {
     /**
      * 检查登录状态
      *
-     * @param token
+     * @param request
      * @return
      */
-    AuthenticationDetailsBean checkLoginHealth(String token);
+    AuthenticationDetailsBean checkLoginHealth(LogoutRequest request);
 
     /**
      * 退出

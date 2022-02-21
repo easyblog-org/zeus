@@ -1,10 +1,16 @@
 package top.easyblog.titan.service.auth.impl;
 
 import com.google.common.collect.Lists;
-import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+import lombok.extern.slf4j.Slf4j;
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AuthenticationDetailsBean;
 import top.easyblog.titan.bean.LoginDetailsBean;
@@ -15,7 +21,13 @@ import top.easyblog.titan.dao.auto.model.PhoneAuth;
 import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.enums.LoginStatus;
 import top.easyblog.titan.exception.BusinessException;
-import top.easyblog.titan.request.*;
+import top.easyblog.titan.request.CreateSignInLogRequest;
+import top.easyblog.titan.request.LoginRequest;
+import top.easyblog.titan.request.LogoutRequest;
+import top.easyblog.titan.request.QueryPhoneAuthRequest;
+import top.easyblog.titan.request.QuerySignInLogRequest;
+import top.easyblog.titan.request.RegisterUserRequest;
+import top.easyblog.titan.request.UpdateSignInLogRequest;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.PhoneAuthService;
 import top.easyblog.titan.service.RedisService;
@@ -24,10 +36,6 @@ import top.easyblog.titan.service.auth.ILoginService;
 import top.easyblog.titan.service.auth.ILoginStrategy;
 import top.easyblog.titan.service.auth.LoginStrategyFactory;
 import top.easyblog.titan.util.JsonUtils;
-
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author frank.huang
@@ -54,7 +62,7 @@ public class LoginServiceImpl implements ILoginService {
             throw new BusinessException(ResultCode.INTERNAL_ERROR);
         }
         AuthenticationDetailsBean userDetailsBean = loginPolicy.doLogin(request);
-        if (Objects.isNull(userDetailsBean)) {
+        if (Objects.isNull(userDetailsBean.getUser())) {
             throw new BusinessException(ResultCode.LOGIN_FAILED);
         }
         LoginDetailsBean loginDetailsBean = new LoginDetailsBean();
@@ -94,7 +102,12 @@ public class LoginServiceImpl implements ILoginService {
         log.info("Create sign log:{}", JsonUtils.toJSONString(signInLog));
     }
 
-
+    /**
+     * 存储登录token 以及 登录时的用户信息
+     *
+     * @param request
+     * @param loginDetailsBean
+     */
     private void storageToken(LoginRequest request, LoginDetailsBean loginDetailsBean) {
         String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, IdentifierType.subCodeOf(request.getIdentifierType()).getCode(), request.getIdentifier());
         String userInfoKey = String.format(LoginConstants.USER_INFO_PREFIX, loginDetailsBean.getToken());
@@ -107,20 +120,25 @@ public class LoginServiceImpl implements ILoginService {
         loginDetailsBean.setToken(token);
     }
 
-    public AuthenticationDetailsBean checkLoginHealth(String token) {
-        if (StringUtils.isEmpty(token)) {
-            throw new BusinessException(ResultCode.REQUIRED_PARAM_TOKEN_NOT_EXISTS);
+    public AuthenticationDetailsBean checkLoginHealth(LogoutRequest request) {
+        int identifierType = IdentifierType.subCodeOf(request.getIdentifierType()).getCode();
+
+        String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, identifierType, request.getIdentifier());
+        String token = redisService.get(accountKey);
+        String userInfoJsonStr = null;
+        AuthenticationDetailsBean authenticationDetailsBean = AuthenticationDetailsBean.builder().build();
+
+        if (StringUtils.isNotBlank(token)) {
+            String userInfoKey = String.format(LoginConstants.USER_INFO_PREFIX, token);
+            userInfoJsonStr = redisService.get(userInfoKey);
+            authenticationDetailsBean.setUser(StringUtils.isNotBlank(userInfoJsonStr) ? JsonUtils.parseObject(userInfoJsonStr, LoginDetailsBean.class).getUser() : null);
         }
-        String userInfoJsonStr = redisService.get(token);
-        return StringUtils.isNotBlank(userInfoJsonStr) ?
-                AuthenticationDetailsBean.builder().user(JsonUtils.parseObject(userInfoJsonStr, UserDetailsBean.class)).build() : null;
+        
+        return authenticationDetailsBean;
     }
 
     @Override
     public void logout(LogoutRequest request) {
-        if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
-        }
         int identifierType = IdentifierType.subCodeOf(request.getIdentifierType()).getCode();
         if (Objects.equals(IdentifierType.PHONE.getCode(), identifierType)) {
             String[] phoneIdentifier = request.getIdentifier().split("-");
@@ -144,7 +162,7 @@ public class LoginServiceImpl implements ILoginService {
         CompletableFuture.runAsync(() -> {
             //更新用户账户状态为退出
             Optional.ofNullable(signInLogService.querySignInLogDetails(QuerySignInLogRequest.builder()
-                            .userId(request.getUserId()).token(token).build()))
+                    .userId(request.getUserId()).token(token).build()))
                     .ifPresent(signInLogBean -> {
                         signInLogService.updateSignLog(UpdateSignInLogRequest.builder()
                                 .id(signInLogBean.getId()).status(LoginStatus.OFFLINE.getCode()).build());
