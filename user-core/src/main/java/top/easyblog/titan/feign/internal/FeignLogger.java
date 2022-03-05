@@ -50,11 +50,6 @@ public class FeignLogger extends Logger {
         String headers = getHeaders(request);
 
         if (isNoBody(request)) {
-
-            int index = url.indexOf("//");
-            if (index != -1) {
-                url = url.substring(index+2);
-            }
             logger.info(configKey + "---> {} {} headers: {}", request.httpMethod().name(), url, headers);
         } else {
             int bodyLength = request.body().length;

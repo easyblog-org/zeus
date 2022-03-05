@@ -27,6 +27,7 @@
         <commons-codec-version>1.15</commons-codec-version>
         <commons-httpclient-version>3.0.1</commons-httpclient-version>
         <commons-pool2-version>2.4.2</commons-pool2-version>
+        <commons-beanutils-version>1.9.4</commons-beanutils-version>
         <sitemapgen4h-veresion>1.0.6</sitemapgen4h-veresion>
         <guava-version>30.1.1-jre</guava-version>
         <qiniu-java-sdk-version>7.2.9</qiniu-java-sdk-version>
@@ -189,6 +190,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${apache-commons-lang3}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils-version}</version>
             </dependency>
             <!-- validation-->
             <dependency>

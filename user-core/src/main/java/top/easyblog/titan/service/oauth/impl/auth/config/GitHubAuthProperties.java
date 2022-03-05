@@ -1,9 +1,8 @@
 package top.easyblog.titan.service.oauth.impl.auth.config;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-
-import lombok.Data;
 
 /**
  * @author frank.huang
@@ -13,4 +12,8 @@ import lombok.Data;
 @Component
 @ConfigurationProperties(prefix = "oauth.github")
 public class GitHubAuthProperties {
+    protected String clientId;
+    protected String clientSecret;
+    private String authorizeUrl;
+    protected String redirectUrl;
 }

@@ -31,13 +31,17 @@ public class ApplicationContextBeanHelper implements ApplicationContextAware {
      * @param <T>
      * @return
      */
-    public static <T> T getBean(String beanClassName, Class<T> requiredType) {
+    public static <T> T getBeanByClassName(String beanClassName, Class<T> requiredType) {
         if (beanClassName == null || beanClassName.length() <= 0) {
             throw new IllegalArgumentException("className为空");
         }
 
         String shortClassName = ClassUtils.getShortName(beanClassName);
         String beanName = Introspector.decapitalize(shortClassName);
+        return getBeanByBeanName(beanName, requiredType);
+    }
+
+    public static <T> T getBeanByBeanName(String beanName, Class<T> requiredType) {
         return applicationContext != null ? applicationContext.getBean(beanName, requiredType) : null;
     }
 }

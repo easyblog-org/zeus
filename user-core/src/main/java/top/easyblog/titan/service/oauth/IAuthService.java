@@ -31,12 +31,6 @@ public interface IAuthService<T> {
      */
     String refreshToken(String code);
 
-    /**
-     * 拼接授权URL
-     *
-     * @return URL
-     */
-    String getAuthorizationUrl();
 
     /**
      * 根据Token和OpenId获得用户信息
@@ -45,4 +39,5 @@ public interface IAuthService<T> {
      * @return 第三方应用给的用户信息
      */
     T getUserInfo(String accessToken);
+
 }

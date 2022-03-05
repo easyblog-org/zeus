@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  * @date: 2022-02-12 17:10
  */
 @Slf4j
-public class UnderlineToCamelArgumentArgumentResolver extends AbstractCustomizeArgumentResolver {
+public class UnderlineToHumpArgumentResolver extends AbstractCustomizeArgumentResolver {
     /**
      * 匹配_加任意一个字符
      */

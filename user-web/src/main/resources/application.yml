@@ -12,7 +12,8 @@ application:
     enable: true
     app-id: 10086
     secret: a5fbe495127e41da9c2b7f7f6609e39c
-
+    excludes:
+      - /v1/open/callback/{platform}
 spring:
   profiles: dev
   datasource:
@@ -22,8 +23,19 @@ spring:
   redis:
     host: ${host}
 
+oauth:
+  github:
+    client-id: 93aa6fff7267a60ff9b5 #client-id
+    client-secret: c1838df46d0730bf243e33741a80425ef54e771e #client-secet
+    authorizeUrl: https://github.com/login/oauth/authorize
+    accessTokenUrl: https://github.com/login/oauth/access_token
+    userInfoUrl: https://api.github.com/user
+    redirectUrl: http://127.0.0.1:8001/v1/open/callback/60
+
 urls:
-  demo: http://127.0.0.1:8001
+  github:
+    auth: https://github.com
+    open-api: https://api.github.com
 
 
 ---
