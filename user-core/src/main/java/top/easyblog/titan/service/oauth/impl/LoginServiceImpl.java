@@ -1,33 +1,18 @@
 package top.easyblog.titan.service.oauth.impl;
 
 import com.google.common.collect.Lists;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-
-import lombok.extern.slf4j.Slf4j;
 import top.easyblog.titan.annotation.Transaction;
-import top.easyblog.titan.bean.AuthenticationDetailsBean;
-import top.easyblog.titan.bean.LoginDetailsBean;
-import top.easyblog.titan.bean.SignInLogBean;
-import top.easyblog.titan.bean.UserDetailsBean;
+import top.easyblog.titan.bean.*;
 import top.easyblog.titan.constant.LoginConstants;
 import top.easyblog.titan.dao.auto.model.PhoneAuth;
 import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.enums.LoginStatus;
 import top.easyblog.titan.exception.BusinessException;
-import top.easyblog.titan.request.CreateSignInLogRequest;
-import top.easyblog.titan.request.LoginRequest;
-import top.easyblog.titan.request.LogoutRequest;
-import top.easyblog.titan.request.QueryPhoneAuthRequest;
-import top.easyblog.titan.request.QuerySignInLogRequest;
-import top.easyblog.titan.request.RegisterUserRequest;
-import top.easyblog.titan.request.UpdateSignInLogRequest;
+import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.PhoneAuthService;
 import top.easyblog.titan.service.RedisService;
@@ -36,6 +21,10 @@ import top.easyblog.titan.service.oauth.ILoginService;
 import top.easyblog.titan.service.oauth.ILoginStrategy;
 import top.easyblog.titan.service.oauth.LoginStrategyFactory;
 import top.easyblog.titan.util.JsonUtils;
+
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author frank.huang
@@ -67,16 +56,25 @@ public class LoginServiceImpl implements ILoginService {
         }
         LoginDetailsBean loginDetailsBean = new LoginDetailsBean();
         loginDetailsBean.setUser(userDetailsBean.getUser());
-        loginDetailsBean.setToken(generateLoginToken());
 
-        storageToken(request, loginDetailsBean);
+        //通过登录日志判断用户是否已经登录过
+        AccountBean currAccount = userDetailsBean.getUser().getCurrAccount();
+        SignInLogBean signInLogBean = signInLogService.querySignInLogDetails(QuerySignInLogRequest.builder()
+                .userId(currAccount.getUserId())
+                .accountId(currAccount.getId())
+                .status(LoginStatus.ONLINE.getCode())
+                .build());
 
-        //保存用户登录日志
-        CompletableFuture.runAsync(() -> {
-            saveLoginLog(request, loginDetailsBean);
+        //如果用户已经登录直接返回，否则生成新的token
+        return Optional.ofNullable(signInLogBean).map(signInLog -> loginDetailsBean).orElseGet(() -> {
+            loginDetailsBean.setToken(generateLoginToken());
+            storageToken(request, loginDetailsBean);
+            //保存用户登录日志
+            CompletableFuture.runAsync(() -> {
+                saveLoginLog(request, loginDetailsBean);
+            });
+            return loginDetailsBean;
         });
-
-        return loginDetailsBean;
     }
 
     /**
@@ -87,11 +85,19 @@ public class LoginServiceImpl implements ILoginService {
      */
     private void saveLoginLog(LoginRequest request, LoginDetailsBean loginDetailsBean) {
         UserDetailsBean userDetailsBean = loginDetailsBean.getUser();
-        CreateSignInLogRequest createSignInLogRequest = CreateSignInLogRequest.builder()
-                .userId(userDetailsBean.getId())
+        AccountBean currAccount = userDetailsBean.getCurrAccount();
+        CreateSignInLogRequest createSignInLogRequest = Optional.of(userDetailsBean).map(userBean -> {
+            log.info("User login log: user_info:{},account_info:{}", JsonUtils.toJSONString(userDetailsBean), JsonUtils.toJSONString(currAccount));
+            return CreateSignInLogRequest.builder()
+                    .userId(userDetailsBean.getId())
+                    .accountId(currAccount.getId())
+                    .token(loginDetailsBean.getToken())
+                    .status(LoginStatus.ONLINE.getCode())
+                    .build();
+        }).orElseGet(() -> CreateSignInLogRequest.builder()
                 .token(loginDetailsBean.getToken())
                 .status(LoginStatus.ONLINE.getCode())
-                .build();
+                .build());
         Optional.ofNullable(request.getExtra()).ifPresent(extra -> {
             createSignInLogRequest.setDevice(extra.getDevice());
             createSignInLogRequest.setOperationSystem(extra.getOperationSystem());
@@ -133,7 +139,7 @@ public class LoginServiceImpl implements ILoginService {
             userInfoJsonStr = redisService.get(userInfoKey);
             authenticationDetailsBean.setUser(StringUtils.isNotBlank(userInfoJsonStr) ? JsonUtils.parseObject(userInfoJsonStr, LoginDetailsBean.class).getUser() : null);
         }
-        
+
         return authenticationDetailsBean;
     }
 
@@ -162,7 +168,7 @@ public class LoginServiceImpl implements ILoginService {
         CompletableFuture.runAsync(() -> {
             //更新用户账户状态为退出
             Optional.ofNullable(signInLogService.querySignInLogDetails(QuerySignInLogRequest.builder()
-                    .userId(request.getUserId()).token(token).build()))
+                            .userId(request.getUserId()).token(token).build()))
                     .ifPresent(signInLogBean -> {
                         signInLogService.updateSignLog(UpdateSignInLogRequest.builder()
                                 .id(signInLogBean.getId()).status(LoginStatus.OFFLINE.getCode()).build());

@@ -18,6 +18,8 @@ public class QuerySignInLogRequest {
 
     private Long userId;
 
+    private Long accountId;
+
     private String token;
 
     private Integer status;

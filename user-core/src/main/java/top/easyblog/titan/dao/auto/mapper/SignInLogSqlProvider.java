@@ -28,13 +28,17 @@ public class SignInLogSqlProvider {
     public String insertSelective(SignInLog record) {
         SQL sql = new SQL();
         sql.INSERT_INTO("sign_in_log");
-        
+
         if (record.getId() != null) {
             sql.VALUES("id", "#{id,jdbcType=BIGINT}");
         }
 
         if (record.getUserId() != null) {
             sql.VALUES("user_id", "#{userId,jdbcType=BIGINT}");
+        }
+
+        if (record.getUserId() != null) {
+            sql.VALUES("account_id", "#{accountId,jdbcType=BIGINT}");
         }
 
         if (record.getStatus() != null) {
@@ -80,6 +84,7 @@ public class SignInLogSqlProvider {
             sql.SELECT("id");
         }
         sql.SELECT("user_id");
+        sql.SELECT("account_id");
         sql.SELECT("token");
         sql.SELECT("status");
         sql.SELECT("ip");
@@ -118,6 +123,10 @@ public class SignInLogSqlProvider {
 
         if (record.getUserId() != null) {
             sql.SET("user_id = #{record.userId,jdbcType=BIGINT}");
+        }
+
+        if (record.getUserId() != null) {
+            sql.VALUES("account_id", "#{accountId,jdbcType=BIGINT}");
         }
 
         if (record.getToken() != null) {
@@ -162,6 +171,7 @@ public class SignInLogSqlProvider {
         
         sql.SET("id = #{record.id,jdbcType=BIGINT}");
         sql.SET("user_id = #{record.userId,jdbcType=BIGINT}");
+        sql.SET("account_id = #{record.accountId,jdbcType=BIGINT}");
         sql.SET("token = #{record.token,jdbcType=VARCHAR}");
         sql.SET("status = #{record.status,jdbcType=INTEGER}");
         sql.SET("ip = #{record.ip,jdbcType=VARCHAR}");
@@ -182,6 +192,10 @@ public class SignInLogSqlProvider {
 
         if (record.getUserId() != null) {
             sql.SET("user_id = #{userId,jdbcType=BIGINT}");
+        }
+
+        if (record.getUserId() != null) {
+            sql.VALUES("account_id", "#{accountId,jdbcType=BIGINT}");
         }
 
         if (record.getToken() != null) {

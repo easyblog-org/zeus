@@ -2,6 +2,7 @@ package top.easyblog.titan.service.oauth.impl.policy;
 
 import org.springframework.stereotype.Component;
 import top.easyblog.titan.annotation.Transaction;
+import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.bean.AuthenticationDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.constant.LoginConstants;
@@ -32,11 +33,12 @@ public class PhoneCaptchaLoginStrategy extends PhoneLoginStrategy {
     public AuthenticationDetailsBean doLogin(LoginRequest request) {
         PhoneAuth phoneAuth = super.checkAndGetPhoneInfo(request);
         request.setIdentifier(String.valueOf(phoneAuth.getId()));
-        UserDetailsBean userDetailsBean = super.preLoginVerify(request);
-        userDetailsBean = userService.queryUserDetails(QueryUserRequest.builder()
-                .id(userDetailsBean.getCurrAccount().getUserId())
+        AccountBean accountBean = super.preLoginVerify(request);
+        UserDetailsBean userDetailsBean = userService.queryUserDetails(QueryUserRequest.builder()
+                .id(accountBean.getUserId())
                 .sections(LoginConstants.QUERY_HEADER_IMG)
                 .build());
+        userDetailsBean.setCurrAccount(accountBean);
         return AuthenticationDetailsBean.builder().user(userDetailsBean).build();
     }
 

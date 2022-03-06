@@ -19,6 +19,10 @@ public class CreateSignInLogRequest {
      */
     private Long userId;
     /**
+     * 账户id
+     */
+    private Long accountId;
+    /**
      * 登录token
      */
     private String token;

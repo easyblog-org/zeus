@@ -42,11 +42,12 @@ public class GiteeLoginStrategy extends AbstractLoginStrategy {
     @Transaction
     @Override
     public AuthenticationDetailsBean doLogin(LoginRequest request) {
-        UserDetailsBean userDetailsBean = super.preLoginVerify(request);
-        userDetailsBean = userService.queryUserDetails(QueryUserRequest.builder()
-                .id(userDetailsBean.getCurrAccount().getUserId())
+        AccountBean accountBean = super.preLoginVerify(request);
+        UserDetailsBean userDetailsBean = userService.queryUserDetails(QueryUserRequest.builder()
+                .id(accountBean.getUserId())
                 .sections(LoginConstants.QUERY_HEADER_IMG)
                 .build());
+        userDetailsBean.setCurrAccount(accountBean);
         log.info("Gitee user: {} login successfully!", request.getIdentifier());
         return AuthenticationDetailsBean.builder().user(userDetailsBean).build();
     }

@@ -1,9 +1,6 @@
 package top.easyblog.titan.service.oauth.impl.policy;
 
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Objects;
-
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.bean.UserDetailsBean;
@@ -14,18 +11,15 @@ import top.easyblog.titan.enums.AccountStatus;
 import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.enums.Status;
 import top.easyblog.titan.exception.BusinessException;
-import top.easyblog.titan.request.CreateAccountRequest;
-import top.easyblog.titan.request.CreateUserRequest;
-import top.easyblog.titan.request.LoginRequest;
-import top.easyblog.titan.request.QueryAccountRequest;
-import top.easyblog.titan.request.QueryUserRequest;
-import top.easyblog.titan.request.RegisterUserRequest;
+import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.AccountService;
 import top.easyblog.titan.service.RandomNicknameService;
 import top.easyblog.titan.service.UserService;
 import top.easyblog.titan.service.oauth.ILoginStrategy;
 import top.easyblog.titan.util.EncryptUtils;
+
+import java.util.Objects;
 
 /**
  * @author: frank.huang
@@ -53,7 +47,7 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
      * @return
      */
     @Transaction
-    public UserDetailsBean preLoginVerify(LoginRequest request) {
+    public AccountBean preLoginVerify(LoginRequest request) {
         QueryAccountRequest queryAccountRequest = QueryAccountRequest.builder()
                 .identityType(IdentifierType.subCodeOf(request.getIdentifierType()).getCode())
                 .identifier(request.getIdentifier())
@@ -76,7 +70,7 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
             //账户被封还未解封
             throw new BusinessException(ResultCode.ACCOUNT_IS_FREEZE);
         }
-        return UserDetailsBean.builder().currAccount(accountBean).build();
+        return accountBean;
     }
 
     /**

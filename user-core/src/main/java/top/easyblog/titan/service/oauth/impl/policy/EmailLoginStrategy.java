@@ -35,7 +35,8 @@ public class EmailLoginStrategy extends AbstractLoginStrategy {
     @Transaction
     @Override
     public AuthenticationDetailsBean doLogin(LoginRequest request) {
-        UserDetailsBean userDetailsBean = super.preLoginVerify(request);
+        AccountBean accountBean = super.preLoginVerify(request);
+        UserDetailsBean userDetailsBean = UserDetailsBean.builder().currAccount(accountBean).build();
         userDetailsBean = processLogin(userDetailsBean, request);
         return LoginDetailsBean.builder().user(userDetailsBean).build();
     }

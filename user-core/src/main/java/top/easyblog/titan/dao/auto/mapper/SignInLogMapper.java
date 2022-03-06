@@ -22,11 +22,11 @@ public interface SignInLogMapper {
     int deleteByPrimaryKey(Long id);
 
     @Insert({
-            "insert into sign_in_log (id, user_id, token",
+            "insert into sign_in_log (id, user_id, account_id, token",
             "status, ip, device, ",
             "operation_system, location, ",
             "create_time, update_time)",
-            "values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{token,jdbcType=VARCHAR},",
+            "values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT},#{account_id,jdbcType=BIGINT}, #{token,jdbcType=VARCHAR},",
             "#{status,jdbcType=INTEGER}, #{ip,jdbcType=VARCHAR}, #{device,jdbcType=VARCHAR}, ",
             "#{operationSystem,jdbcType=VARCHAR}, #{location,jdbcType=VARCHAR}, ",
             "#{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})"
@@ -42,6 +42,7 @@ public interface SignInLogMapper {
     @Results({
             @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
             @Result(column = "user_id", property = "userId", jdbcType = JdbcType.BIGINT),
+            @Result(column = "account_id", property = "accountId", jdbcType = JdbcType.BIGINT),
             @Result(column = "token", property = "token", jdbcType = JdbcType.VARCHAR),
             @Result(column = "status", property = "status", jdbcType = JdbcType.INTEGER),
             @Result(column = "ip", property = "ip", jdbcType = JdbcType.VARCHAR),
@@ -55,13 +56,14 @@ public interface SignInLogMapper {
 
     @Select({
             "select",
-            "id, user_id,token  status, ip, device, operation_system, location, create_time, update_time",
+            "id, user_id,account_id,token  status, ip, device, operation_system, location, create_time, update_time",
             "from sign_in_log",
             "where id = #{id,jdbcType=BIGINT}"
     })
     @Results({
             @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
             @Result(column = "user_id", property = "userId", jdbcType = JdbcType.BIGINT),
+            @Result(column = "account_id", property = "accountId", jdbcType = JdbcType.BIGINT),
             @Result(column = "token", property = "token", jdbcType = JdbcType.VARCHAR),
             @Result(column = "status", property = "status", jdbcType = JdbcType.INTEGER),
             @Result(column = "ip", property = "ip", jdbcType = JdbcType.VARCHAR),
@@ -85,6 +87,7 @@ public interface SignInLogMapper {
     @Update({
             "update sign_in_log",
             "set user_id = #{userId,jdbcType=BIGINT},",
+            "account_id = #{accountId,jdbcType=BIGINT},",
             "status = #{status,jdbcType=INTEGER},",
             "token = #{device,jdbcType=VARCHAR},",
             "ip = #{ip,jdbcType=VARCHAR},",

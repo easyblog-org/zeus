@@ -3,6 +3,7 @@ package top.easyblog.titan.service.oauth.impl.policy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.easyblog.titan.annotation.Transaction;
+import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.bean.AuthenticationDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.dao.auto.model.PhoneAuth;
@@ -42,8 +43,10 @@ public class PhoneLoginStrategy extends AbstractLoginStrategy {
     public AuthenticationDetailsBean doLogin(LoginRequest request) {
         PhoneAuth phoneAuth = checkAndGetPhoneInfo(request);
         request.setIdentifier(String.valueOf(phoneAuth.getId()));
-        UserDetailsBean userDetailsBean = super.preLoginVerify(request);
-        userDetailsBean = processLogin(userDetailsBean, request);
+        AccountBean accountBean = super.preLoginVerify(request);
+        UserDetailsBean userDetailsBean = processLogin(UserDetailsBean.builder()
+                .currAccount(accountBean).build(), request);
+        userDetailsBean.setCurrAccount(accountBean);
         return AuthenticationDetailsBean.builder().user(userDetailsBean).build();
     }
 
