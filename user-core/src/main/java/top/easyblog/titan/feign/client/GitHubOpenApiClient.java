@@ -11,7 +11,7 @@ import top.easyblog.titan.feign.internal.Verify;
  * @author: frank.huang
  * @date: 2022-02-27 12:10
  */
-@FeignClient(name = "github-open-api", url = "${urls.github.open-api}", configuration = CommonFeignConfig.class)
+@FeignClient(name = "github-open-api", url = "${urls.github-api}", configuration = CommonFeignConfig.class)
 public interface GitHubOpenApiClient extends Verify {
 
     /**

@@ -11,7 +11,7 @@ import top.easyblog.titan.request.QueryGitHubAuthTokenRequest;
  * @author: frank.huang
  * @date: 2022-02-27 11:41
  */
-@FeignClient(name = "github", url = "${urls.github.auth}", configuration = CommonFormFeignConfig.class)
+@FeignClient(name = "github", url = "${urls.github}", configuration = CommonFormFeignConfig.class)
 public interface GitHubClient extends Verify {
 
     /**

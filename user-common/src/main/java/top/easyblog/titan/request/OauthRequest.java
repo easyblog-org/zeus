@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -23,9 +22,4 @@ public class OauthRequest {
     @NotNull(message = "Required parameter `identifier_type` is not present")
     private Integer identifierType;
 
-    /**
-     * 登录账号
-     */
-    @NotBlank(message = "Required parameter `identifier` is not present")
-    private String identifier;
 }

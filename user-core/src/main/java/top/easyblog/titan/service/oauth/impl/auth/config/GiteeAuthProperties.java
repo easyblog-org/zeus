@@ -4,11 +4,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 /**
- * @author frank.huang
- * @date 2022/02/21 16:50
+ * @author: frank.huang
+ * @date: 2022-03-06 12:17
  */
 @Component
-@ConfigurationProperties(prefix = "oauth.github")
-public class GitHubAuthProperties extends AuthProperties {
-   
+@ConfigurationProperties(prefix = "oauth.gitee")
+public class GiteeAuthProperties extends AuthProperties {
 }

@@ -47,6 +47,6 @@ public final class LoginConstants {
     public static final String QUERY_SIGN_LOG = "sign_log";
 
 
-    public static final String GITHUB_GRANT_TYPE = "authorization_code";
+    public static final String COMMON_GRANT_TYPE = "authorization_code";
 
 }

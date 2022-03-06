@@ -1,13 +1,26 @@
 package top.easyblog.titan.service.oauth.impl.policy;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import top.easyblog.titan.annotation.Transaction;
+import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.bean.AuthenticationDetailsBean;
+import top.easyblog.titan.bean.UserDetailsBean;
+import top.easyblog.titan.constant.LoginConstants;
+import top.easyblog.titan.enums.AccountStatus;
+import top.easyblog.titan.enums.IdentifierType;
+import top.easyblog.titan.enums.Status;
 import top.easyblog.titan.request.LoginRequest;
+import top.easyblog.titan.request.QueryAccountRequest;
+import top.easyblog.titan.request.QueryUserRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.service.AccountService;
 import top.easyblog.titan.service.RandomNicknameService;
 import top.easyblog.titan.service.UserService;
+import top.easyblog.titan.service.oauth.ILoginService;
+
+import java.util.Objects;
 
 /**
  * Gitee第三方登录
@@ -19,17 +32,57 @@ import top.easyblog.titan.service.UserService;
 @Component
 public class GiteeLoginStrategy extends AbstractLoginStrategy {
 
+    @Autowired
+    private ILoginService loginService;
+
     public GiteeLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService) {
         super(accountService, userService, randomNicknameService);
     }
 
+    @Transaction
     @Override
     public AuthenticationDetailsBean doLogin(LoginRequest request) {
-        return null;
+        UserDetailsBean userDetailsBean = super.preLoginVerify(request);
+        userDetailsBean = userService.queryUserDetails(QueryUserRequest.builder()
+                .id(userDetailsBean.getCurrAccount().getUserId())
+                .sections(LoginConstants.QUERY_HEADER_IMG)
+                .build());
+        log.info("Gitee user: {} login successfully!", request.getIdentifier());
+        return AuthenticationDetailsBean.builder().user(userDetailsBean).build();
     }
 
+    /**
+     * identifierType: IdentifierType.GitHub
+     * identifier：openId
+     *
+     * @param request
+     * @return
+     */
+    @Transaction
     @Override
     public AuthenticationDetailsBean doRegister(RegisterUserRequest request) {
-        return null;
+        log.info("Gitee user: {} start register as user!", request.getIdentifier());
+        AccountBean account = accountService.queryAccountDetails(QueryAccountRequest.builder()
+                .identityType(IdentifierType.GITEE.getCode())
+                .identifier(request.getIdentifier())
+                .build());
+        if (Objects.nonNull(account)) {
+            log.info("Gitee user: {} already register as user,redirect to login...", request.getIdentifier());
+            return redirectToLogin(request);
+        }
+        request.setStatus(AccountStatus.ACTIVE.getCode());
+        request.setVerified(Status.ENABLE.getCode());
+        processRegister(request);
+        log.info("GitHub user: {} register successfully!", request.getIdentifier());
+        return redirectToLogin(request);
+    }
+
+
+    private AuthenticationDetailsBean redirectToLogin(RegisterUserRequest request) {
+        log.info("Gitee user: {} goto login...", request.getIdentifier());
+        return loginService.login(LoginRequest.builder()
+                .identifierType(IdentifierType.GITEE.getSubCode())
+                .identifier(request.getIdentifier())
+                .build());
     }
 }

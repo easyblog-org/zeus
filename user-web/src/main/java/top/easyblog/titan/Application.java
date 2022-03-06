@@ -9,7 +9,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import top.easyblog.titan.service.oauth.impl.auth.config.GitHubAuthProperties;
 
 @EnableWebMvc
 @EnableAspectJAutoProxy
@@ -18,7 +17,7 @@ import top.easyblog.titan.service.oauth.impl.auth.config.GitHubAuthProperties;
 @MapperScans({
         @MapperScan("top.easyblog.titan.dao")
 })
-@EnableConfigurationProperties({GitHubAuthProperties.class})
+@EnableConfigurationProperties
 @SpringBootApplication(scanBasePackages = {"top.easyblog.titan"})
 public class Application {
 

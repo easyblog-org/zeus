@@ -28,6 +28,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
+ * GitHub第三方接入官方文档：https://developer.github.com/apps/building-github-apps/identifying-and-authorizing-users-for-github-apps/
+ *
  * @author frank.huang
  * @date 2022/02/21 16:18
  */
@@ -53,12 +55,13 @@ public class GitHubAuthServiceImpl implements IAuthService<GitHubAuthBean>, IOau
                 .clientId(gitHubAuthProperties.getClientId())
                 .clientSecret(gitHubAuthProperties.getClientSecret())
                 .code(code)
-                .grantType(LoginConstants.GITHUB_GRANT_TYPE)
+                .grantType(LoginConstants.COMMON_GRANT_TYPE)
                 .build());
-        if (Objects.isNull(accessToken)) {
-            throw new BusinessException(ResultCode.REQUEST_GITHUB_ACCESS_TOKEN_FAILED);
-        }
-        return Iterables.getFirst(accessToken.get("accessToken"), null);
+        return Optional.ofNullable(accessToken).map(item -> {
+            String token = Iterables.getFirst(item.get("accessToken"), null);
+            log.info("Get GitHub access_token: {}", JsonUtils.toJSONString(accessToken));
+            return token;
+        }).orElseThrow(() -> new BusinessException(ResultCode.REQUEST_GITHUB_ACCESS_TOKEN_FAILED));
     }
 
     @Override
