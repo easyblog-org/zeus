@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import top.easyblog.titan.dao.auto.mapper.SignInLogMapper;
 import top.easyblog.titan.dao.auto.model.SignInLog;
 import top.easyblog.titan.dao.auto.model.SignInLogExample;
+import top.easyblog.titan.dao.custom.mapper.MySignInLogMapper;
 import top.easyblog.titan.request.CreateSignInLogRequest;
 import top.easyblog.titan.request.QuerySignInLogListRequest;
 import top.easyblog.titan.request.QuerySignInLogRequest;
@@ -27,8 +28,12 @@ import java.util.Objects;
 @Slf4j
 @Service
 public class AccessSignInLogService {
+
     @Autowired
     private SignInLogMapper signInLogMapper;
+
+    @Autowired
+    private MySignInLogMapper mySignInLogMapper;
 
 
     public SignInLog insertSignInLogByRequest(CreateSignInLogRequest request) {
@@ -51,7 +56,7 @@ public class AccessSignInLogService {
             criteria.andUserIdEqualTo(request.getUserId());
         }
         if (StringUtils.isNotBlank(request.getToken())) {
-           criteria.andTokenEqualTo(request.getToken());
+            criteria.andTokenEqualTo(request.getToken());
         }
         if (Objects.nonNull(request.getStatus())) {
             criteria.andStatusEqualTo(request.getStatus());
@@ -95,10 +100,16 @@ public class AccessSignInLogService {
         return example;
     }
 
-    public void updateSignInLogByRequestSelective(UpdateSignInLogRequest request) {
+    public void updateSignInLogByPrimarySelective(UpdateSignInLogRequest request) {
         SignInLog signInLog = new SignInLog();
         BeanUtils.copyProperties(request, signInLog);
         signInLogMapper.updateByPrimaryKeySelective(signInLog);
+        log.info("[DB]Update sign_in_log: {}", JsonUtils.toJSONString(request));
     }
 
+
+    public void updateSignInLogByToken(String token, Integer status) {
+        mySignInLogMapper.updateByTokenSelective(token, status);
+        log.info("[DB]Update sign_in_log status to [{}] by token [{}]", status, token);
+    }
 }

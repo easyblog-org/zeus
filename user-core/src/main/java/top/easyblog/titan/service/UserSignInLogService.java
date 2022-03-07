@@ -78,7 +78,7 @@ public class UserSignInLogService {
         if (Objects.isNull(request)) {
             throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        accessSignInLogService.updateSignInLogByRequestSelective(request);
+        accessSignInLogService.updateSignInLogByPrimarySelective(request);
     }
 
 }
