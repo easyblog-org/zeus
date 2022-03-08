@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import feign.Request;
 import feign.RequestTemplate;
 import feign.Target;
+import org.apache.commons.collections4.CollectionUtils;
 import top.easyblog.titan.util.InterceptorUtils;
 import top.easyboot.constant.Constants;
 import top.easyboot.sign.SignEntity;
@@ -12,14 +13,19 @@ import top.easyboot.sign.SignHandler;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author: frank.huang
  * @date: 2022-03-01 19:06
  */
 public class CommonSignInterceptor extends AbstractSignInterceptor {
-    public CommonSignInterceptor(SignHandler signHandler) {
+
+    private final Set<String> excludes;
+
+    public CommonSignInterceptor(SignHandler signHandler, Set<String> excludes) {
         super(signHandler);
+        this.excludes = excludes;
     }
 
     @Override
@@ -27,7 +33,7 @@ public class CommonSignInterceptor extends AbstractSignInterceptor {
         //排除特殊路径，不需要做验签
         Target<?> target = requestTemplate.feignTarget();
         String url = target.url();
-        return Boolean.FALSE.equals(url.contains("github.com"));
+        return CollectionUtils.isEmpty(excludes) || excludes.stream().anyMatch(path -> path.contains(url));
     }
 
     @Override

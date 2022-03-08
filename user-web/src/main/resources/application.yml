@@ -39,6 +39,8 @@ urls:
   github-api: https://api.github.com
   gitee: https://gitee.com
 
+feign:
+  excludes: github.com,gitee.com
 ---
 spring:
   profiles: test

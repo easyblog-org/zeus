@@ -1,5 +1,6 @@
 package top.easyblog.titan.feign.config;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import feign.*;
 import feign.codec.Decoder;
@@ -26,6 +27,8 @@ import top.easyblog.titan.feign.sign.CommonSignInterceptor;
 import top.easyblog.titan.response.ResultCode;
 import top.easyboot.sign.SignHandler;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -59,6 +62,8 @@ public class FeignConfig {
     @Value("${feign.custom.retry-max-attempts:3}")
     private int retryMaxAttempts;
 
+    @Value("${feign.excludes}")
+    private String excludesPath;
 
     @Bean
     public Request.Options options() {
@@ -100,7 +105,8 @@ public class FeignConfig {
 
     @Bean
     public RequestInterceptor sign() {
-        return new CommonSignInterceptor(signHandler);
+        Set<String> excludes = new HashSet<>(Splitter.on(excludesPath).omitEmptyStrings().splitToList(","));
+        return new CommonSignInterceptor(signHandler, excludes);
     }
 
     @Bean
