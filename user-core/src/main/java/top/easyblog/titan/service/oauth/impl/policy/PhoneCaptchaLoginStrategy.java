@@ -12,6 +12,7 @@ import top.easyblog.titan.request.QueryUserRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.service.AccountService;
 import top.easyblog.titan.service.RandomNicknameService;
+import top.easyblog.titan.service.UserHeaderImgService;
 import top.easyblog.titan.service.UserService;
 
 /**
@@ -24,10 +25,11 @@ import top.easyblog.titan.service.UserService;
 public class PhoneCaptchaLoginStrategy extends PhoneLoginStrategy {
 
 
-    public PhoneCaptchaLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService) {
-        super(accountService, userService, randomNicknameService);
+    public PhoneCaptchaLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService, UserHeaderImgService headerImgService) {
+        super(accountService, userService, randomNicknameService, headerImgService);
     }
 
+    
     @Transaction
     @Override
     public AuthenticationDetailsBean doLogin(LoginRequest request) {

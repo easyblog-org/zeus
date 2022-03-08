@@ -17,6 +17,7 @@ import top.easyblog.titan.request.QueryUserRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.service.AccountService;
 import top.easyblog.titan.service.RandomNicknameService;
+import top.easyblog.titan.service.UserHeaderImgService;
 import top.easyblog.titan.service.UserService;
 import top.easyblog.titan.service.oauth.ILoginService;
 
@@ -35,18 +36,17 @@ public class GitHubLoginStrategy extends AbstractLoginStrategy {
     @Autowired
     private ILoginService loginService;
 
-    public GitHubLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService) {
-        super(accountService, userService, randomNicknameService);
+    public GitHubLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService, UserHeaderImgService headerImgService) {
+        super(accountService, userService, randomNicknameService, headerImgService);
     }
+
 
     @Transaction
     @Override
     public AuthenticationDetailsBean doLogin(LoginRequest request) {
         AccountBean accountBean = super.preLoginVerify(request);
         UserDetailsBean userDetailsBean = userService.queryUserDetails(QueryUserRequest.builder()
-                .id(accountBean.getUserId())
-                .sections(LoginConstants.QUERY_HEADER_IMG)
-                .build());
+                .id(accountBean.getUserId()).sections(LoginConstants.QUERY_HEADER_IMG).build());
         userDetailsBean.setCurrAccount(accountBean);
         log.info("GitHub user: {} login successfully!", request.getIdentifier());
         return AuthenticationDetailsBean.builder().user(userDetailsBean).build();
@@ -64,9 +64,7 @@ public class GitHubLoginStrategy extends AbstractLoginStrategy {
     public AuthenticationDetailsBean doRegister(RegisterUserRequest request) {
         log.info("GitHub user: {} start register as user!", request.getIdentifier());
         AccountBean account = accountService.queryAccountDetails(QueryAccountRequest.builder()
-                .identityType(IdentifierType.GITHUB.getCode())
-                .identifier(request.getIdentifier())
-                .build());
+                .identityType(IdentifierType.GITHUB.getCode()).identifier(request.getIdentifier()).build());
         if (Objects.nonNull(account)) {
             log.info("GitHub user: {} already register as user,redirect to login...", request.getIdentifier());
             return redirectToLogin(request);

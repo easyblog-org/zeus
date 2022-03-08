@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.easyblog.titan.annotation.RequestParamAlias;
 import top.easyblog.titan.annotation.ResponseWrapper;
+import top.easyblog.titan.request.CreateUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
 import top.easyblog.titan.request.UpdateUserHeaderImgRequest;
@@ -22,6 +23,11 @@ public class UserHeaderImgController {
     @Autowired
     private UserHeaderImgService headerImgService;
 
+    @ResponseWrapper
+    @PostMapping
+    public void save(@Valid @RequestBody CreateUserHeaderImgRequest request) {
+        headerImgService.createUserHeaderImg(request);
+    }
 
     @ResponseWrapper
     @GetMapping

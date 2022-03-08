@@ -41,6 +41,11 @@ urls:
 
 feign:
   excludes: github.com,gitee.com
+
+custom:
+  default-header-image: https://avatars.githubusercontent.com/u/52988156?s=400&u=1c23aaf03691b86f9b2e97fbdeeb6a6512b8c4be&v=4
+
+
 ---
 spring:
   profiles: test

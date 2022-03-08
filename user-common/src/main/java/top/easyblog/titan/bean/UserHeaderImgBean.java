@@ -1,8 +1,8 @@
 package top.easyblog.titan.bean;
 
-import java.util.Date;
-
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @author frank.huang
@@ -15,8 +15,8 @@ public class UserHeaderImgBean {
     private String headerImgUrl;
 
     private Long userId;
-    
-    private boolean currentHeader;
+
+    private Boolean isCurrentHeader;
 
     private Date createTime;
 

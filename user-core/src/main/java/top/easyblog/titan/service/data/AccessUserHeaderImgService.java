@@ -1,17 +1,12 @@
 package top.easyblog.titan.service.data;
 
 import com.google.common.collect.Iterables;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-
 import top.easyblog.titan.dao.auto.mapper.UserHeaderImgMapper;
 import top.easyblog.titan.dao.auto.model.UserHeaderImg;
 import top.easyblog.titan.dao.auto.model.UserHeaderImgExample;
@@ -19,11 +14,17 @@ import top.easyblog.titan.request.CreateUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
 import top.easyblog.titan.request.UpdateUserHeaderImgRequest;
+import top.easyblog.titan.util.JsonUtils;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author frank.huang
  * @date 2022/01/30 10:53
  */
+@Slf4j
 @Service
 public class AccessUserHeaderImgService {
 
@@ -37,6 +38,7 @@ public class AccessUserHeaderImgService {
         userHeaderImg.setUpdateTime(new Date());
         BeanUtils.copyProperties(request, userHeaderImg);
         userHeaderImgMapper.insertSelective(userHeaderImg);
+        log.info("[DB]Insert new header images: {}", JsonUtils.toJSONString(userHeaderImg));
     }
 
 
@@ -52,7 +54,9 @@ public class AccessUserHeaderImgService {
         if (CollectionUtils.isNotEmpty(request.getStatuses())) {
             criteria.andStatusIn(request.getStatuses());
         }
-        return Iterables.getFirst(userHeaderImgMapper.selectByExample(example), null);
+        List<UserHeaderImg> userHeaderImgs = userHeaderImgMapper.selectByExample(example);
+        log.info("[DB]Get user header images: {}", JsonUtils.toJSONString(userHeaderImgs));
+        return Iterables.getFirst(userHeaderImgs, null);
     }
 
 
@@ -74,9 +78,9 @@ public class AccessUserHeaderImgService {
             criteria.andIdIn(request.getIds());
         }
         if (Objects.nonNull(request.getUserId())) {
-            criteria.andIdEqualTo(request.getUserId());
+            criteria.andUserIdEqualTo(request.getUserId());
         } else if (CollectionUtils.isNotEmpty(request.getUserIds())) {
-            criteria.andIdIn(request.getUserIds());
+            criteria.andUserIdIn(request.getUserIds());
         }
         if (Objects.nonNull(request.getStatus())) {
             criteria.andStatusEqualTo(request.getStatus());
@@ -92,10 +96,6 @@ public class AccessUserHeaderImgService {
     }
 
     public void updateHeaderImgByRequest(UpdateUserHeaderImgRequest request) {
-        userHeaderImgMapper.updateByPrimaryKey(buildUpdateUserHeaderImg(request));
-    }
-
-    private UserHeaderImg buildUpdateUserHeaderImg(UpdateUserHeaderImgRequest request) {
         UserHeaderImg userHeaderImg = new UserHeaderImg();
         if (Objects.nonNull(request.getStatus())) {
             userHeaderImg.setStatus(request.getStatus());
@@ -107,6 +107,8 @@ public class AccessUserHeaderImgService {
             userHeaderImg.setUserId(request.getUserId());
         }
         userHeaderImg.setUpdateTime(new Date());
-        return userHeaderImg;
+        userHeaderImgMapper.updateByPrimaryKeySelective(userHeaderImg);
+        log.info("[DB]Update user header images: {}", JsonUtils.toJSONString(request));
     }
+
 }

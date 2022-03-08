@@ -32,7 +32,12 @@ public class UserDetailsBean {
      */
     private Integer integration;
     /**
-     * 头像
+     * 用户当前有效头像
+     */
+    private UserHeaderImgBean currUserHeaderImg;
+
+    /**
+     * 用户历史所有头像
      */
     private List<UserHeaderImgBean> userHeaderImg;
 
@@ -42,7 +47,7 @@ public class UserDetailsBean {
     private AccountBean currAccount;
 
     /**
-     * 账号列表
+     * 用户历史所有账号
      */
     private List<AccountBean> accounts;
 

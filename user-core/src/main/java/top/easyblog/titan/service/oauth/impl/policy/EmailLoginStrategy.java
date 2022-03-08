@@ -14,6 +14,7 @@ import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.AccountService;
 import top.easyblog.titan.service.RandomNicknameService;
+import top.easyblog.titan.service.UserHeaderImgService;
 import top.easyblog.titan.service.UserService;
 import top.easyblog.titan.util.RegexUtils;
 
@@ -28,8 +29,9 @@ import java.util.Objects;
 @Component
 public class EmailLoginStrategy extends AbstractLoginStrategy {
 
-    public EmailLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService) {
-        super(accountService, userService, randomNicknameService);
+
+    public EmailLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService, UserHeaderImgService headerImgService) {
+        super(accountService, userService, randomNicknameService, headerImgService);
     }
 
     @Transaction
@@ -38,6 +40,7 @@ public class EmailLoginStrategy extends AbstractLoginStrategy {
         AccountBean accountBean = super.preLoginVerify(request);
         UserDetailsBean userDetailsBean = UserDetailsBean.builder().currAccount(accountBean).build();
         userDetailsBean = processLogin(userDetailsBean, request);
+        userDetailsBean.setCurrAccount(accountBean);
         return LoginDetailsBean.builder().user(userDetailsBean).build();
     }
 

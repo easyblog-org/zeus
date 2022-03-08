@@ -13,10 +13,7 @@ import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.feign.client.GitHubClient;
 import top.easyblog.titan.feign.client.GitHubOpenApiClient;
-import top.easyblog.titan.request.AuthCallbackRequest;
-import top.easyblog.titan.request.OauthRequest;
-import top.easyblog.titan.request.QueryGitHubAuthTokenRequest;
-import top.easyblog.titan.request.RegisterUserRequest;
+import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.oauth.IAuthService;
 import top.easyblog.titan.service.oauth.ILoginService;
@@ -101,6 +98,7 @@ public class GitHubAuthServiceImpl implements IAuthService<GitHubAuthBean>, IOau
             AuthenticationDetailsBean authenticationDetailsBean = loginService.register(RegisterUserRequest.builder()
                     .identifierType(IdentifierType.GITHUB.getSubCode())
                     .identifier(userInfo.getId())
+                    .headerImg(CreateUserHeaderImgRequest.builder().headerImgUrl(userInfo.getAvatarUrl()).build())
                     .build());
             return AuthorizationBean.builder().user(authenticationDetailsBean.getUser()).build();
         }).orElseThrow(() -> new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS));

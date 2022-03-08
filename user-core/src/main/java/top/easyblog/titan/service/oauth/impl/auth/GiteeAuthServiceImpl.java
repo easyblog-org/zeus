@@ -11,10 +11,7 @@ import top.easyblog.titan.constant.LoginConstants;
 import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.feign.client.GiteeClient;
-import top.easyblog.titan.request.AuthCallbackRequest;
-import top.easyblog.titan.request.OauthRequest;
-import top.easyblog.titan.request.QueryGiteeAuthTokenRequest;
-import top.easyblog.titan.request.RegisterUserRequest;
+import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.oauth.IAuthService;
 import top.easyblog.titan.service.oauth.ILoginService;
@@ -94,6 +91,7 @@ public class GiteeAuthServiceImpl implements IAuthService<GiteeAuthBean>, IOauth
             AuthenticationDetailsBean authenticationDetailsBean = loginService.register(RegisterUserRequest.builder()
                     .identifierType(IdentifierType.GITEE.getSubCode())
                     .identifier(userInfo.getId())
+                    .headerImg(CreateUserHeaderImgRequest.builder().headerImgUrl(userInfo.getAvatarUrl()).build())
                     .build());
             return AuthorizationBean.builder().user(authenticationDetailsBean.getUser()).build();
         }).orElseThrow(() -> new BusinessException(ResultCode.REQUEST_GITEE_ACCESS_TOKEN_FAILED));
