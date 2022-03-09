@@ -25,13 +25,13 @@ public class RequestIdGeneratorFilter implements Filter {
         HttpServletResponse response=(HttpServletResponse) servletResponse;
 
         try{
-            String requestId = request.getHeader(Constants.HEADER_Request_ID);
+            String requestId = request.getHeader(Constants.HEADER_REQUEST_ID);
             if (StringUtils.isEmpty(requestId)) {
                 requestId = IdGenerator.getRequestId();
             }
 
             MDC.put(Constants.REQUEST_ID, requestId);
-            response.setHeader(Constants.HEADER_Request_ID, requestId);
+            response.setHeader(Constants.HEADER_REQUEST_ID, requestId);
             // 放入ip
             MDC.put(Constants.IP, NetWorkUtils.getRequestSourceIp(request));
             MDC.put(Constants.REQUEST_URL, request.getRequestURI());

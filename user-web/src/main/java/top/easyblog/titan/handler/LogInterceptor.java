@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * web请求日志记录拦截器
+ *
  * @author: frank.huang
  * @date: 2021-11-20 19:58
  */
@@ -33,7 +35,7 @@ public class LogInterceptor implements HandlerInterceptor {
         }
         String queryString = request.getQueryString();
         String queryClause = StringUtils.hasLength(queryString) ? "?" + queryString : "";
-        log.info("{} {}{},parameters={{}}",request.getMethod(),getRequestUri(request),queryClause,params);
+        log.info("{} {}{},parameters={{}}", request.getMethod(), getRequestUri(request), queryClause, params);
         return true;
     }
 

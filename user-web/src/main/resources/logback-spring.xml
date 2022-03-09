@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="30 seconds" debug="true">
-    <contextName>cacacai</contextName>
+    <contextName>system-log</contextName>
     <springProperty scope="context" name="springAppName" source="spring.application.name"/>
     <property name="log.path" value="log" />
     <property name="log.maxHistory" value="90" />

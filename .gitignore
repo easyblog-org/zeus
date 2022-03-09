@@ -10,5 +10,9 @@
 user-common/target
 user-core/target
 user-web/target
+user-common/user-common.iml
+user-core/user-core.iml
+user-web/user-web.iml
+user.iml
 .idea/
 log/

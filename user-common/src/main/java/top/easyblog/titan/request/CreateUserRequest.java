@@ -1,23 +1,22 @@
 package top.easyblog.titan.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 /**
- * Example of request parameter bean to create an object
  * @author: frank.huang
- * @date: 2021-11-01 20:39
+ * @date: 2022-01-29 21:41
  */
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class CreateUserRequest {
-
-    private String username;
-    private String address;
-    private Integer age;
-
+    private String nickName;
+    private Integer integration;
+    private Integer level;
+    private Integer visit;
+    private Integer active;
+    private Date createTime;
+    private Date updateTime;
 }
