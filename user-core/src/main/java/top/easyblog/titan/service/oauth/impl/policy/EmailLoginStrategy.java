@@ -58,7 +58,7 @@ public class EmailLoginStrategy extends AbstractLoginStrategy {
             throw new BusinessException(ResultCode.EMAIL_ACCOUNT_EXISTS);
         }
         //检查密码是否符合
-        if (checkPasswordValid(request.getCredential())) {
+        if (validatePasswdComplexity(request.getCredential()) >= MIX_PASSWORD_COMPLEXITY) {
             throw new BusinessException(ResultCode.PASSWORD_NOT_VALID);
         }
         if (Boolean.FALSE.equals(StringUtils.equals(request.getCredential(), request.getCredentialAgain()))) {

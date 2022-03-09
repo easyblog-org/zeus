@@ -37,6 +37,8 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
 
     protected UserHeaderImgService headerImgService;
 
+    //最小密码复杂度
+    public static Integer MIX_PASSWORD_COMPLEXITY = 3;
 
     public AbstractLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService, UserHeaderImgService headerImgService) {
         this.accountService = accountService;
@@ -137,28 +139,21 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
      * @param password
      * @return
      */
-    public boolean checkPasswordValid(String password) {
-        if (!StringUtils.isNotBlank(password)) {
-            return false;
+    public int validatePasswdComplexity(String password) {
+        int count = 0;
+        if (password.length() - password.replaceAll("[A-Z]", "").length() > 0) {
+            count++;
         }
-        int len = 0;
-        if ((len = password.length()) < LoginConstants.PASSWORD_MIN_LEN || len > LoginConstants.PASSWORD_MAX_LEN) {
-            return false;
+        if (password.length() - password.replaceAll("[a-z]", "").length() > 0) {
+            count++;
         }
-        char[] chars = password.toCharArray();
-        int[] strength = new int[3];   //密码强度
-        int specialFlag = 2, letterFlag = 1, numberFlag = 0;
-        for (char ch : chars) {
-            if (strength[specialFlag] == 0 && LoginConstants.PASSWORD_SPECIAL_CHARACTERS.contains(String.valueOf(ch))) {
-                strength[specialFlag] = 1;
-            } else if (strength[letterFlag] == 0 && ((ch >= 'a' && ch <= 'z') || ch >= 'A' && ch <= 'Z')) {
-                strength[letterFlag] = 1;
-            } else if (strength[numberFlag] == 0 && ch >= '0' && ch <= '9') {
-                strength[numberFlag] = 1;
-            }
+        if (password.length() - password.replaceAll("[0-9]", "").length() > 0) {
+            count++;
         }
-
-        return strength[specialFlag] + strength[letterFlag] + strength[numberFlag] >= 2;
+        if (password.replaceAll("[0-9,A-Z,a-z]", "").length() > 0) {
+            count++;
+        }
+        return count;
     }
 
     public String encryptPassword(String originalPassword) {
