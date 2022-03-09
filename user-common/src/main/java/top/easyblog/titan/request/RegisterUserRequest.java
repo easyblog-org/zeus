@@ -46,4 +46,8 @@ public class RegisterUserRequest {
      * 是否验证
      */
     private Integer verified;
+    /**
+     * 头像
+     */
+    private CreateUserHeaderImgRequest headerImg;
 }

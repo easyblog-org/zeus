@@ -8,6 +8,7 @@ import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.bean.SignInLogBean;
 import top.easyblog.titan.bean.UserDetailsBean;
+import top.easyblog.titan.bean.UserHeaderImgBean;
 import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.dao.auto.model.User;
 import top.easyblog.titan.enums.Status;
@@ -73,25 +74,40 @@ public class UserService {
      * @param userDetailsBean
      */
     private void setSection(String section, UserDetailsBean userDetailsBean) {
-        if (StringUtils.isNotBlank(section)) {
-            if (section.contains(QUERY_HEADER_IMG)) {
-                QueryUserHeaderImgsRequest queryUserHeaderImgsRequest = QueryUserHeaderImgsRequest.builder().userId(userDetailsBean.getId()).build();
-                userDetailsBean.setUserHeaderImg(headerImgService.buildUserHeaderImgBeans(queryUserHeaderImgsRequest));
+        if (StringUtils.isBlank(section)) {
+            return;
+        }
+        if (section.contains(QUERY_HEADER_IMG) || section.contains(QUERY_CURRENT_HEADER_IMG)) {
+            QueryUserHeaderImgsRequest queryUserHeaderImgsRequest = QueryUserHeaderImgsRequest.builder()
+                    .userId(userDetailsBean.getId()).status(Status.ENABLE.getCode()).build();
+            List<UserHeaderImgBean> userHeaderImgBeans = headerImgService.buildUserHeaderImgBeans(queryUserHeaderImgsRequest);
+            if (section.equals(QUERY_HEADER_IMG)) {
+                userDetailsBean.setUserHeaderImg(userHeaderImgBeans);
+            } else {
+                userDetailsBean.setCurrUserHeaderImg(userHeaderImgBeans.stream()
+                        .filter(item -> Boolean.TRUE.equals(item.getIsCurrentHeader())).findAny()
+                        .orElseGet(() -> {
+                            UserHeaderImgBean imgBean = new UserHeaderImgBean();
+                            imgBean.setIsCurrentHeader(true);
+                            imgBean.setHeaderImgUrl(headerImgService.getDefaultUserHeaderImg());
+                            return imgBean;
+                        }));
             }
-            if (section.contains(QUERY_ACCOUNTS)) {
-                QueryAccountListRequest queryAccountListRequest = QueryAccountListRequest.builder().userId(userDetailsBean.getId()).status(Status.ENABLE.getCode()).build();
-                List<AccountBean> accounts = accountService.queryAccountList(queryAccountListRequest);
-                userDetailsBean.setAccounts(accounts);
-            }
-            if (section.contains(QUERY_SIGN_LOG)) {
-                QuerySignInLogListRequest querySignInLogListRequest = new QuerySignInLogListRequest();
-                querySignInLogListRequest.setUserId(userDetailsBean.getId());
-                querySignInLogListRequest.setStatus(Status.ENABLE.getCode());
-                querySignInLogListRequest.setOffset(Constants.DEFAULT_OFFSET);
-                querySignInLogListRequest.setLimit(Constants.DEFAULT_LIMIT);
-                PageResponse<SignInLogBean> signInLogBeanPageResponse = userSignInLogService.querySignInLogList(querySignInLogListRequest);
-                userDetailsBean.setSignInLogs(signInLogBeanPageResponse.getData());
-            }
+        }
+        if (section.contains(QUERY_ACCOUNTS)) {
+            QueryAccountListRequest queryAccountListRequest = QueryAccountListRequest.builder()
+                    .userId(userDetailsBean.getId()).status(Status.ENABLE.getCode()).build();
+            List<AccountBean> accounts = accountService.queryAccountList(queryAccountListRequest);
+            userDetailsBean.setAccounts(accounts);
+        }
+        if (section.contains(QUERY_SIGN_LOG)) {
+            QuerySignInLogListRequest querySignInLogListRequest = new QuerySignInLogListRequest();
+            querySignInLogListRequest.setUserId(userDetailsBean.getId());
+            querySignInLogListRequest.setStatus(Status.ENABLE.getCode());
+            querySignInLogListRequest.setOffset(Constants.DEFAULT_OFFSET);
+            querySignInLogListRequest.setLimit(Constants.DEFAULT_LIMIT);
+            PageResponse<SignInLogBean> signInLogBeanPageResponse = userSignInLogService.querySignInLogList(querySignInLogListRequest);
+            userDetailsBean.setSignInLogs(signInLogBeanPageResponse.getData());
         }
     }
 
@@ -149,7 +165,6 @@ public class UserService {
      *
      * @param request
      */
-    @Transaction
     public User createUser(CreateUserRequest request) {
         return userService.insertSelective(request);
     }

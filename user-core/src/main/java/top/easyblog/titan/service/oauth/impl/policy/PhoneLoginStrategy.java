@@ -13,10 +13,7 @@ import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.QueryPhoneAuthRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.AccountService;
-import top.easyblog.titan.service.PhoneAuthService;
-import top.easyblog.titan.service.RandomNicknameService;
-import top.easyblog.titan.service.UserService;
+import top.easyblog.titan.service.*;
 import top.easyblog.titan.util.RegexUtils;
 
 import java.util.Objects;
@@ -33,8 +30,8 @@ public class PhoneLoginStrategy extends AbstractLoginStrategy {
     @Autowired
     private PhoneAuthService phoneAuthService;
 
-    public PhoneLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService) {
-        super(accountService, userService, randomNicknameService);
+    public PhoneLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService, UserHeaderImgService headerImgService) {
+        super(accountService, userService, randomNicknameService, headerImgService);
     }
 
 

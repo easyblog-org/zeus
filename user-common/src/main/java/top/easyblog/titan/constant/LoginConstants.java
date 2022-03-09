@@ -38,6 +38,10 @@ public final class LoginConstants {
      */
     public static final String QUERY_HEADER_IMG = "header_img";
     /**
+     * 当前头像
+     */
+    public static final String QUERY_CURRENT_HEADER_IMG = "current_header_img";
+    /**
      * 查询用户所有账户信息section
      */
     public static final String QUERY_ACCOUNTS = "accounts";

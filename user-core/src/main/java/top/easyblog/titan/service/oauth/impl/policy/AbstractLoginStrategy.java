@@ -15,11 +15,13 @@ import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.ResultCode;
 import top.easyblog.titan.service.AccountService;
 import top.easyblog.titan.service.RandomNicknameService;
+import top.easyblog.titan.service.UserHeaderImgService;
 import top.easyblog.titan.service.UserService;
 import top.easyblog.titan.service.oauth.ILoginStrategy;
 import top.easyblog.titan.util.EncryptUtils;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author: frank.huang
@@ -33,11 +35,16 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
 
     protected RandomNicknameService randomNicknameService;
 
+    protected UserHeaderImgService headerImgService;
 
-    public AbstractLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService) {
+    //最小密码复杂度
+    public static Integer MIX_PASSWORD_COMPLEXITY = 3;
+
+    public AbstractLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService, UserHeaderImgService headerImgService) {
         this.accountService = accountService;
         this.userService = userService;
         this.randomNicknameService = randomNicknameService;
+        this.headerImgService = headerImgService;
     }
 
     /**
@@ -48,11 +55,10 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
      */
     @Transaction
     public AccountBean preLoginVerify(LoginRequest request) {
-        QueryAccountRequest queryAccountRequest = QueryAccountRequest.builder()
+        AccountBean accountBean = accountService.queryAccountDetails(QueryAccountRequest.builder()
                 .identityType(IdentifierType.subCodeOf(request.getIdentifierType()).getCode())
                 .identifier(request.getIdentifier())
-                .build();
-        AccountBean accountBean = accountService.queryAccountDetails(queryAccountRequest);
+                .build());
         if (Objects.isNull(accountBean)) {
             //check and found that the account is not exists
             throw new BusinessException(ResultCode.USER_ACCOUNT_NOT_FOUND);
@@ -89,9 +95,7 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
             throw new BusinessException(ResultCode.PASSWORD_VALID_FAILED);
         }
         return userService.queryUserDetails(QueryUserRequest.builder()
-                .id(currAccount.getUserId())
-                .sections(LoginConstants.QUERY_HEADER_IMG)
-                .build());
+                .id(currAccount.getUserId()).sections(LoginConstants.QUERY_CURRENT_HEADER_IMG).build());
     }
 
     /**
@@ -103,27 +107,28 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
     @Transaction
     public UserDetailsBean processRegister(RegisterUserRequest request) {
         //3.创建User
-        CreateUserRequest createUserRequest = CreateUserRequest.builder()
-                .nickName(randomNicknameService.getRandomNickname())
-                .active(AccountStatus.PRE_ACTIVE.getCode())
-                .build();
-        User newUser = userService.createUser(createUserRequest);
+        User newUser = userService.createUser(CreateUserRequest.builder()
+                .nickName(randomNicknameService.getRandomNickname()).active(AccountStatus.PRE_ACTIVE.getCode()).build());
+
+        CreateUserHeaderImgRequest headerImg = request.getHeaderImg();
+        headerImgService.createUserHeaderImg(CreateUserHeaderImgRequest.builder()
+                .userId(newUser.getId())
+                .headerImgUrl(Optional.ofNullable(headerImg).map(CreateUserHeaderImgRequest::getHeaderImgUrl).orElse(headerImgService.getDefaultUserHeaderImg()))
+                .status(Status.ENABLE.getCode()).build());
 
         //4. 创建账户并绑定user_id
-        CreateAccountRequest createAccountRequest = CreateAccountRequest.builder()
+        accountService.createAccount(CreateAccountRequest.builder()
                 .userId(newUser.getId())
-                .identityType((int) IdentifierType.subCodeOf(request.getIdentifierType()).getCode())
+                .identityType(IdentifierType.subCodeOf(request.getIdentifierType()).getCode())
                 .identifier(request.getIdentifier())
                 .credential(encryptPassword(request.getCredential()))
                 .verified(Objects.isNull(request.getVerified()) ? Status.DISABLE.getCode() : request.getVerified())
                 .status(Objects.isNull(request.getStatus()) ? AccountStatus.PRE_ACTIVE.getCode() : request.getStatus())
                 .createDirect(Boolean.TRUE)
-                .build();
-        accountService.createAccount(createAccountRequest);
-        return userService.queryUserDetails(QueryUserRequest.builder()
-                .id(newUser.getId())
-                .sections(LoginConstants.QUERY_ACCOUNTS)
                 .build());
+
+        return userService.queryUserDetails(QueryUserRequest.builder()
+                .id(newUser.getId()).sections(LoginConstants.QUERY_ACCOUNTS).build());
     }
 
     /**
@@ -134,28 +139,21 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
      * @param password
      * @return
      */
-    public boolean checkPasswordValid(String password) {
-        if (!StringUtils.isNotBlank(password)) {
-            return false;
+    public int validatePasswdComplexity(String password) {
+        int count = 0;
+        if (password.length() - password.replaceAll("[A-Z]", "").length() > 0) {
+            count++;
         }
-        int len = 0;
-        if ((len = password.length()) < LoginConstants.PASSWORD_MIN_LEN || len > LoginConstants.PASSWORD_MAX_LEN) {
-            return false;
+        if (password.length() - password.replaceAll("[a-z]", "").length() > 0) {
+            count++;
         }
-        char[] chars = password.toCharArray();
-        int[] strength = new int[3];   //密码强度
-        int specialFlag = 2, letterFlag = 1, numberFlag = 0;
-        for (char ch : chars) {
-            if (strength[specialFlag] == 0 && LoginConstants.PASSWORD_SPECIAL_CHARACTERS.contains(String.valueOf(ch))) {
-                strength[specialFlag] = 1;
-            } else if (strength[letterFlag] == 0 && ((ch >= 'a' && ch <= 'z') || ch >= 'A' && ch <= 'Z')) {
-                strength[letterFlag] = 1;
-            } else if (strength[numberFlag] == 0 && ch >= '0' && ch <= '9') {
-                strength[numberFlag] = 1;
-            }
+        if (password.length() - password.replaceAll("[0-9]", "").length() > 0) {
+            count++;
         }
-
-        return strength[specialFlag] + strength[letterFlag] + strength[numberFlag] >= 2;
+        if (password.replaceAll("[0-9,A-Z,a-z]", "").length() > 0) {
+            count++;
+        }
+        return count;
     }
 
     public String encryptPassword(String originalPassword) {

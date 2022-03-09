@@ -2,7 +2,10 @@ package top.easyblog.titan.feign.internal;
 
 import okhttp3.OkHttpClient;
 
-import javax.net.ssl.*;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.security.cert.CertificateException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -64,13 +67,8 @@ public final class OkHttpClientFactory {
             final SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
 
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
-            builder.sslSocketFactory(sslSocketFactory);
-            builder.hostnameVerifier(new HostnameVerifier() {
-                @Override
-                public boolean verify(String hostname, SSLSession session) {
-                    return true;
-                }
-            });
+            builder.sslSocketFactory(sslSocketFactory, (X509TrustManager) trustAllCerts[0]);
+            builder.hostnameVerifier((hostname, session) -> true);
 
             return builder.build();
         } catch (Exception e) {

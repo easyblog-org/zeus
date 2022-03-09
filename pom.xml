@@ -35,7 +35,7 @@
         <flexmark-all-version>0.62.2</flexmark-all-version>
         <apache-commons-lang3>3.12.0</apache-commons-lang3>
         <apache-commons-io>2.7</apache-commons-io>
-        <netty-version>4.1.42.Final</netty-version>
+        <netty-version>4.1.74.Final</netty-version>
         <Okhttp-version>4.9.1</Okhttp-version>
         <feign-httpclient-version>11.7</feign-httpclient-version>
         <api-signature-version>1.0.0</api-signature-version>
@@ -155,35 +155,11 @@
                 <artifactId>commons-pool2</artifactId>
                 <version>${commons-pool2-version}</version>
             </dependency>
-            <!-- sitemap generate-->
-            <dependency>
-                <groupId>com.github.dfabulich</groupId>
-                <artifactId>sitemapgen4j</artifactId>
-                <version>${sitemapgen4h-veresion}</version>
-            </dependency>
             <!--google guava-->
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava-version}</version>
-            </dependency>
-            <!--七牛云SDK-->
-            <dependency>
-                <groupId>com.qiniu</groupId>
-                <artifactId>qiniu-java-sdk</artifactId>
-                <version>${qiniu-java-sdk-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.qiniu</groupId>
-                <artifactId>happy-dns-java</artifactId>
-                <version>${happy-dns-java-version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <!--Markdown 解析器-->
-            <dependency>
-                <groupId>com.vladsch.flexmark</groupId>
-                <artifactId>flexmark-all</artifactId>
-                <version>${flexmark-all-version}</version>
             </dependency>
             <!-- commons-lang3 -->
             <dependency>
