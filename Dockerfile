@@ -22,10 +22,7 @@ ARG PRODUCTION_MODE
 # Application run Configuration
 # ---------------------------
 ENV WORK_HOME="/docker/app" \
-    PROT="8001" \
-    JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom \
-               -Dlog4j2.formatMsgNoLookups=true \
-               -Dspring.profiles.active=$PRODUCTION_MODE"
+    PROT="8001"
 
 WORKDIR  $WORK_HOME
 #挂载宿主机/tmp目录
@@ -40,6 +37,5 @@ ADD  $APP_PATH  /app.jar
 EXPOSE $PROT
 
 # Container entry
-ENTRYPOINT ["java","-jar","/app.jar"]
-CMD ["${JAVA_OPTS}"]
+ENTRYPOINT ["sh","-c","java ${JAVA_OPTS} -jar /app.jar"]
 

@@ -11,10 +11,12 @@ VERSION="1.0.0"
 PROJECT_VERSION='1.0.0'
 BUILD_VERSION='1.0.0'
 PRODUCTION_MODE="dev"
+#启动参数
+JAVA_OPTS=""
 
 ######################################################BUILD START#######################################################
 #初始化构建环境
-initBuildEnv() {
+init_build_env() {
   return 0
 }
 
@@ -33,7 +35,7 @@ package() {
 
 #获取项目maven版本或者根据maven版本生成build版本
 version() {
-  PROJECT_VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)
+  PROJECT_VERSION="$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)"
   random_version=$(date +%s%N | md5sum | head -c 8)
   opt=$1
   if [ "$opt" -eq 1 ]; then
@@ -46,7 +48,7 @@ version() {
   return 0
 }
 
-initProductModel() {
+init_product_model() {
   profile=$1
   if [ -n "$profile" ] && [ "$profile" == "prod" ]; then
     PRODUCTION_MODE="prod"
@@ -57,14 +59,14 @@ initProductModel() {
 }
 
 #构建docker镜像
-buildDockerImage() {
+build_docker_image() {
   version 3
   app_path="./${PROJECT_NAME}-web/target/${PROJECT_NAME}-web-${PROJECT_VERSION}.jar"
   log_show "Start to build docker image: ${PROJECT_NAME}:${BUILD_VERSION}" "APP_PATH=$app_path" "Model: $PRODUCTION_MODE"
   docker build --no-cache \
-               --build-arg APP_PATH="$app_path" \
-               --build-arg PRODUCTION_MODE="${PRODUCTION_MODE}" \
-               -t "${PROJECT_NAME}:${BUILD_VERSION}" .
+    --build-arg APP_PATH="$app_path" \
+    --build-arg PRODUCTION_MODE="${PRODUCTION_MODE}" \
+    -t "${PROJECT_NAME}:${BUILD_VERSION}" .
   return 0
 }
 
@@ -72,11 +74,11 @@ buildDockerImage() {
 
 #######################################################RUN START########################################################
 # 检查应用的启动状态：3次调用指定健康状况检查接口，有1次响应即可
-checkHealth() {
+check_health() {
   times=3
   while [ "$times" -gt 0 ]; do
     sleep 10s
-    rest=$(curl localhost:8001/status)
+    rest="$(curl localhost:8001/status)"
     echo "$rest"
     ((times -= 1))
   done
@@ -87,7 +89,13 @@ checkHealth() {
   fi
 }
 
-stopOldInstanceIfNeed() {
+resolve_JAVA_option() {
+  JAVA_OPTS="${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom \
+                          -Dlog4j2.formatMsgNoLookups=true \
+                          -Dspring.profiles.active=$PRODUCTION_MODE"
+}
+
+stop_old_instance_if_need() {
   instances=$(docker ps -q -a --filter "name=app")
   for item in $instances; do
     docker stop "$item" && docker rm "$item"
@@ -103,10 +111,10 @@ start() {
   fi
   latest_image="${PROJECT_NAME}:${BUILD_VERSION}"
   if [ "prod" == "$PRODUCTION_MODE" ]; then
-    docker run --name app-8001 -p 8001:8001 -d "${latest_image}"
-    docker run --name app-8002 -p 8002:8001 -d "${latest_image}"
+    docker run -e JAVA_OPTS="$JAVA_OPTS" --name app-8001 -p 8001:8001 -d "${latest_image}"
+    docker run -e JAVA_OPTS="$JAVA_OPTS" --name app-8002 -p 8002:8001 -d "${latest_image}"
   else
-    docker run --name app-8001 -p 8001:8001 -d "${latest_image}"
+    docker run -e JAVA_OPTS="$JAVA_OPTS" --name app-8001 -p 8001:8001 -d "${latest_image}"
   fi
 }
 ########################################################RUN END#########################################################
@@ -142,7 +150,8 @@ log_show() {
 #main
 initBuildEnv &&
   package &&
-  initProductModel "$1" &&
-  buildDockerImage &&
+  init_product_model "$1" &&
+  build_docker_image &&
+  resolve_JAVA_option &&
   start &&
-  checkHealth
+  check_health
