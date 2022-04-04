@@ -1,8 +1,7 @@
 #!/bin/bash
-#########################################################################
+#Copyright (c) 2019-2022 EasyBlog and/or its affiliates. All rights reserved.
 
-#Copyright @ www.easyblog.top 2022
-#########################################################################
+#---------------------------
 set -e
 
 #项目名称
@@ -11,10 +10,17 @@ PROJECT_NAME="user"
 VERSION="1.0.0"
 PROJECT_VERSION='1.0.0'
 BUILD_VERSION='1.0.0'
+CURRENT_DIR=$(pwd)
+PRODUCTION_MODE="dev"
 
 ######################################################BUILD START#######################################################
 #maven编译打包
 package() {
+  # shellcheck disable=SC2143
+  if [ -n "$(echo "$CURRENT_DIR" | grep "CICD")" ]; then
+    cd ../
+    CURRENT_DIR=$(pwd)
+  fi
   mvn -v >/dev/null
   # shellcheck disable=SC2181
   if [ "$?" -ne 0 ]; then
@@ -40,12 +46,24 @@ version() {
   fi
 }
 
+initProductModel() {
+  profile=$1
+  if [ -n "$profile" ] && [ "$profile" == "prod" ]; then
+     PRODUCTION_MODE="prod"
+  else
+    PRODUCTION_MODE="dev"
+  fi
+}
+
 #构建docker镜像
 buildDockerImage() {
   version 3
-  log_show "Start to build docker image: ""$PROJECT_NAME":"$BUILD_VERSION"
-  app_path=../"$PROJECT_NAME"-web/target/"$PROJECT_NAME"-web-"$PROJECT_VERSION".jar
-  docker build --build-arg APP_PATH="$app_path" -t "$PROJECT_NAME":"$BUILD_VERSION" .
+  app_path="${CURRENT_DIR}/${PROJECT_NAME}-web/target/${PROJECT_NAME}-web-${PROJECT_VERSION}.jar"
+  log_show "Start to build docker image: ${PROJECT_NAME}:${BUILD_VERSION}" "APP_PATH=$app_path" "Model: $PRODUCTION_MODE"
+  docker build --no-cache --build-arg APP_PATH="$app_path" \
+    --build-arg PRODUCTION_MODE="${PRODUCTION_MODE}" \
+    -t "${PROJECT_NAME}:${BUILD_VERSION}" \
+    -f "${CURRENT_DIR}/CICD/Dockerfile" .
 }
 
 #######################################################BUILD END########################################################
@@ -75,11 +93,7 @@ stopOldInstanceIfNeed() {
 }
 
 start() {
-  profile=$1
-  if [ -z "$profile" ]; then
-    profile="dev"
-  fi
-  log_show "Start application in dev ${profile}..."
+  log_show "Start application in ${PRODUCTION_MODE} model..."
   stopOldInstanceIfNeed
   # shellcheck disable=SC2181
   if [ "$?" -ne 0 ]; then
@@ -87,10 +101,10 @@ start() {
   fi
   latest_image=$(docker images | grep "user" | awk -F" " '{printf("%s:%s\n",$1,$2)}' | head -n 1)
   if [ "prod" == "$profile" ]; then
-    docker run --name app-8001 -p 8001:8001 --link mysql:mysql --link redis:redis -d "${latest_image}"
-    docker run --name app-8002 -p 8002:8001 --link mysql:mysql --link redis:redis -d "${latest_image}"
+    docker run --name app-8001 -p 8001:8001 -d "${latest_image}"
+    docker run --name app-8002 -p 8002:8001 -d "${latest_image}"
   else
-    docker run --name app-8001 -p 8001:8001 --link mysql:mysql --link redis:redis -d "${latest_image}"
+    docker run --name app-8001 -p 8001:8001 -d "${latest_image}"
   fi
 }
 ########################################################RUN END#########################################################
@@ -125,6 +139,7 @@ log_show() {
 
 #main
 package &&
+  initProductModel "$1" &&
   buildDockerImage &&
-  start "$1" &&
+  start &&
   checkHealth
