@@ -58,7 +58,7 @@ initProductModel() {
 #构建docker镜像
 buildDockerImage() {
   version 3
-  app_path="${CURRENT_DIR}/${PROJECT_NAME}-web/target/${PROJECT_NAME}-web-${PROJECT_VERSION}.jar"
+  app_path="/${CURRENT_DIR}/${PROJECT_NAME}-web/target/${PROJECT_NAME}-web-${PROJECT_VERSION}.jar"
   log_show "Start to build docker image: ${PROJECT_NAME}:${BUILD_VERSION}" "APP_PATH=$app_path" "Model: $PRODUCTION_MODE"
   docker build --no-cache --build-arg APP_PATH="$app_path" \
     --build-arg PRODUCTION_MODE="${PRODUCTION_MODE}" \

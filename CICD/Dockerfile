@@ -23,7 +23,9 @@ ARG PRODUCTION_MODE
 # ---------------------------
 ENV WORK_HOME="/docker/app" \
     PROT="8001" \
-    JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Dlog4j2.formatMsgNoLookups=true -Dspring.profiles.active=$PRODUCTION_MODE"
+    JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom \
+               -Dlog4j2.formatMsgNoLookups=true \
+               -Dspring.profiles.active=$PRODUCTION_MODE"
 
 WORKDIR  $WORK_HOME
 #挂载宿主机/tmp目录
