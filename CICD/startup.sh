@@ -68,8 +68,7 @@ buildDockerImage() {
   log_show "Start to build docker image: ${PROJECT_NAME}:${BUILD_VERSION}" "APP_PATH=$app_path" "Model: $PRODUCTION_MODE"
   docker build --no-cache --build-arg APP_PATH="$app_path" \
     --build-arg PRODUCTION_MODE="${PRODUCTION_MODE}" \
-    -t "${PROJECT_NAME}:${BUILD_VERSION}" \
-    -f "${CURRENT_DIR}/CICD/Dockerfile" "/${CURRENT_DIR}"
+    -t "${PROJECT_NAME}:${BUILD_VERSION}" \ .
   return 0
 }
 
@@ -106,7 +105,7 @@ start() {
   if [ "$?" -ne 0 ]; then
     log_error "BUILD DOCKER IMAGE FAILED"
   fi
-  latest_image=$(docker images | grep "user" | awk -F" " '{printf("%s:%s\n",$1,$2)}' | head -n 1)
+  latest_image="${PROJECT_NAME}:${BUILD_VERSION}"
   if [ "prod" == "$PRODUCTION_MODE" ]; then
     docker run --name app-8001 -p 8001:8001 -d "${latest_image}"
     docker run --name app-8002 -p 8002:8001 -d "${latest_image}"
