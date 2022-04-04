@@ -40,5 +40,6 @@ ADD  $APP_PATH  /app.jar
 EXPOSE $PROT
 
 # Container entry
-ENTRYPOINT ["java","$JAVA_OPTS","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","/app.jar"]
+CMD ["${JAVA_OPTS}"]
 
