@@ -10,17 +10,12 @@ PROJECT_NAME="user"
 VERSION="1.0.0"
 PROJECT_VERSION='1.0.0'
 BUILD_VERSION='1.0.0'
-CURRENT_DIR=$(pwd)
 PRODUCTION_MODE="dev"
 
 ######################################################BUILD START#######################################################
 #初始化构建环境
 initBuildEnv() {
-  # shellcheck disable=SC2143
-  if [ -n "$(echo "$CURRENT_DIR" | grep "CICD")" ]; then
-    cd ../
-    CURRENT_DIR=$(pwd)
-  fi
+  retun 0
 }
 
 #maven编译打包
@@ -64,11 +59,12 @@ initProductModel() {
 #构建docker镜像
 buildDockerImage() {
   version 3
-  app_path="/${CURRENT_DIR}/${PROJECT_NAME}-web/target/${PROJECT_NAME}-web-${PROJECT_VERSION}.jar"
+  app_path="./${PROJECT_NAME}-web/target/${PROJECT_NAME}-web-${PROJECT_VERSION}.jar"
   log_show "Start to build docker image: ${PROJECT_NAME}:${BUILD_VERSION}" "APP_PATH=$app_path" "Model: $PRODUCTION_MODE"
-  docker build --no-cache --build-arg APP_PATH="$app_path" \
-    --build-arg PRODUCTION_MODE="${PRODUCTION_MODE}" \
-    -t "${PROJECT_NAME}:${BUILD_VERSION}" \ .
+  docker build --no-cache \
+               --build-arg APP_PATH="$app_path" \
+               --build-arg PRODUCTION_MODE="${PRODUCTION_MODE}" \
+               -t "${PROJECT_NAME}:${BUILD_VERSION}" .
   return 0
 }
 
