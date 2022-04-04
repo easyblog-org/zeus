@@ -17,6 +17,24 @@ JAVA_OPTS=""
 ######################################################BUILD START#######################################################
 #初始化构建环境
 init_build_env() {
+  init_product_model "$1"
+  # shellcheck disable=SC2181
+  if [ "$?" -ne 0 ]; then
+    log_error "INIT BUILD ENV FAILED"
+    exit
+  fi
+  JAVA_OPTS="${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom \
+                            -Dlog4j2.formatMsgNoLookups=true \
+                            -Dspring.profiles.active=$PRODUCTION_MODE"
+}
+
+init_product_model() {
+  profile=$1
+  if [ -n "$profile" ] && [ "$profile" == "prod" ]; then
+    PRODUCTION_MODE="prod"
+  else
+    PRODUCTION_MODE="dev"
+  fi
   return 0
 }
 
@@ -44,16 +62,6 @@ version() {
     VERSION="$random_version"
   elif [ "$opt" -eq 3 ]; then
     VERSION="$PROJECT_VERSION"
-  fi
-  return 0
-}
-
-init_product_model() {
-  profile=$1
-  if [ -n "$profile" ] && [ "$profile" == "prod" ]; then
-    PRODUCTION_MODE="prod"
-  else
-    PRODUCTION_MODE="dev"
   fi
   return 0
 }
@@ -89,12 +97,6 @@ check_health() {
   fi
 }
 
-resolve_JAVA_option() {
-  JAVA_OPTS="${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom \
-                          -Dlog4j2.formatMsgNoLookups=true \
-                          -Dspring.profiles.active=$PRODUCTION_MODE"
-}
-
 stop_old_instance_if_need() {
   instances=$(docker ps -q -a --filter "name=app")
   for item in $instances; do
@@ -104,7 +106,7 @@ stop_old_instance_if_need() {
 
 start() {
   log_show "Start application in ${PRODUCTION_MODE} model..."
-  stopOldInstanceIfNeed
+  stop_old_instance_if_need
   # shellcheck disable=SC2181
   if [ "$?" -ne 0 ]; then
     log_error "BUILD DOCKER IMAGE FAILED"
@@ -148,10 +150,10 @@ log_show() {
 ########################################################LOG END#########################################################
 
 #main
-initBuildEnv &&
+(
+init_build_env "$1" &&
   package &&
-  init_product_model "$1" &&
   build_docker_image &&
-  resolve_JAVA_option &&
   start &&
   check_health
+) || clean
