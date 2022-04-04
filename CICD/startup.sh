@@ -44,7 +44,7 @@ version() {
 buildDockerImage() {
   version 3
   log_show "Start to build docker image: ""$PROJECT_NAME":"$BUILD_VERSION"
-  app_path=./"$PROJECT_NAME"-web/target/"$PROJECT_NAME"-web-"$PROJECT_VERSION".jar
+  app_path=../"$PROJECT_NAME"-web/target/"$PROJECT_NAME"-web-"$PROJECT_VERSION".jar
   docker build --build-arg APP_PATH="$app_path" -t "$PROJECT_NAME":"$BUILD_VERSION" .
 }
 
