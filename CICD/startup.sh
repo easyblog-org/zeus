@@ -14,13 +14,17 @@ CURRENT_DIR=$(pwd)
 PRODUCTION_MODE="dev"
 
 ######################################################BUILD START#######################################################
-#maven编译打包
-package() {
+#初始化构建环境
+initBuildEnv() {
   # shellcheck disable=SC2143
   if [ -n "$(echo "$CURRENT_DIR" | grep "CICD")" ]; then
     cd ../
     CURRENT_DIR=$(pwd)
   fi
+}
+
+#maven编译打包
+package() {
   mvn -v >/dev/null
   # shellcheck disable=SC2181
   if [ "$?" -ne 0 ]; then
@@ -44,15 +48,17 @@ version() {
   elif [ "$opt" -eq 3 ]; then
     VERSION="$PROJECT_VERSION"
   fi
+  return 0
 }
 
 initProductModel() {
   profile=$1
   if [ -n "$profile" ] && [ "$profile" == "prod" ]; then
-     PRODUCTION_MODE="prod"
+    PRODUCTION_MODE="prod"
   else
     PRODUCTION_MODE="dev"
   fi
+  return 0
 }
 
 #构建docker镜像
@@ -63,7 +69,8 @@ buildDockerImage() {
   docker build --no-cache --build-arg APP_PATH="$app_path" \
     --build-arg PRODUCTION_MODE="${PRODUCTION_MODE}" \
     -t "${PROJECT_NAME}:${BUILD_VERSION}" \
-    -f "${CURRENT_DIR}/CICD/Dockerfile" .
+    -f "${CURRENT_DIR}/CICD/Dockerfile" "/${CURRENT_DIR}"
+  return 0
 }
 
 #######################################################BUILD END########################################################
@@ -100,7 +107,7 @@ start() {
     log_error "BUILD DOCKER IMAGE FAILED"
   fi
   latest_image=$(docker images | grep "user" | awk -F" " '{printf("%s:%s\n",$1,$2)}' | head -n 1)
-  if [ "prod" == "$profile" ]; then
+  if [ "prod" == "$PRODUCTION_MODE" ]; then
     docker run --name app-8001 -p 8001:8001 -d "${latest_image}"
     docker run --name app-8002 -p 8002:8001 -d "${latest_image}"
   else
@@ -138,7 +145,8 @@ log_show() {
 ########################################################LOG END#########################################################
 
 #main
-package &&
+initBuildEnv &&
+  package &&
   initProductModel "$1" &&
   buildDockerImage &&
   start &&
