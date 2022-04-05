@@ -1,6 +1,7 @@
 #!/bin/bash
 #Copyright (c) 2019-2022 EasyBlog and/or its affiliates. All rights reserved.
-
+#
+# EASYBLOG MODULE USER STARTUP SCRIPTS
 #---------------------------
 set -e
 
@@ -14,9 +15,10 @@ PRODUCTION_MODE="dev"
 #启动参数
 JAVA_OPTS=""
 
-######################################################BUILD START#######################################################
-#初始化构建环境
-init_build_env() {
+#---------------------------
+# Init build and run env
+#---------------------------
+init_env() {
   init_product_model "$1"
   # shellcheck disable=SC2181
   if [ "$?" -ne 0 ]; then
@@ -28,6 +30,9 @@ init_build_env() {
                             -Dspring.profiles.active=$PRODUCTION_MODE"
 }
 
+#---------------------------
+# Init profiles,default profiles is 'dev'
+#---------------------------
 init_product_model() {
   profile=$1
   if [ -n "$profile" ] && [ "$profile" == "prod" ]; then
@@ -38,7 +43,9 @@ init_product_model() {
   return 0
 }
 
-#maven编译打包
+#---------------------------
+# Build project with maven
+#---------------------------
 package() {
   mvn -v >/dev/null
   # shellcheck disable=SC2181
@@ -51,7 +58,9 @@ package() {
   return $?
 }
 
-#获取项目maven版本或者根据maven版本生成build版本
+#---------------------------
+# Get maven project version or generate build version
+#---------------------------
 version() {
   PROJECT_VERSION="$(mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate -Dexpression=project.version -q -DforceStdout)"
   random_version=$(date +%s%N | md5sum | head -c 8)
@@ -66,7 +75,9 @@ version() {
   return 0
 }
 
-#构建docker镜像
+#---------------------------
+# Build docker image based maven build output(jar package)
+#---------------------------
 build_docker_image() {
   version 3
   app_path="./${PROJECT_NAME}-web/target/${PROJECT_NAME}-web-${PROJECT_VERSION}.jar"
@@ -78,25 +89,9 @@ build_docker_image() {
   return 0
 }
 
-#######################################################BUILD END########################################################
-
-#######################################################RUN START########################################################
-# 检查应用的启动状态：3次调用指定健康状况检查接口，有1次响应即可
-check_health() {
-  times=3
-  while [ "$times" -gt 0 ]; do
-    sleep 10s
-    rest="$(curl localhost:8001/status)"
-    echo "$rest"
-    ((times -= 1))
-  done
-  if [ "$times" -ge 0 ]; then
-    log_success "Startup application success!"
-  else
-    log_error "Startup application failed!"
-  fi
-}
-
+#---------------------------
+# Stop all running or stopped docker instances whose name is 'app'
+#---------------------------
 stop_old_instance_if_need() {
   instances=$(docker ps -q -a --filter "name=app")
   for item in $instances; do
@@ -104,6 +99,9 @@ stop_old_instance_if_need() {
   done
 }
 
+#---------------------------
+# Run application
+#---------------------------
 start() {
   log_show "Start application in ${PRODUCTION_MODE} model..."
   stop_old_instance_if_need
@@ -119,41 +117,63 @@ start() {
     docker run -e JAVA_OPTS="$JAVA_OPTS" --name app-8001 -p 8001:8001 -d "${latest_image}"
   fi
 }
-########################################################RUN END#########################################################
 
-#######################################################LOG START########################################################
+#---------------------------
+# Check the application startup status: If one of the three request attempts to
+# the specified health check interface successfully responds, the startup can be determined to be successful.
+#---------------------------
+check_health() {
+  times=3
+  while [ "$times" -gt 0 ]; do
+    sleep 20s
+    rest="$(curl localhost:8001/status)"
+    echo "$rest"
+    ((times -= 1))
+  done
+  if [ "$times" -ge 0 ]; then
+    log_success "Startup application success!"
+  else
+    log_error "Startup application failed!"
+  fi
+}
+
+#---------------------------
+# Common log output style
+#---------------------------
 log() {
   echo -e "\033[${1}m[$2] ------------------------------------------------------------------------\033[0m"
   echo -e "\033[${1}m[$2] $3\033[0m"
   echo -e "\033[${1}m[$2] ------------------------------------------------------------------------\033[0m"
 }
 
-log_debug() {
-  log 30 "DEBUG" "$*"
-}
-
+#---------------------------
+# Debug mode log, output character color is red
+#---------------------------
 log_error() {
   log 31 "ERROR" "$*"
 }
 
+#---------------------------
+# Success mode log, output character color is green
+#---------------------------
 log_success() {
   log 32 "SUCCESS" "$*"
 }
 
-log_warn() {
-  log 33 "WARN" "$*"
-}
-
+#---------------------------
+# Info mode log, output character color is blue
+#---------------------------
 log_show() {
   log 34 "INFO" "$*"
 }
-########################################################LOG END#########################################################
 
-#main
-(
-init_build_env "$1" &&
+
+#---------------------------
+# main
+#---------------------------
+init_env "$1" &&
   package &&
   build_docker_image &&
   start &&
   check_health
-) || clean
+

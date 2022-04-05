@@ -21,21 +21,21 @@ ARG PRODUCTION_MODE
 
 # Application run Configuration
 # ---------------------------
-ENV WORK_HOME="/docker/app" \
+ENV WORK_HOME="/data/app" \
     PROT="8001"
 
 WORKDIR  $WORK_HOME
-#挂载宿主机/tmp目录
-VOLUME ["/docker/app"]
+#挂载宿主机/data/app目录
+VOLUME ["/data/app","/data/logs"]
 
 # Add files required to build this image
 # ---------------
-ADD  $APP_PATH  /app.jar
+ADD  $APP_PATH  $WORK_HOME
 
 # Expose default port
 # ---------------
 EXPOSE $PROT
 
 # Container entry
-ENTRYPOINT ["sh","-c","java ${JAVA_OPTS} -jar /app.jar"]
+ENTRYPOINT ["sh","-c","java ${JAVA_OPTS} -jar  ${WORK_HOME}/app.jar"]
 
