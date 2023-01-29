@@ -7,12 +7,12 @@
 # Editor-based HTTP Client requests
 /httpRequests/
 
-user-common/target
-user-core/target
-user-web/target
-user-common/user-common.iml
-user-core/user-core.iml
-user-web/user-web.iml
-user.iml
+zeus-common/target
+zeus-core/target
+zeus-web/target
+zeus-common/user-common.iml
+zeus-core/user-core.iml
+zeus-web/user-web.iml
+zeus.iml
 .idea/
 log/
