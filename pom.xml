@@ -8,7 +8,7 @@
         <version>2.2.8.RELEASE</version>
     </parent>
     <groupId>top.easyblog.titan</groupId>
-    <artifactId>user</artifactId>
+    <artifactId>zeus</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
 
@@ -25,8 +25,8 @@
         <druid.version>1.1.16</druid.version>
         <mybatis.spring.boot.version>2.1.0</mybatis.spring.boot.version>
         <pagehelper-version>1.2.13</pagehelper-version>
-        <user-common-version>1.0.0</user-common-version>
-        <user-core-version>1.0.0</user-core-version>
+        <zeus-common-version>1.0.0</zeus-common-version>
+        <zeus-core-version>1.0.0</zeus-core-version>
         <commons-logging-version>1.1.1</commons-logging-version>
         <commons-codec-version>1.15</commons-codec-version>
         <commons-httpclient-version>3.0.1</commons-httpclient-version>
@@ -90,13 +90,13 @@
             </dependency>
             <dependency>
                 <groupId>top.easyblog.titan</groupId>
-                <artifactId>user-common</artifactId>
-                <version>${user-common-version}</version>
+                <artifactId>zeus-common</artifactId>
+                <version>${zeus-common-version}</version>
             </dependency>
             <dependency>
                 <groupId>top.easyblog.titan</groupId>
-                <artifactId>user-core</artifactId>
-                <version>${user-core-version}</version>
+                <artifactId>zeus-core</artifactId>
+                <version>${zeus-core-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -184,8 +184,8 @@
     </dependencyManagement>
 
     <modules>
-        <module>user-common</module>
-        <module>user-core</module>
-        <module>user-web</module>
+        <module>zeus-common</module>
+        <module>zeus-core</module>
+        <module>zeus-web</module>
     </modules>
 </project>
