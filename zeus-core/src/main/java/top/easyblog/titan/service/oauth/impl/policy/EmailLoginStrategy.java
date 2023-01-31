@@ -1,5 +1,6 @@
 package top.easyblog.titan.service.oauth.impl.policy;
 
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import top.easyblog.titan.annotation.Transaction;

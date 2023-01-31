@@ -7,7 +7,7 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 import top.easyblog.titan.enums.LoginStatus;
-import top.easyblog.titan.service.data.AccessSignInLogService;
+import top.easyblog.titan.service.access.AccessSignInLogService;
 
 /**
  * @author: frank.huang

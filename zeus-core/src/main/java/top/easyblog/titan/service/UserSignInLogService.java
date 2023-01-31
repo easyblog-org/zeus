@@ -13,7 +13,7 @@ import top.easyblog.titan.request.QuerySignInLogRequest;
 import top.easyblog.titan.request.UpdateSignInLogRequest;
 import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.data.AccessSignInLogService;
+import top.easyblog.titan.service.access.AccessSignInLogService;
 
 import java.util.Collections;
 import java.util.Objects;

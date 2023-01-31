@@ -1,5 +1,7 @@
 package top.easyblog.titan.service.oauth.impl.policy;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
@@ -27,6 +29,8 @@ import java.util.Optional;
  * @author: frank.huang
  * @date: 2022-02-13 21:55
  */
+@Slf4j
+@AllArgsConstructor
 public abstract class AbstractLoginStrategy implements ILoginStrategy {
 
     protected AccountService accountService;
@@ -40,12 +44,6 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
     //最小密码复杂度
     public static Integer MIX_PASSWORD_COMPLEXITY = 3;
 
-    public AbstractLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService, UserHeaderImgService headerImgService) {
-        this.accountService = accountService;
-        this.userService = userService;
-        this.randomNicknameService = randomNicknameService;
-        this.headerImgService = headerImgService;
-    }
 
     /**
      * 登录前置校验

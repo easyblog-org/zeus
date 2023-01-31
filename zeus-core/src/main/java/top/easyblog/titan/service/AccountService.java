@@ -13,7 +13,7 @@ import top.easyblog.titan.request.QueryAccountListRequest;
 import top.easyblog.titan.request.QueryAccountRequest;
 import top.easyblog.titan.request.UpdateAccountRequest;
 import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.data.AccessAccountService;
+import top.easyblog.titan.service.access.AccessAccountService;
 
 import java.util.List;
 import java.util.Objects;

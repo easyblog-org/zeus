@@ -11,7 +11,7 @@ import top.easyblog.titan.request.CreatePhoneAuthRequest;
 import top.easyblog.titan.request.QueryPhoneAuthRequest;
 import top.easyblog.titan.request.UpdatePhoneAuthRequest;
 import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.data.AccessPhoneAuthService;
+import top.easyblog.titan.service.access.AccessPhoneAuthService;
 
 import java.util.Objects;
 

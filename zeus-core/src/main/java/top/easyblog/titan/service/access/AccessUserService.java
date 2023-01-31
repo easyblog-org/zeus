@@ -1,4 +1,4 @@
-package top.easyblog.titan.service.data;
+package top.easyblog.titan.service.access;
 
 import com.google.common.collect.Iterables;
 import org.apache.commons.collections4.CollectionUtils;

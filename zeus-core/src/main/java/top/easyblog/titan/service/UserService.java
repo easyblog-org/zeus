@@ -16,7 +16,7 @@ import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.data.AccessUserService;
+import top.easyblog.titan.service.access.AccessUserService;
 
 import java.util.Collections;
 import java.util.List;

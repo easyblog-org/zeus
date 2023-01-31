@@ -1,4 +1,4 @@
-package top.easyblog.titan.service.data;
+package top.easyblog.titan.service.access;
 
 import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;

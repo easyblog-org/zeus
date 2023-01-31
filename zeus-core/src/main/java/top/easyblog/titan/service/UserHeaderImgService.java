@@ -18,7 +18,7 @@ import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
 import top.easyblog.titan.request.UpdateUserHeaderImgRequest;
 import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.data.AccessUserHeaderImgService;
+import top.easyblog.titan.service.access.AccessUserHeaderImgService;
 
 import java.util.Collections;
 import java.util.List;

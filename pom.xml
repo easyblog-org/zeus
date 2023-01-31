@@ -22,7 +22,7 @@
         <slf4j-version>1.7.30</slf4j-version>
         <lombok.version>1.18.22</lombok.version>
         <mysql.version>8.0.16</mysql.version>
-        <druid.version>1.1.16</druid.version>
+        <druid.version>1.2.8</druid.version>
         <mybatis.spring.boot.version>2.1.0</mybatis.spring.boot.version>
         <pagehelper-version>1.2.13</pagehelper-version>
         <zeus-common-version>1.0.0</zeus-common-version>
@@ -46,6 +46,7 @@
         <commons-collections4-version>4.4</commons-collections4-version>
         <gson-version>2.8.9</gson-version>
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
+        <nacos-config-verion>2021.1</nacos-config-verion>
     </properties>
 
     <dependencyManagement>
@@ -60,11 +61,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>${commons-collections4-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>top.easyboot</groupId>
-                <artifactId>api-signature-spring-boot-starter</artifactId>
-                <version>${api-signature-version}</version>
             </dependency>
             <!--okhttp-->
             <dependency>
@@ -126,13 +122,19 @@
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
-                <artifactId>druid</artifactId>
+                <artifactId>druid-spring-boot-starter</artifactId>
                 <version>${druid.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
                 <version>${mybatis.spring.boot.version}</version>
+            </dependency>
+            <!--NACOS-->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+                <version>${nacos-config-verion}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>

@@ -15,7 +15,7 @@ import top.easyblog.titan.request.QueryPhoneAreaCodeRequest;
 import top.easyblog.titan.request.UpdatePhoneAreaCodeRequest;
 import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.data.AccessPhoneAreaCodeService;
+import top.easyblog.titan.service.access.AccessPhoneAreaCodeService;
 
 import java.util.Collections;
 import java.util.List;
