@@ -13,12 +13,12 @@ echo ${ARTIFACT}
 VERSION="1.0.0"
 ARTIFACT_VERSION='1.0.0'
 BUILD_VERSION='1.0.0'
-BASE_DIR="/app"
-if [ ! -d "${BASE_DIR}/${ARTIFACT}/data/logs" ]; then
-  mkdir -p ${BASE_DIR}/${ARTIFACT}/logs
+BASE_DIR="/app/${ARTIFACT}"
+if [ ! -d "${BASE_DIR}/data/logs" ]; then
+  mkdir -p ${BASE_DIR}/data/logs
 fi
 
-cd ${BASE_DIR}/${ARTIFACT}
+cd ${BASE_DIR}
 
 
 #===========================================================================================
@@ -87,11 +87,13 @@ echo ">>>>>> Package the project successfully!"
 #===========================================================================================
 # Build Docker Image
 #===========================================================================================
-app_path="./${ARTIFACT}-web/target/${ARTIFACT}-web-*.jar"
+JAR_FILE_PATH="./${ARTIFACT}-web/target/${ARTIFACT}-web-*.jar"
 echo ">>>>>> Start to build docker image: ${ARTIFACT}"
 docker build --no-cache \
-    --build-arg APP_PATH="${app_path}" \
-    --build-arg ACTIVE_PROFILE="${ACTIVE_PROFILE}" \
+    --build-arg WORK_HOME="${BASE_DIR}" \
+    --build-arg JAR_FILE_PATH="${JAR_FILE_PATH}" \
+    --build-arg SERVER_PORT="${SERVER_PORT}" \
+    --build-arg BASE_DIR="${BASE_DIR}" \
     -t "${ACTIVE_PROFILE}" .
 
 #===========================================================================================
