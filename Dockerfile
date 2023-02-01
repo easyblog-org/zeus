@@ -27,14 +27,13 @@ ARG SERVER_PORT
 # ---------------
 ARG WORK_HOME
 
-
 WORKDIR  $WORK_HOME
 #挂载宿主机${WORK_HOME}/data/logs目录
 VOLUME ["${WORK_HOME}/data/logs","/data/logs"]
 
 # Add files required to build this image
 # ---------------
-ADD  $JAR_FILE_PATH  $WORK_HOME
+COPY  $JAR_FILE_PATH  $WORK_HOME/app.jar
 
 # Expose default port
 # ---------------
