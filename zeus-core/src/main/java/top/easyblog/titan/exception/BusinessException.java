@@ -3,7 +3,7 @@ package top.easyblog.titan.exception;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.lang.NonNull;
-import top.easyblog.titan.response.ResultCode;
+import top.easyblog.titan.response.ZeusResultCode;
 
 /**
  * @author: frank.huang
@@ -13,18 +13,18 @@ import top.easyblog.titan.response.ResultCode;
 @EqualsAndHashCode(callSuper = false)
 public class BusinessException extends RuntimeException {
 
-    private ResultCode code;
+    private ZeusResultCode code;
 
-    public BusinessException(@NonNull ResultCode code) {
+    public BusinessException(@NonNull ZeusResultCode code) {
         this.code = code;
     }
 
-    public BusinessException(@NonNull ResultCode code,String message){
+    public BusinessException(@NonNull ZeusResultCode code, String message){
         super(message);
         this.code=code;
     }
 
-    public BusinessException(@NonNull ResultCode code,Throwable cause) {
+    public BusinessException(@NonNull ZeusResultCode code, Throwable cause) {
         super(cause);
         this.code = code;
     }

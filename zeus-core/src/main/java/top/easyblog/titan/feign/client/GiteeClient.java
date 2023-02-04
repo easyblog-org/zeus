@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import top.easyblog.titan.bean.auth.GiteeAuthBean;
-import top.easyblog.titan.bean.auth.GiteeAuthTokenBean;
+import top.easyblog.titan.feign.client.dto.GiteeAuthDTO;
+import top.easyblog.titan.feign.client.dto.GiteeAuthTokenDTO;
 import top.easyblog.titan.feign.config.CommonFeignConfig;
 import top.easyblog.titan.request.QueryGiteeAuthTokenRequest;
 
@@ -28,7 +28,7 @@ public interface GiteeClient {
      */
     @PostMapping(value = "/oauth/token")
     @Headers({"User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36)"})
-    GiteeAuthTokenBean getAccessToken(@RequestBody QueryGiteeAuthTokenRequest request);
+    GiteeAuthTokenDTO getAccessToken(@RequestBody QueryGiteeAuthTokenRequest request);
 
     /**
      * Gitee获取收钱用户信息
@@ -37,5 +37,5 @@ public interface GiteeClient {
      * @return
      */
     @GetMapping(value = "/api/v5/user")
-    GiteeAuthBean getGiteeUserInfo(@RequestParam("access_token") String accessToken);
+    GiteeAuthDTO getGiteeUserInfo(@RequestParam("access_token") String accessToken);
 }

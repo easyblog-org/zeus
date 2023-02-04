@@ -23,7 +23,6 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-
     @ResponseWrapper
     @PostMapping
     public void create(@RequestBody @Valid CreateAccountRequest request) {

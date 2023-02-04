@@ -1,4 +1,4 @@
-use `easyblog-dev`;
+use `zeus_dev`;
 
 CREATE TABLE `account`
 (

@@ -12,8 +12,8 @@ import top.easyblog.titan.request.CreateAccountRequest;
 import top.easyblog.titan.request.QueryAccountListRequest;
 import top.easyblog.titan.request.QueryAccountRequest;
 import top.easyblog.titan.request.UpdateAccountRequest;
-import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.data.AccessAccountService;
+import top.easyblog.titan.response.ZeusResultCode;
+import top.easyblog.titan.service.atomic.AtomicAccountService;
 
 import java.util.List;
 import java.util.Objects;
@@ -28,24 +28,24 @@ import java.util.stream.Collectors;
 public class AccountService {
 
     @Autowired
-    private AccessAccountService accessAccountService;
+    private AtomicAccountService atomicAccountService;
 
     @Transaction
     public Account createAccount(CreateAccountRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
         Account account = null;
         if (Objects.isNull(request.getCreateDirect()) || Boolean.FALSE.equals(request.getCreateDirect())) {
             QueryAccountRequest queryAccountRequest = QueryAccountRequest.builder()
                     .identityType(request.getIdentityType())
                     .identifier(request.getIdentifier()).build();
-            account = accessAccountService.queryAccountByRequest(queryAccountRequest);
+            account = atomicAccountService.queryAccountByRequest(queryAccountRequest);
             if (Objects.nonNull(account)) {
-                throw new BusinessException(ResultCode.USER_ACCOUNT_EXISTS);
+                throw new BusinessException(ZeusResultCode.USER_ACCOUNT_EXISTS);
             }
         }
-        account = accessAccountService.insertSelective(request);
+        account = atomicAccountService.insertSelective(request);
         log.info("Create new user account id={} successfully", account.getId());
         return account;
     }
@@ -53,9 +53,9 @@ public class AccountService {
     @Transaction
     public AccountBean queryAccountDetails(QueryAccountRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        Account account = accessAccountService.queryAccountByRequest(request);
+        Account account = atomicAccountService.queryAccountByRequest(request);
         if (Objects.isNull(account)) {
             return null;
         }
@@ -66,7 +66,7 @@ public class AccountService {
 
     @Transaction
     public List<AccountBean> queryAccountList(QueryAccountListRequest request) {
-        return accessAccountService.queryAccountListByRequest(request).stream().map(account -> {
+        return atomicAccountService.queryAccountListByRequest(request).stream().map(account -> {
             AccountBean accountBean = new AccountBean();
             BeanUtils.copyProperties(account, accountBean);
             return accountBean;
@@ -76,7 +76,7 @@ public class AccountService {
     @Transaction
     public void updateAccount(UpdateAccountRequest request) {
         Account account = buildUpdateAccount(request);
-        accessAccountService.updateAccountByRequest(account);
+        atomicAccountService.updateAccountByRequest(account);
     }
 
     private Account buildUpdateAccount(UpdateAccountRequest request) {

@@ -17,8 +17,8 @@ import top.easyblog.titan.request.QueryUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
 import top.easyblog.titan.request.UpdateUserHeaderImgRequest;
 import top.easyblog.titan.response.PageResponse;
-import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.data.AccessUserHeaderImgService;
+import top.easyblog.titan.response.ZeusResultCode;
+import top.easyblog.titan.service.atomic.AtomicUserHeaderImgService;
 
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 public class UserHeaderImgService {
 
     @Autowired
-    private AccessUserHeaderImgService headerImgService;
+    private AtomicUserHeaderImgService headerImgService;
 
     @Value("${custom.default-header-image}")
     private String defaultHeaderImg;
@@ -42,7 +42,7 @@ public class UserHeaderImgService {
     @Transaction
     public void createUserHeaderImg(CreateUserHeaderImgRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
         UserHeaderImg userHeaderImg = headerImgService.queryByRequest(QueryUserHeaderImgRequest.builder()
                 .userId(request.getUserId()).statuses(Lists.newArrayList(Status.ENABLE.getCode())).build());
@@ -61,7 +61,7 @@ public class UserHeaderImgService {
         UserHeaderImg userHeaderImg = headerImgService.queryByRequest(QueryUserHeaderImgRequest.builder()
                 .userId(request.getUserId()).statuses(Lists.newArrayList(Status.ENABLE.getCode())).build());
         if (Objects.isNull(userHeaderImg)) {
-            throw new BusinessException(ResultCode.USER_HEADER_IMGS_NOT_FOUND);
+            throw new BusinessException(ZeusResultCode.USER_HEADER_IMGS_NOT_FOUND);
         }
         headerImgService.updateHeaderImgByRequest(request);
         UserHeaderImgBean userHeaderImgBean = new UserHeaderImgBean();
@@ -73,7 +73,7 @@ public class UserHeaderImgService {
     @Transaction
     public UserHeaderImgBean queryUserHeaderDetails(QueryUserHeaderImgRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
         UserHeaderImg userHeaderImg = headerImgService.queryByRequest(request);
         if (Objects.isNull(userHeaderImg)) {
@@ -87,7 +87,7 @@ public class UserHeaderImgService {
     @Transaction
     public Object queryUserHeaderList(QueryUserHeaderImgsRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
         if (Objects.isNull(request.getOffset()) || Objects.isNull(request.getLimit())) {
             //不分页，默认查询1000条数据

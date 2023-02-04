@@ -51,15 +51,15 @@ public class BaseResponse<T> implements Serializable {
     }
 
     public boolean isSuccess() {
-        return ResultCode.SUCCESS.getCode().equalsIgnoreCase(this.code);
+        return ZeusResultCode.SUCCESS.getCode().equalsIgnoreCase(this.code);
     }
 
     public static <T> BaseResponse<T> ok(T data) {
-        return new BaseResponse<>(data, "ok", ResultCode.SUCCESS.getCode());
+        return new BaseResponse<>(data, "ok", ZeusResultCode.SUCCESS.getCode());
     }
 
     public static <T> BaseResponse<T> fail() {
-        return new BaseResponse<>(null, "fail", ResultCode.INTERNAL_ERROR.getCode());
+        return new BaseResponse<>(null, "fail", ZeusResultCode.INTERNAL_ERROR.getCode());
     }
 
     public static <T> BaseResponse<T> fail(String code, String message) {

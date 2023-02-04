@@ -12,8 +12,8 @@ import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.AuthCallbackRequest;
 import top.easyblog.titan.request.OauthRequest;
-import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.oauth.impl.OauthService;
+import top.easyblog.titan.response.ZeusResultCode;
+import top.easyblog.titan.service.OauthService;
 
 import javax.validation.Valid;
 
@@ -40,7 +40,7 @@ public class OauthController {
     @GetMapping(value = "/callback/{platform}")
     public AuthorizationBean callback(@PathVariable("platform") Integer platform, @RequestParamAlias @Valid AuthCallbackRequest callback) {
         if (IdentifierType.SYSTEM_IDENTITY_TYPE.contains(IdentifierType.codeOf(callback.getPlatform()))) {
-            throw new BusinessException(ResultCode.INVALID_IDENTITY_TYPE);
+            throw new BusinessException(ZeusResultCode.INVALID_IDENTITY_TYPE);
         }
         callback.setPlatform(platform);
         return oauthService.callback(callback);
