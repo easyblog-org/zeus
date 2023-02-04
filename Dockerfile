@@ -13,29 +13,31 @@ MAINTAINER Frank.HUANG <hx981230@163.com>
 
 # BUILD ARG: target application file path
 # ---------------
-ARG APP_PATH
+ARG JAR_FILE_PATH
 
 # BUILD ARG: applicatgion run profile
 # ---------------
-ARG PRODUCTION_MODE
+ARG ACTIVE_PROFILE
 
-# Application run Configuration
-# ---------------------------
-ENV WORK_HOME="/data/app" \
-    PROT="8001"
+# BUILD ARG: applicatgion run port
+# ---------------
+ARG SERVER_PORT
+
+# BUILD ARG: applicatgion run home dir
+# ---------------
+ARG WORK_HOME
 
 WORKDIR  $WORK_HOME
-#挂载宿主机/data/app目录
-VOLUME ["/data/app","/data/logs"]
+#挂载宿主机${WORK_HOME}/data/logs目录
+VOLUME ["${WORK_HOME}/data/logs","/data/logs"]
 
 # Add files required to build this image
 # ---------------
-ADD  $APP_PATH  $WORK_HOME
+COPY  $JAR_FILE_PATH  $WORK_HOME/app.jar
 
 # Expose default port
 # ---------------
-EXPOSE $PROT
+EXPOSE $SERVER_PORT
 
 # Container entry
-ENTRYPOINT ["sh","-c","java ${JAVA_OPTS} -jar  ${WORK_HOME}/app.jar"]
-
+ENTRYPOINT ["sh","-c","java ${JAVA_OPTS} ${JVM_PARAMS} -jar  ${WORK_HOME}/app.jar"]
