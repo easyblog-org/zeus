@@ -18,30 +18,28 @@ import java.util.Set;
 @AllArgsConstructor
 public enum IdentifierType {
 
-    UNKNOWN(0, 0, "未知", null, null),
+    UNKNOWN(0, 0, "未知"),
 
-    E_MAIL(1, 10, "邮箱账号密码登录", "emailLoginStrategy", "emailLoginStrategy"),
+    E_MAIL(1, 10, "邮箱账号密码登录"),
 
-    PHONE(2, 20, "手机号密码登录", "phoneLoginStrategy", "phoneLoginStrategy"),
+    PHONE(2, 20, "手机号密码登录"),
 
-    PHONE_CAPTCHA(2, 21, "手机号验证码登录", "phoneCaptchaLoginStrategy", "phoneCaptchaLoginStrategy"),
+    PHONE_CAPTCHA(2, 21, "手机号验证码登录"),
 
-    QQ(3, 30, "QQ登录", "qQLoginStrategy", "qQAuthServiceImpl"),
+    QQ(3, 30, "QQ登录"),
 
-    WECHAT(4, 40, "微信登录", "wechatLoginStrategy", "wechatAuthServiceImpl"),
+    WECHAT(4, 40, "微信登录"),
 
-    WEIBO(5, 50, "微博登录", "weiBoLoginStrategy", "weiBoAuthServiceImpl"),
+    WEIBO(5, 50, "微博登录"),
 
-    GITHUB(6, 60, "GitHub登录", "gitHubLoginStrategy", "gitHubAuthServiceImpl"),
+    GITHUB(6, 60, "GitHub登录"),
 
-    GITEE(7, 70, "Gitee登录", "giteeLoginStrategy", "giteeAuthServiceImpl");
+    GITEE(7, 70, "Gitee登录");
 
 
     private final Integer code;
     private final Integer subCode;
     private final String desc;
-    private final String loginStrategyName;
-    private final String authServiceName;
 
 
     /**

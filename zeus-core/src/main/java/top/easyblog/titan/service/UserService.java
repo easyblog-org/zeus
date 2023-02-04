@@ -15,8 +15,8 @@ import top.easyblog.titan.enums.Status;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.PageResponse;
-import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.access.AccessUserService;
+import top.easyblog.titan.response.ZeusResultCode;
+import top.easyblog.titan.service.atomic.AtomicUserService;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +33,7 @@ import static top.easyblog.titan.constant.LoginConstants.*;
 public class UserService {
 
     @Autowired
-    private AccessUserService userService;
+    private AtomicUserService userService;
 
     @Autowired
     private UserHeaderImgService headerImgService;
@@ -53,7 +53,7 @@ public class UserService {
     @Transaction
     public UserDetailsBean queryUserDetails(QueryUserRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
         //1.根据request查询user基本信息
         User user = userService.queryByRequest(request);
@@ -131,7 +131,7 @@ public class UserService {
     @Transaction
     public Object queryUserListPage(QueryUserListRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
         if (Objects.isNull(request.getOffset()) || Objects.isNull(request.getLimit())) {
             //不分页，默认查询1000条数据

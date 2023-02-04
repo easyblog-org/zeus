@@ -10,7 +10,7 @@ import java.util.Objects;
 
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.BaseRequest;
-import top.easyblog.titan.response.ResultCode;
+import top.easyblog.titan.response.ZeusResultCode;
 
 /**
  * @author frank.huang
@@ -34,7 +34,7 @@ public class ApiRequestAspect {
         Object[] args = pjp.getArgs();
         Arrays.stream(args).filter(arg -> Objects.nonNull(arg) && arg instanceof BaseRequest).forEach(arg -> {
             if (!((BaseRequest) arg).validate()) {
-                throw new BusinessException(ResultCode.PARAMETER_VALIDATE_FAILED, "please check parameter:" + arg);
+                throw new BusinessException(ZeusResultCode.PARAMETER_VALIDATE_FAILED, "please check parameter:" + arg);
             }
         });
         return pjp.proceed(pjp.getArgs());

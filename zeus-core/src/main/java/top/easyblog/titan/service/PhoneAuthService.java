@@ -10,8 +10,8 @@ import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.CreatePhoneAuthRequest;
 import top.easyblog.titan.request.QueryPhoneAuthRequest;
 import top.easyblog.titan.request.UpdatePhoneAuthRequest;
-import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.access.AccessPhoneAuthService;
+import top.easyblog.titan.response.ZeusResultCode;
+import top.easyblog.titan.service.atomic.AtomicPhoneAuthService;
 
 import java.util.Objects;
 
@@ -24,16 +24,16 @@ import java.util.Objects;
 public class PhoneAuthService {
 
     @Autowired
-    private AccessPhoneAuthService phoneAuthService;
+    private AtomicPhoneAuthService phoneAuthService;
 
     @Transaction
     public Long createPhoneAuth(CreatePhoneAuthRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
         PhoneAuth phoneAuth = queryPhoneAuthDetails(QueryPhoneAuthRequest.builder().phoneAreaCode(request.getPhoneAreaCode()).phone(request.getPhone()).build());
         if (Objects.nonNull(phoneAuth)) {
-            throw new BusinessException(ResultCode.PHONE_ACCOUNT_ALREADY_EXISTS);
+            throw new BusinessException(ZeusResultCode.PHONE_ACCOUNT_ALREADY_EXISTS);
         }
         return phoneAuthService.insertByRequestSelective(request);
     }
@@ -41,7 +41,7 @@ public class PhoneAuthService {
     @Transaction
     public PhoneAuth queryPhoneAuthDetails(QueryPhoneAuthRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
         return phoneAuthService.queryPhoneAuthByRequest(request);
     }
@@ -49,7 +49,7 @@ public class PhoneAuthService {
     @Transaction
     public void updatePhoneAuth(UpdatePhoneAuthRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
         PhoneAuth phoneAuth = new PhoneAuth();
         BeanUtils.copyProperties(request, phoneAuth);

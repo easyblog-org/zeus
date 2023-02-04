@@ -7,7 +7,7 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 import top.easyblog.titan.enums.LoginStatus;
-import top.easyblog.titan.service.access.AccessSignInLogService;
+import top.easyblog.titan.service.atomic.AtomicSignInLogService;
 
 /**
  * @author: frank.huang
@@ -18,7 +18,7 @@ import top.easyblog.titan.service.access.AccessSignInLogService;
 public class UserLoginTokenExpireListener extends AbstractRedisKeyExpireListener {
 
     @Autowired
-    private AccessSignInLogService signInLogService;
+    private AtomicSignInLogService signInLogService;
 
     private final static String LISTEN_KEY = "user:token";
 
