@@ -22,6 +22,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 public class Application {
 
     public static void main(String[] args) {
+        System.setProperty("nacos.logging.default.config.enabled","false");
         SpringApplication.run(Application.class,args);
     }
 

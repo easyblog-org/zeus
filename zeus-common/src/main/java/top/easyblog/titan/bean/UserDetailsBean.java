@@ -19,10 +19,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDetailsBean {
+
     /**
-     * 用户ID
+     * 用户id
      */
     private Long id;
+    /**
+     * 用户Code
+     */
+    private String code;
     /**
      * 用户昵称
      */
@@ -34,12 +39,12 @@ public class UserDetailsBean {
     /**
      * 用户当前有效头像
      */
-    private UserHeaderImgBean currUserHeaderImg;
+    private UserHeaderImgBean userCurrentImages;
 
     /**
      * 用户历史所有头像
      */
-    private List<UserHeaderImgBean> userHeaderImg;
+    private List<UserHeaderImgBean> userHistoryImages;
 
     /**
      * 当前账户
@@ -67,6 +72,14 @@ public class UserDetailsBean {
      * 用户账号状态，和account状态关联
      */
     private Integer active;
+    /**
+     * 角色
+     */
+    private List<RolesBean> roles;
+    /**
+     * 是否是新注册用户
+     */
+    private Boolean isNewUser;
     /**
      * 用户注册时间
      */

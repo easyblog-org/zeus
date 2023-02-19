@@ -22,7 +22,7 @@ import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.feign.config.http.encoder.CamelToUnderscoreEncoder;
 import top.easyblog.titan.feign.internal.FeignLogger;
 import top.easyblog.titan.feign.internal.OkHttpClientFactory;
-import top.easyblog.titan.response.ResultCode;
+import top.easyblog.titan.response.ZeusResultCode;
 
 import java.util.concurrent.TimeUnit;
 
@@ -81,7 +81,7 @@ public class FeignConfig {
     @Bean
     public ErrorDecoder error() {
         return (method, response) -> {
-            throw new BusinessException(ResultCode.REMOTE_INVOKE_FAIL, response.reason());
+            throw new BusinessException(ZeusResultCode.REMOTE_INVOKE_FAILED, response.reason());
         };
     }
 

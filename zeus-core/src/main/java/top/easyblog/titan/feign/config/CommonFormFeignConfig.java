@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.feign.config.http.converter.FormHttpMessageConverter;
-import top.easyblog.titan.response.ResultCode;
+import top.easyblog.titan.response.ZeusResultCode;
 import top.easyblog.titan.util.JsonUtils;
 
 /**
@@ -50,7 +50,7 @@ public class CommonFormFeignConfig extends FeignConfig {
     @Bean
     public ErrorDecoder error() {
         return (s, response) -> {
-            throw new BusinessException(ResultCode.REMOTE_INVOKE_FAIL, "远程调用失败");
+            throw new BusinessException(ZeusResultCode.REMOTE_INVOKE_FAILED, "远程调用失败");
         };
     }
 

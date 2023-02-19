@@ -3,7 +3,7 @@ package top.easyblog.titan.feign.client;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
-import top.easyblog.titan.bean.auth.GitHubAuthBean;
+import top.easyblog.titan.feign.client.dto.GitHubAuthDTO;
 import top.easyblog.titan.feign.config.CommonFeignConfig;
 import top.easyblog.titan.feign.internal.Verify;
 
@@ -21,7 +21,7 @@ public interface GitHubOpenApiClient extends Verify {
      * @return
      */
     @GetMapping(value = "/user")
-    GitHubAuthBean getGithubUserInfo(@RequestHeader(name = "Authorization") String token);
+    GitHubAuthDTO getGithubUserInfo(@RequestHeader(name = "Authorization") String token);
 
 
 }

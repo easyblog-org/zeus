@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.response.BaseResponse;
-import top.easyblog.titan.response.ResultCode;
+import top.easyblog.titan.response.ZeusResultCode;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class GlobalConsumeExceptionHandler {
     @ExceptionHandler(Exception.class)
     public BaseResponse<Object> handleException(Exception e) {
         e.printStackTrace();
-        return BaseResponse.fail(ResultCode.INTERNAL_ERROR.getCode(), e.getMessage());
+        return BaseResponse.fail(ZeusResultCode.INTERNAL_ERROR.getCode(), e.getMessage());
     }
 
     /**
@@ -44,7 +44,7 @@ public class GlobalConsumeExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public BaseResponse<Object> handleRuntimeException(RuntimeException e) {
         e.printStackTrace();
-        return BaseResponse.fail(ResultCode.INTERNAL_ERROR.getCode(), e.getMessage());
+        return BaseResponse.fail(ZeusResultCode.INTERNAL_ERROR.getCode(), e.getMessage());
     }
 
     /**
@@ -68,7 +68,7 @@ public class GlobalConsumeExceptionHandler {
      */
     @ExceptionHandler(DataAccessException.class)
     public BaseResponse<Object> handleDataBaseException(DataAccessException e) {
-        return BaseResponse.fail(ResultCode.DATA_ACCESS_FAIL.getCode(), e.getCause().toString());
+        return BaseResponse.fail(ZeusResultCode.DATA_ACCESS_FAIL.getCode(), e.getCause().toString());
     }
 
     /**
@@ -79,7 +79,7 @@ public class GlobalConsumeExceptionHandler {
     @ExceptionHandler(BindException.class)
     public BaseResponse<Object> handBindingException(BindException e) {
         List<ObjectError> allErrors = e.getAllErrors();
-        return BaseResponse.fail(ResultCode.PARAMTER_NOT_VALID.getCode(), buildValidErrorsMsg(allErrors));
+        return BaseResponse.fail(ZeusResultCode.PARAMTER_NOT_VALID.getCode(), buildValidErrorsMsg(allErrors));
     }
 
     /**
@@ -91,7 +91,7 @@ public class GlobalConsumeExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public BaseResponse<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         List<ObjectError> allErrors = e.getBindingResult().getAllErrors();
-        return BaseResponse.fail(ResultCode.PARAMTER_NOT_VALID.getCode(), buildValidErrorsMsg(allErrors));
+        return BaseResponse.fail(ZeusResultCode.PARAMTER_NOT_VALID.getCode(), buildValidErrorsMsg(allErrors));
     }
 
     /**

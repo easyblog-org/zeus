@@ -2,7 +2,7 @@ package top.easyblog.titan.feign.internal;
 
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import top.easyblog.titan.response.ResultCode;
+import top.easyblog.titan.response.ZeusResultCode;
 
 /**
  * @author: frank.huang
@@ -20,7 +20,7 @@ public class BaseClientResponse<T> implements Response<T>{
 
     @Override
     public boolean isSuccess() {
-        return StringUtils.equalsIgnoreCase(code, ResultCode.SUCCESS.getCode());
+        return StringUtils.equalsIgnoreCase(code, ZeusResultCode.SUCCESS.getCode());
     }
 
     @Override

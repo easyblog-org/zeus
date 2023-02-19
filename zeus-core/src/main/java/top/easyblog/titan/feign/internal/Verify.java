@@ -1,7 +1,7 @@
 package top.easyblog.titan.feign.internal;
 
 import top.easyblog.titan.exception.BusinessException;
-import top.easyblog.titan.response.ResultCode;
+import top.easyblog.titan.response.ZeusResultCode;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -21,13 +21,13 @@ public interface Verify {
      */
     default <T> T request(Supplier<Response<T>> request) {
         Response<T> response = request.get();
-        this.throwIfFail(response, ResultCode.REMOTE_INVOKE_FAIL);
+        this.throwIfFail(response, ZeusResultCode.REMOTE_INVOKE_FAILED);
         return response.data();
     }
 
-    default <T> void throwIfFail(Response<T> response, ResultCode resultCode) {
+    default <T> void throwIfFail(Response<T> response, ZeusResultCode zeusResultCode) {
         if (Objects.isNull(response) || !response.isSuccess()) {
-            throw new BusinessException(resultCode, response.message());
+            throw new BusinessException(zeusResultCode, response.message());
         }
     }
 

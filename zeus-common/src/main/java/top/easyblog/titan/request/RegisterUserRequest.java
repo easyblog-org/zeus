@@ -20,6 +20,10 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class RegisterUserRequest {
     /**
+     * 昵称
+     */
+    private String nickname;
+    /**
      * 账号类型
      */
     @NotNull(message = "Required parameter `identifier_type` is not present")

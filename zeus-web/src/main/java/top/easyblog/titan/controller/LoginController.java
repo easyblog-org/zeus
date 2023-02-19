@@ -8,8 +8,8 @@ import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.LogoutRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
-import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.oauth.ILoginService;
+import top.easyblog.titan.response.ZeusResultCode;
+import top.easyblog.titan.service.ILoginService;
 
 import javax.validation.Valid;
 
@@ -20,17 +20,29 @@ import javax.validation.Valid;
  * @date 2022/01/29 15:44
  */
 @RestController
-@RequestMapping("/v1/in/auth")
+@RequestMapping("/v1/auth")
 public class LoginController {
 
     @Autowired
     private ILoginService loginService;
 
+    /**
+     * 生成6位验证码（纯数字）
+     *
+     * @return
+     */
+    @ResponseWrapper
+    @GetMapping("/captcha-code")
+    public void sendCaptchaCode(@RequestParam("identifier_type") Integer identifierType,
+                                  @RequestParam("identifier") String identifier) {
+        loginService.sendCaptchaCode(identifierType, identifier);
+    }
+
     @ResponseWrapper
     @PostMapping("/login")
     public Object login(@RequestBody @Valid LoginRequest request) {
         if (IdentifierType.THIRD_IDENTITY_TYPE.contains(IdentifierType.subCodeOf(request.getIdentifierType()))) {
-            throw new BusinessException(ResultCode.INVALID_IDENTITY_TYPE);
+            throw new BusinessException(ZeusResultCode.INVALID_IDENTITY_TYPE);
         }
         return loginService.login(request);
     }
@@ -51,7 +63,7 @@ public class LoginController {
     @PostMapping("/register")
     public Object register(@RequestBody @Valid RegisterUserRequest request) {
         if (IdentifierType.THIRD_IDENTITY_TYPE.contains(IdentifierType.subCodeOf(request.getIdentifierType()))) {
-            throw new BusinessException(ResultCode.INVALID_IDENTITY_TYPE);
+            throw new BusinessException(ZeusResultCode.INVALID_IDENTITY_TYPE);
         }
         return loginService.register(request);
     }

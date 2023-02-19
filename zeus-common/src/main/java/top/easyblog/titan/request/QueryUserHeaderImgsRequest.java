@@ -19,8 +19,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class QueryUserHeaderImgsRequest extends PageRequest {
     private Long id;
-    private List<Long> ids;
     private Long userId;
     private List<Long> userIds;
+    private List<Long> ids;
     private Integer status;
 }

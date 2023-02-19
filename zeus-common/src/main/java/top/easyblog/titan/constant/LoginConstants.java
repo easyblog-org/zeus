@@ -10,6 +10,7 @@ import java.util.Set;
  */
 public final class LoginConstants {
 
+    //====================================Redis======================================
     /**
      * 用户登录 token 最大过期时间: 15天
      */
@@ -21,6 +22,13 @@ public final class LoginConstants {
 
     public final static String USER_INFO_PREFIX = "user:token:%s";
 
+    // 手机验证码key
+    public static final String PHONE_LOGIN_CAPTCHA_CODE = "zeus:phone_captcha_code:%s";
+
+    // 手机验证码有效时间(分钟)
+    public static final long PHONE_LOGIN_CAPTCHA_CODE_EXPIRE = 5;
+
+    //====================================Business======================================
     /**
      * 密码最小长度
      */
@@ -49,8 +57,16 @@ public final class LoginConstants {
      * 查询用户登录情况section
      */
     public static final String QUERY_SIGN_LOG = "sign_log";
+    /**
+     * 查询用户登录情况section
+     */
+    public static final String QUERY_ROLE = "role";
 
 
     public static final String COMMON_GRANT_TYPE = "authorization_code";
 
+    /**
+     * 验证码默认长度
+     */
+    public static final int DEFAULT_CAPTCHA_CODE_LENGTH = 6;
 }

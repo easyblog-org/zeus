@@ -14,8 +14,8 @@ import top.easyblog.titan.request.QueryPhoneAreaCodeListRequest;
 import top.easyblog.titan.request.QueryPhoneAreaCodeRequest;
 import top.easyblog.titan.request.UpdatePhoneAreaCodeRequest;
 import top.easyblog.titan.response.PageResponse;
-import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.data.AccessPhoneAreaCodeService;
+import top.easyblog.titan.response.ZeusResultCode;
+import top.easyblog.titan.service.atomic.AtomicPhoneAreaCodeService;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,27 +31,27 @@ import java.util.stream.Collectors;
 public class PhoneAreaCodeService {
 
     @Autowired
-    private AccessPhoneAreaCodeService accessPhoneAreaCodeService;
+    private AtomicPhoneAreaCodeService atomicPhoneAreaCodeService;
 
     @Transaction
     public void createPhoneAreaCode(CreatePhoneAreaCodeRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
         PhoneAreaCodeBean phoneAreaCodeBean = queryPhoneAreaCodeDetails(QueryPhoneAreaCodeRequest.builder()
                 .crownCode(request.getCrownCode()).countryCode(request.getCountryCode()).build());
         if (Objects.nonNull(phoneAreaCodeBean)) {
-            throw new BusinessException(ResultCode.PHONE_AREA_CODE_ALREADY_EXISTS);
+            throw new BusinessException(ZeusResultCode.PHONE_AREA_CODE_ALREADY_EXISTS);
         }
-        accessPhoneAreaCodeService.insertPhoneAreaCodeByRequest(request);
+        atomicPhoneAreaCodeService.insertPhoneAreaCodeByRequest(request);
     }
 
     @Transaction
     public PhoneAreaCodeBean queryPhoneAreaCodeDetails(QueryPhoneAreaCodeRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        PhoneAreaCode phoneAreaCode = accessPhoneAreaCodeService.queryPhoneAreaCodeByRequest(request);
+        PhoneAreaCode phoneAreaCode = atomicPhoneAreaCodeService.queryPhoneAreaCodeByRequest(request);
         if (Objects.isNull(phoneAreaCode)) {
             return null;
         }
@@ -63,7 +63,7 @@ public class PhoneAreaCodeService {
     @Transaction
     public Object queryPhoneAreaCodePage(QueryPhoneAreaCodeListRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
 
         if (Objects.isNull(request.getOffset()) || Objects.isNull(request.getLimit())) {
@@ -75,17 +75,17 @@ public class PhoneAreaCodeService {
         //分页
         PageResponse<PhoneAreaCodeBean> response = new PageResponse<>(request.getLimit(), request.getOffset(),
                 0L, Collections.emptyList());
-        long count = accessPhoneAreaCodeService.countByRequest(request);
+        long count = atomicPhoneAreaCodeService.countByRequest(request);
         if (count == 0) {
             return response;
         }
         response.setTotal(count);
-        response.setData(buildPhoneAreaCodeBeanList(request));
+        response.setList(buildPhoneAreaCodeBeanList(request));
         return response;
     }
 
     private List<PhoneAreaCodeBean> buildPhoneAreaCodeBeanList(QueryPhoneAreaCodeListRequest request) {
-        return accessPhoneAreaCodeService.queryPhoneAreaCodeListByRequest(request).stream().map(phoneAreaCode -> {
+        return atomicPhoneAreaCodeService.queryPhoneAreaCodeListByRequest(request).stream().map(phoneAreaCode -> {
             PhoneAreaCodeBean phoneAreaCodeBean = new PhoneAreaCodeBean();
             BeanUtils.copyProperties(phoneAreaCode, phoneAreaCodeBean);
             return phoneAreaCodeBean;
@@ -95,11 +95,11 @@ public class PhoneAreaCodeService {
     @Transaction
     public void updatePhoneAreaCode(UpdatePhoneAreaCodeRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
 
         PhoneAreaCode phoneAreaCode = new PhoneAreaCode();
         BeanUtils.copyProperties(request, phoneAreaCode);
-        accessPhoneAreaCodeService.updatePhoneAreaCodeByRequest(phoneAreaCode);
+        atomicPhoneAreaCodeService.updatePhoneAreaCodeByRequest(phoneAreaCode);
     }
 }

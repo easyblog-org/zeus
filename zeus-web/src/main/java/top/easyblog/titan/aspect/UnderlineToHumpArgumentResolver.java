@@ -11,9 +11,12 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import top.easyblog.titan.annotation.RequestParamAlias;
 
-import java.util.Iterator;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author: frank.huang
@@ -34,9 +37,9 @@ public class UnderlineToHumpArgumentResolver extends AbstractCustomizeArgumentRe
     @Override
     public Object resolveArgument(@NotNull MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer,
                                   NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
-        Object org = handleParameterNames(methodParameter, nativeWebRequest);
-        valid(methodParameter, modelAndViewContainer, nativeWebRequest, webDataBinderFactory, org);
-        return org;
+        Object obj = handleParameterNames(methodParameter, nativeWebRequest);
+        valid(methodParameter, modelAndViewContainer, nativeWebRequest, webDataBinderFactory, obj);
+        return obj;
     }
 
     /**
@@ -51,10 +54,12 @@ public class UnderlineToHumpArgumentResolver extends AbstractCustomizeArgumentRe
         BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
         Iterator<String> paramNames = webRequest.getParameterNames();
         while (paramNames.hasNext()) {
-            String paramName = paramNames.next();
-            Object o = webRequest.getParameter(paramName);
-            log.info("Handle request param underline to camel==>"+paramName + "=" + o);
-            wrapper.setPropertyValue(underLineToCamel(paramName), o);
+            String param = paramNames.next();
+            if (wrapper.isWritableProperty(param)) {
+                Object value = webRequest.getParameter(param);
+                log.debug("Handle request param underline to camel ==> {}={}", param, value);
+                wrapper.setPropertyValue(underLineToCamel(param), value);
+            }
         }
         return obj;
     }

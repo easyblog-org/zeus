@@ -12,8 +12,8 @@ import top.easyblog.titan.request.QuerySignInLogListRequest;
 import top.easyblog.titan.request.QuerySignInLogRequest;
 import top.easyblog.titan.request.UpdateSignInLogRequest;
 import top.easyblog.titan.response.PageResponse;
-import top.easyblog.titan.response.ResultCode;
-import top.easyblog.titan.service.data.AccessSignInLogService;
+import top.easyblog.titan.response.ZeusResultCode;
+import top.easyblog.titan.service.atomic.AtomicSignInLogService;
 
 import java.util.Collections;
 import java.util.Objects;
@@ -27,14 +27,14 @@ import java.util.stream.Collectors;
 public class UserSignInLogService {
 
     @Autowired
-    private AccessSignInLogService accessSignInLogService;
+    private AtomicSignInLogService atomicSignInLogService;
 
     @Transaction
     public SignInLogBean createSignInLog(CreateSignInLogRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        SignInLog signInLog = accessSignInLogService.insertSignInLogByRequest(request);
+        SignInLog signInLog = atomicSignInLogService.insertSignInLogByRequest(request);
         SignInLogBean signInLogBean = new SignInLogBean();
         BeanUtils.copyProperties(signInLog, signInLogBean);
         return signInLogBean;
@@ -43,9 +43,9 @@ public class UserSignInLogService {
     @Transaction
     public SignInLogBean querySignInLogDetails(QuerySignInLogRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        SignInLog signInLog = accessSignInLogService.querySignLogByRequest(request);
+        SignInLog signInLog = atomicSignInLogService.querySignLogByRequest(request);
         if (Objects.isNull(signInLog)) {
             return null;
         }
@@ -59,12 +59,12 @@ public class UserSignInLogService {
     public PageResponse<SignInLogBean> querySignInLogList(QuerySignInLogListRequest request) {
         PageResponse<SignInLogBean> response = new PageResponse<>(request.getLimit(), request.getOffset(),
                 0L, Collections.emptyList());
-        long count = accessSignInLogService.countByRequest(request);
+        long count = atomicSignInLogService.countByRequest(request);
         if (count == 0) {
             return response;
         }
         response.setTotal(count);
-        response.setData(accessSignInLogService.querySignInLogListByRequest(request).stream().map(signInLog -> {
+        response.setList(atomicSignInLogService.querySignInLogListByRequest(request).stream().map(signInLog -> {
             SignInLogBean signInLogBean = new SignInLogBean();
             BeanUtils.copyProperties(signInLog, signInLogBean);
             return signInLogBean;
@@ -76,9 +76,9 @@ public class UserSignInLogService {
     @Transaction
     public void updateSignLog(UpdateSignInLogRequest request) {
         if (Objects.isNull(request)) {
-            throw new BusinessException(ResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
+            throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
-        accessSignInLogService.updateSignInLogByPrimarySelective(request);
+        atomicSignInLogService.updateSignInLogByPrimarySelective(request);
     }
 
 }
