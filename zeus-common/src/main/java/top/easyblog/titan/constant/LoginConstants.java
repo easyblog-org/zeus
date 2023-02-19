@@ -57,6 +57,10 @@ public final class LoginConstants {
      * 查询用户登录情况section
      */
     public static final String QUERY_SIGN_LOG = "sign_log";
+    /**
+     * 查询用户登录情况section
+     */
+    public static final String QUERY_ROLE = "role";
 
 
     public static final String COMMON_GRANT_TYPE = "authorization_code";

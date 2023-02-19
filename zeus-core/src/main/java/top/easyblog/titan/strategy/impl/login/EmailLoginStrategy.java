@@ -1,5 +1,6 @@
 package top.easyblog.titan.strategy.impl.login;
 
+import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import top.easyblog.titan.annotation.Transaction;
@@ -17,6 +18,8 @@ import top.easyblog.titan.service.AccountService;
 import top.easyblog.titan.service.RandomNicknameService;
 import top.easyblog.titan.service.UserHeaderImgService;
 import top.easyblog.titan.service.UserService;
+import top.easyblog.titan.service.atomic.AtomicRolesService;
+import top.easyblog.titan.service.atomic.AtomicUserRolesService;
 import top.easyblog.titan.util.RegexUtils;
 
 import java.util.Objects;
@@ -30,9 +33,13 @@ import java.util.Objects;
 @Component
 public class EmailLoginStrategy extends AbstractLoginStrategy {
 
-
-    public EmailLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService, UserHeaderImgService headerImgService) {
-        super(accountService, userService, randomNicknameService, headerImgService);
+    public EmailLoginStrategy(AccountService accountService,
+                              UserService userService,
+                              RandomNicknameService randomNicknameService,
+                              UserHeaderImgService headerImgService,
+                              AtomicUserRolesService atomicUserRolesService,
+                              AtomicRolesService atomicRolesService) {
+        super(accountService, userService, randomNicknameService, headerImgService, atomicUserRolesService,atomicRolesService);
     }
 
 

@@ -1,21 +1,23 @@
 package top.easyblog.titan.service;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.easyblog.titan.annotation.Transaction;
-import top.easyblog.titan.bean.AccountBean;
-import top.easyblog.titan.bean.SignInLogBean;
-import top.easyblog.titan.bean.UserDetailsBean;
-import top.easyblog.titan.bean.UserHeaderImgBean;
+import top.easyblog.titan.bean.*;
 import top.easyblog.titan.constant.Constants;
+import top.easyblog.titan.dao.auto.model.Roles;
 import top.easyblog.titan.dao.auto.model.User;
+import top.easyblog.titan.dao.auto.model.UserRoles;
 import top.easyblog.titan.enums.Status;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ZeusResultCode;
+import top.easyblog.titan.service.atomic.AtomicRolesService;
+import top.easyblog.titan.service.atomic.AtomicUserRolesService;
 import top.easyblog.titan.service.atomic.AtomicUserService;
 
 import java.util.Collections;
@@ -33,7 +35,7 @@ import static top.easyblog.titan.constant.LoginConstants.*;
 public class UserService {
 
     @Autowired
-    private AtomicUserService userService;
+    private AtomicUserService atomicUserService;
 
     @Autowired
     private UserHeaderImgService headerImgService;
@@ -43,6 +45,12 @@ public class UserService {
 
     @Autowired
     private UserSignInLogService userSignInLogService;
+
+    @Autowired
+    private AtomicUserRolesService atomicUserRolesService;
+
+    @Autowired
+    private RolesService rolesService;
 
     /**
      * 查询用户详情
@@ -56,14 +64,23 @@ public class UserService {
             throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
         //1.根据request查询user基本信息
-        User user = userService.queryByRequest(request);
+        User user = atomicUserService.queryByRequest(request);
+        if (Objects.isNull(user)) {
+            return null;
+        }
+        UserDetailsBean userDetailsBean = buildUserDetailsBean(user);
+        //查询其他选项参数
+        fillSection(request.getSections(), userDetailsBean);
+        return userDetailsBean;
+    }
+
+    private UserDetailsBean buildUserDetailsBean(User user) {
         if (Objects.isNull(user)) {
             return null;
         }
         UserDetailsBean userDetailsBean = new UserDetailsBean();
         BeanUtils.copyProperties(user, userDetailsBean);
-        //查询其他选项参数
-        fillSection(request.getSections(), userDetailsBean);
+        userDetailsBean.setIsNewUser(Boolean.FALSE);
         return userDetailsBean;
     }
 
@@ -109,6 +126,18 @@ public class UserService {
             PageResponse<SignInLogBean> signInLogBeanPageResponse = userSignInLogService.querySignInLogList(querySignInLogListRequest);
             userDetailsBean.setSignInLogs(signInLogBeanPageResponse.getList());
         }
+        if (section.contains(QUERY_ROLE)) {
+            List<UserRoles> userRoles = atomicUserRolesService.queryList(QueryUserRolesListRequest.builder()
+                    .userIds(Collections.singletonList(userDetailsBean.getId().intValue()))
+                    .enabled(Boolean.TRUE)
+                    .build());
+            if (CollectionUtils.isNotEmpty(userRoles)) {
+                List<Long> roleIds = userRoles.stream().map(item -> item.getRoleId().longValue()).collect(Collectors.toList());
+                PageResponse<RolesBean> rolesBeanPageResponse = rolesService.queryRolesList(QueryRolesListRequest.builder()
+                        .ids(roleIds).build());
+                userDetailsBean.setRoles(rolesBeanPageResponse.getList());
+            }
+        }
     }
 
     /**
@@ -116,10 +145,17 @@ public class UserService {
      *
      * @param request
      */
-    public void updateUser(UpdateUserRequest request) {
-        User user = new User();
-        BeanUtils.copyProperties(request, user);
-        userService.updateUserByPrimaryKey(user);
+    public void updateUser(String code, UpdateUserRequest request) {
+        User user = atomicUserService.queryByRequest(QueryUserRequest.builder()
+                .code(code)
+                .build());
+        if (Objects.isNull(user)) {
+            throw new BusinessException(ZeusResultCode.USER_NOT_FOUND);
+        }
+        User newUser = new User();
+        newUser.setId(user.getId());
+        BeanUtils.copyProperties(request, newUser);
+        atomicUserService.updateUserByPrimaryKey(newUser);
     }
 
     /**
@@ -143,7 +179,7 @@ public class UserService {
         }
         PageResponse<UserDetailsBean> response = new PageResponse<>(request.getLimit(), request.getOffset(),
                 0L, Collections.emptyList());
-        long count = userService.countByRequest(request);
+        long count = atomicUserService.countByRequest(request);
         if (count == 0) {
             return response;
         }
@@ -153,7 +189,7 @@ public class UserService {
     }
 
     private List<UserDetailsBean> buildUserDetailsBeanList(QueryUserListRequest request) {
-        return userService.queryUserListByRequest(request).stream().map(user -> {
+        return atomicUserService.queryUserListByRequest(request).stream().map(user -> {
             UserDetailsBean userDetailsBean = new UserDetailsBean();
             BeanUtils.copyProperties(user, userDetailsBean);
             fillSection(request.getSections(), userDetailsBean);
@@ -167,8 +203,17 @@ public class UserService {
      *
      * @param request
      */
-    public User createUser(CreateUserRequest request) {
-        return userService.insertSelective(request);
+    public UserDetailsBean createUser(CreateUserRequest request) {
+        User user = atomicUserService.queryByRequest(QueryUserRequest.builder()
+                .nickName(request.getNickName()).build());
+        if (Objects.nonNull(user)) {
+            // nickname 不能重复，如果重复返回已经存在的用户
+            return buildUserDetailsBean(user);
+        }
+        User newUser = atomicUserService.insertSelective(request);
+        UserDetailsBean userDetailsBean = buildUserDetailsBean(newUser);
+        Objects.requireNonNull(userDetailsBean).setIsNewUser(Boolean.TRUE);
+        return userDetailsBean;
     }
 
 

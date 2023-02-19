@@ -73,6 +73,14 @@ public class UserDetailsBean {
      */
     private Integer active;
     /**
+     * 角色
+     */
+    private List<RolesBean> roles;
+    /**
+     * 是否是新注册用户
+     */
+    private Boolean isNewUser;
+    /**
      * 用户注册时间
      */
     private Date createTime;

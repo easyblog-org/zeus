@@ -1,6 +1,7 @@
 package top.easyblog.titan.service.atomic;
 
 import com.google.common.collect.Iterables;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -12,6 +13,7 @@ import top.easyblog.titan.dao.auto.model.UserExample;
 import top.easyblog.titan.request.CreateUserRequest;
 import top.easyblog.titan.request.QueryUserListRequest;
 import top.easyblog.titan.request.QueryUserRequest;
+import top.easyblog.titan.util.JsonUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.Objects;
  * @author frank.huang
  * @date 2022/01/29 16:10
  */
+@Slf4j
 @Service
 public class AtomicUserService {
 
@@ -33,6 +36,7 @@ public class AtomicUserService {
         request.setUpdateTime(new Date());
         BeanUtils.copyProperties(request, user);
         userMapper.insertSelective(user);
+        log.info("[DB]Insert new user sucessfully!Details==>{}",JsonUtils.toJSONString(user));
         return user;
     }
 
@@ -42,6 +46,9 @@ public class AtomicUserService {
         UserExample.Criteria criteria = userExample.createCriteria();
         if (Objects.nonNull(request.getId())) {
             criteria.andIdEqualTo(request.getId());
+        }
+        if (StringUtils.isNotBlank(request.getCode())) {
+            criteria.andCodeEqualTo(request.getCode());
         }
         if (StringUtils.isNotBlank(request.getNickName())) {
             criteria.andNickNameEqualTo(request.getNickName());
@@ -77,6 +84,7 @@ public class AtomicUserService {
     public void updateUserByPrimaryKey(User user) {
         user.setUpdateTime(new Date());
         userMapper.updateByPrimaryKey(user);
+        log.info("[DB]Update user by ok successfully!Details==>{}", JsonUtils.toJSONString(user));
     }
 
     public long countByRequest(QueryUserListRequest request) {

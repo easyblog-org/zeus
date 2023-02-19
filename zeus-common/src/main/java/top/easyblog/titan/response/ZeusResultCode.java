@@ -67,6 +67,9 @@ public enum ZeusResultCode {
     SEND_CAPTCHA_FAILED,   // 发送验证码失败
     INCORRECT_OR_EXPIRE_CAPTCHA,    //不正确或已过期的验证码
 
+    DB_OPERATE_RECORD_NOT_ALLOW_NULL, // 数据库操作对象不能为空
+    ROLE_EXISTS,  //角色已经存在
+    ROLE_NOT_FOUND,  //角色未找到
     ;
 
 

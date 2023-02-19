@@ -3,12 +3,15 @@ package top.easyblog.titan.strategy.impl.login;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.constant.LoginConstants;
+import top.easyblog.titan.dao.auto.model.Roles;
 import top.easyblog.titan.dao.auto.model.User;
+import top.easyblog.titan.dao.auto.model.UserRoles;
 import top.easyblog.titan.enums.AccountStatus;
 import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.enums.Status;
@@ -19,11 +22,14 @@ import top.easyblog.titan.service.AccountService;
 import top.easyblog.titan.service.RandomNicknameService;
 import top.easyblog.titan.service.UserHeaderImgService;
 import top.easyblog.titan.service.UserService;
+import top.easyblog.titan.service.atomic.AtomicRolesService;
+import top.easyblog.titan.service.atomic.AtomicUserRolesService;
 import top.easyblog.titan.strategy.ILoginStrategy;
 import top.easyblog.titan.util.EncryptUtils;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author: frank.huang
@@ -33,6 +39,12 @@ import java.util.Optional;
 @AllArgsConstructor
 public abstract class AbstractLoginStrategy implements ILoginStrategy {
 
+    //最小密码复杂度
+    public static final Integer MIX_PASSWORD_COMPLEXITY = 6;
+
+    // 默认用户角色
+    public static final String DEFAULT_USER_ROLE_NAME = "NORMAL";
+
     protected AccountService accountService;
 
     protected UserService userService;
@@ -41,8 +53,9 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
 
     protected UserHeaderImgService headerImgService;
 
-    //最小密码复杂度
-    public static Integer MIX_PASSWORD_COMPLEXITY = 3;
+    private AtomicUserRolesService atomicUserRolesService;
+
+    private AtomicRolesService atomicRolesService;
 
 
     /**
@@ -105,8 +118,9 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
     @Transaction
     public UserDetailsBean processRegister(RegisterUserRequest request) {
         //3.创建User
-        User newUser = userService.createUser(CreateUserRequest.builder()
-                .nickName(randomNicknameService.getRandomNickname()).active(AccountStatus.PRE_ACTIVE.getCode()).build());
+        String nickname = StringUtils.isNotBlank(request.getNickname()) ? request.getNickname() : randomNicknameService.getRandomNickname();
+        UserDetailsBean newUser = userService.createUser(CreateUserRequest.builder()
+                .nickName(nickname).active(AccountStatus.PRE_ACTIVE.getCode()).build());
 
         CreateUserHeaderImgRequest headerImg = request.getHeaderImg();
         headerImgService.createUserHeaderImg(CreateUserHeaderImgRequest.builder()
@@ -125,8 +139,30 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
                 .createDirect(Boolean.TRUE)
                 .build());
 
+        createUserRole(newUser);
         return userService.queryUserDetails(QueryUserRequest.builder()
                 .id(newUser.getId()).sections(LoginConstants.QUERY_ACCOUNTS).build());
+    }
+
+    private void createUserRole(UserDetailsBean newUser) {
+        Roles roles = atomicRolesService.queryDetails(QueryRolesDetailsRequest.builder()
+                .name(DEFAULT_USER_ROLE_NAME).build());
+        if (Objects.isNull(roles)) {
+            throw new BusinessException(ZeusResultCode.ROLE_NOT_FOUND);
+        }
+
+        UserRoles userRoles = atomicUserRolesService.queryDetails(QueryUserRolesDetailsRequest.builder()
+                .roleId(roles.getId().intValue()).userId(newUser.getId().intValue()).enabled(Boolean.TRUE)
+                .build());
+        if (Objects.nonNull(userRoles)) {
+            log.info("Already exists user-role mapping:[uid={},roleId={}]", userRoles.getUserId(), userRoles.getRoleId());
+            return;
+        }
+        UserRoles newUserRoles = new UserRoles();
+        newUserRoles.setRoleId(roles.getId().intValue());
+        newUserRoles.setUserId(newUser.getId().intValue());
+        newUserRoles.setEnabled(Boolean.TRUE);
+        atomicUserRolesService.insertOne(newUserRoles);
     }
 
     /**

@@ -30,11 +30,10 @@ public class UserController {
     }
 
     @ResponseWrapper
-    @PutMapping("/{user_id}")
-    public void update(@PathVariable("user_id") Long userId,
+    @PutMapping("/{code}")
+    public void update(@PathVariable("code") String code,
                        @RequestBody @Valid UpdateUserRequest request) {
-        request.setId(userId);
-        userService.updateUser(request);
+        userService.updateUser(code,request);
     }
 
     @ResponseWrapper

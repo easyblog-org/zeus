@@ -7,9 +7,9 @@ public class Roles {
 
     private String code;
 
-    private Short name;
+    private String name;
 
-    private String desc;
+    private String description;
 
     private Boolean enabled;
 
@@ -33,20 +33,20 @@ public class Roles {
         this.code = code == null ? null : code.trim();
     }
 
-    public Short getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(Short name) {
-        this.name = name;
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc == null ? null : desc.trim();
+    public void setDescription(String description) {
+        this.description = description == null ? null : description.trim();
     }
 
     public Boolean getEnabled() {

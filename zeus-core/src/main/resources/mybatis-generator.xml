@@ -61,9 +61,5 @@
             <property name="useActualColumnNames" value="false"/>
             <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>
-        <table tableName="user_roles">
-            <property name="useActualColumnNames" value="false"/>
-            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
-        </table>
     </context>
 </generatorConfiguration>

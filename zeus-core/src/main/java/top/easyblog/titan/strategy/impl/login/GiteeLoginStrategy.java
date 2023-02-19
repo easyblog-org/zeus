@@ -20,6 +20,8 @@ import top.easyblog.titan.service.RandomNicknameService;
 import top.easyblog.titan.service.UserHeaderImgService;
 import top.easyblog.titan.service.UserService;
 import top.easyblog.titan.service.ILoginService;
+import top.easyblog.titan.service.atomic.AtomicRolesService;
+import top.easyblog.titan.service.atomic.AtomicUserRolesService;
 
 import java.util.Objects;
 
@@ -36,8 +38,13 @@ public class GiteeLoginStrategy extends AbstractLoginStrategy {
     @Autowired
     private ILoginService loginService;
 
-    public GiteeLoginStrategy(AccountService accountService, UserService userService, RandomNicknameService randomNicknameService, UserHeaderImgService headerImgService) {
-        super(accountService, userService, randomNicknameService, headerImgService);
+    public GiteeLoginStrategy(AccountService accountService,
+                               UserService userService,
+                               RandomNicknameService randomNicknameService,
+                               UserHeaderImgService headerImgService,
+                               AtomicUserRolesService atomicUserRolesService,
+                              AtomicRolesService atomicRolesService) {
+        super(accountService, userService, randomNicknameService, headerImgService, atomicUserRolesService,atomicRolesService);
     }
 
     @Override

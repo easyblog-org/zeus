@@ -33,11 +33,11 @@ public class RolesSqlProvider {
         }
         
         if (record.getName() != null) {
-            sql.VALUES("name", "#{name,jdbcType=SMALLINT}");
+            sql.VALUES("name", "#{name,jdbcType=VARCHAR}");
         }
         
-        if (record.getDesc() != null) {
-            sql.VALUES("desc", "#{desc,jdbcType=VARCHAR}");
+        if (record.getDescription() != null) {
+            sql.VALUES("description", "#{description,jdbcType=VARCHAR}");
         }
         
         if (record.getEnabled() != null) {
@@ -64,7 +64,7 @@ public class RolesSqlProvider {
         }
         sql.SELECT("code");
         sql.SELECT("name");
-        sql.SELECT("desc");
+        sql.SELECT("description");
         sql.SELECT("enabled");
         sql.SELECT("create_time");
         sql.SELECT("update_time");
@@ -101,11 +101,11 @@ public class RolesSqlProvider {
         }
         
         if (record.getName() != null) {
-            sql.SET("name = #{record.name,jdbcType=SMALLINT}");
+            sql.SET("name = #{record.name,jdbcType=VARCHAR}");
         }
         
-        if (record.getDesc() != null) {
-            sql.SET("desc = #{record.desc,jdbcType=VARCHAR}");
+        if (record.getDescription() != null) {
+            sql.SET("description = #{record.description,jdbcType=VARCHAR}");
         }
         
         if (record.getEnabled() != null) {
@@ -130,8 +130,8 @@ public class RolesSqlProvider {
         
         sql.SET("id = #{record.id,jdbcType=BIGINT}");
         sql.SET("code = #{record.code,jdbcType=VARCHAR}");
-        sql.SET("name = #{record.name,jdbcType=SMALLINT}");
-        sql.SET("desc = #{record.desc,jdbcType=VARCHAR}");
+        sql.SET("name = #{record.name,jdbcType=VARCHAR}");
+        sql.SET("description = #{record.description,jdbcType=VARCHAR}");
         sql.SET("enabled = #{record.enabled,jdbcType=BIT}");
         sql.SET("create_time = #{record.createTime,jdbcType=TIMESTAMP}");
         sql.SET("update_time = #{record.updateTime,jdbcType=TIMESTAMP}");
@@ -150,11 +150,11 @@ public class RolesSqlProvider {
         }
         
         if (record.getName() != null) {
-            sql.SET("name = #{name,jdbcType=SMALLINT}");
+            sql.SET("name = #{name,jdbcType=VARCHAR}");
         }
         
-        if (record.getDesc() != null) {
-            sql.SET("desc = #{desc,jdbcType=VARCHAR}");
+        if (record.getDescription() != null) {
+            sql.SET("description = #{description,jdbcType=VARCHAR}");
         }
         
         if (record.getEnabled() != null) {
