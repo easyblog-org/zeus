@@ -37,6 +37,6 @@ public class PageResponse<T> {
     /**
      * 分页数据
      */
-    private List<T> data;
+    private List<T> list;
 
 }

@@ -1,13 +1,12 @@
 package top.easyblog.titan.dao.auto.mapper;
 
-import org.apache.ibatis.jdbc.SQL;
-import top.easyblog.titan.dao.auto.model.User;
-import top.easyblog.titan.dao.auto.model.UserExample;
-import top.easyblog.titan.dao.auto.model.UserExample.Criteria;
-import top.easyblog.titan.dao.auto.model.UserExample.Criterion;
-
 import java.util.List;
 import java.util.Map;
+import org.apache.ibatis.jdbc.SQL;
+import top.easyblog.titan.dao.auto.model.User;
+import top.easyblog.titan.dao.auto.model.UserExample.Criteria;
+import top.easyblog.titan.dao.auto.model.UserExample.Criterion;
+import top.easyblog.titan.dao.auto.model.UserExample;
 
 public class UserSqlProvider {
 
@@ -29,8 +28,8 @@ public class UserSqlProvider {
         SQL sql = new SQL();
         sql.INSERT_INTO("user");
         
-        if (record.getId() != null) {
-            sql.VALUES("id", "#{id,jdbcType=BIGINT}");
+        if (record.getCode() != null) {
+            sql.VALUES("code", "#{code,jdbcType=VARCHAR}");
         }
         
         if (record.getNickName() != null) {
@@ -39,6 +38,10 @@ public class UserSqlProvider {
         
         if (record.getIntegration() != null) {
             sql.VALUES("integration", "#{integration,jdbcType=INTEGER}");
+        }
+        
+        if (record.getHeaderImgId() != null) {
+            sql.VALUES("header_img_id", "#{headerImgId,jdbcType=INTEGER}");
         }
         
         if (record.getLevel() != null) {
@@ -71,6 +74,7 @@ public class UserSqlProvider {
         } else {
             sql.SELECT("id");
         }
+        sql.SELECT("code");
         sql.SELECT("nick_name");
         sql.SELECT("integration");
         sql.SELECT("header_img_id");
@@ -81,7 +85,7 @@ public class UserSqlProvider {
         sql.SELECT("update_time");
         sql.FROM("user");
         applyWhere(sql, example, false);
-
+        
         if (example != null && example.getOrderByClause() != null) {
             sql.ORDER_BY(example.getOrderByClause());
         }
@@ -107,12 +111,20 @@ public class UserSqlProvider {
             sql.SET("id = #{record.id,jdbcType=BIGINT}");
         }
         
+        if (record.getCode() != null) {
+            sql.SET("code = #{record.code,jdbcType=VARCHAR}");
+        }
+        
         if (record.getNickName() != null) {
             sql.SET("nick_name = #{record.nickName,jdbcType=VARCHAR}");
         }
         
         if (record.getIntegration() != null) {
             sql.SET("integration = #{record.integration,jdbcType=INTEGER}");
+        }
+        
+        if (record.getHeaderImgId() != null) {
+            sql.SET("header_img_id = #{record.headerImgId,jdbcType=INTEGER}");
         }
         
         if (record.getLevel() != null) {
@@ -144,8 +156,10 @@ public class UserSqlProvider {
         sql.UPDATE("user");
         
         sql.SET("id = #{record.id,jdbcType=BIGINT}");
+        sql.SET("code = #{record.code,jdbcType=VARCHAR}");
         sql.SET("nick_name = #{record.nickName,jdbcType=VARCHAR}");
         sql.SET("integration = #{record.integration,jdbcType=INTEGER}");
+        sql.SET("header_img_id = #{record.headerImgId,jdbcType=INTEGER}");
         sql.SET("level = #{record.level,jdbcType=INTEGER}");
         sql.SET("visit = #{record.visit,jdbcType=INTEGER}");
         sql.SET("active = #{record.active,jdbcType=INTEGER}");
@@ -154,6 +168,51 @@ public class UserSqlProvider {
         
         UserExample example = (UserExample) parameter.get("example");
         applyWhere(sql, example, true);
+        return sql.toString();
+    }
+
+    public String updateByPrimaryKeySelective(User record) {
+        SQL sql = new SQL();
+        sql.UPDATE("user");
+        
+        if (record.getCode() != null) {
+            sql.SET("code = #{code,jdbcType=VARCHAR}");
+        }
+        
+        if (record.getNickName() != null) {
+            sql.SET("nick_name = #{nickName,jdbcType=VARCHAR}");
+        }
+        
+        if (record.getIntegration() != null) {
+            sql.SET("integration = #{integration,jdbcType=INTEGER}");
+        }
+        
+        if (record.getHeaderImgId() != null) {
+            sql.SET("header_img_id = #{headerImgId,jdbcType=INTEGER}");
+        }
+        
+        if (record.getLevel() != null) {
+            sql.SET("level = #{level,jdbcType=INTEGER}");
+        }
+        
+        if (record.getVisit() != null) {
+            sql.SET("visit = #{visit,jdbcType=INTEGER}");
+        }
+        
+        if (record.getActive() != null) {
+            sql.SET("active = #{active,jdbcType=INTEGER}");
+        }
+        
+        if (record.getCreateTime() != null) {
+            sql.SET("create_time = #{createTime,jdbcType=TIMESTAMP}");
+        }
+        
+        if (record.getUpdateTime() != null) {
+            sql.SET("update_time = #{updateTime,jdbcType=TIMESTAMP}");
+        }
+        
+        sql.WHERE("id = #{id,jdbcType=BIGINT}");
+        
         return sql.toString();
     }
 

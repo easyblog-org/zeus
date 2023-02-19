@@ -63,7 +63,7 @@ public class UserService {
         UserDetailsBean userDetailsBean = new UserDetailsBean();
         BeanUtils.copyProperties(user, userDetailsBean);
         //查询其他选项参数
-        setSection(request.getSections(), userDetailsBean);
+        fillSection(request.getSections(), userDetailsBean);
         return userDetailsBean;
     }
 
@@ -73,14 +73,14 @@ public class UserService {
      * @param section
      * @param userDetailsBean
      */
-    private void setSection(String section, UserDetailsBean userDetailsBean) {
+    private void fillSection(String section, UserDetailsBean userDetailsBean) {
         if (StringUtils.isBlank(section)) {
             return;
         }
         if (section.contains(QUERY_HEADER_IMG) || section.contains(QUERY_CURRENT_HEADER_IMG)) {
             QueryUserHeaderImgsRequest queryUserHeaderImgsRequest = QueryUserHeaderImgsRequest.builder()
                     .userId(userDetailsBean.getId()).status(Status.ENABLE.getCode()).build();
-            List<UserHeaderImgBean> userHeaderImgBeans = headerImgService.buildUserHeaderImgBeans(queryUserHeaderImgsRequest);
+            List<UserHeaderImgBean> userHeaderImgBeans = headerImgService.queryUserHeaderImgBeans(queryUserHeaderImgsRequest);
             if (section.equals(QUERY_HEADER_IMG)) {
                 userDetailsBean.setUserHeaderImg(userHeaderImgBeans);
             } else {
@@ -107,7 +107,7 @@ public class UserService {
             querySignInLogListRequest.setOffset(Constants.DEFAULT_OFFSET);
             querySignInLogListRequest.setLimit(Constants.DEFAULT_LIMIT);
             PageResponse<SignInLogBean> signInLogBeanPageResponse = userSignInLogService.querySignInLogList(querySignInLogListRequest);
-            userDetailsBean.setSignInLogs(signInLogBeanPageResponse.getData());
+            userDetailsBean.setSignInLogs(signInLogBeanPageResponse.getList());
         }
     }
 
@@ -129,7 +129,7 @@ public class UserService {
      * @return
      */
     @Transaction
-    public Object queryUserListPage(QueryUserListRequest request) {
+    public PageResponse<UserDetailsBean> queryUserListPage(QueryUserListRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
         }
@@ -137,7 +137,9 @@ public class UserService {
             //不分页，默认查询1000条数据
             request.setOffset(Constants.DEFAULT_OFFSET);
             request.setLimit(Objects.isNull(request.getLimit()) ? Constants.DEFAULT_LIMIT : request.getLimit());
-            return buildUserDetailsBeanList(request);
+            List<UserDetailsBean> userDetailsBeans = buildUserDetailsBeanList(request);
+            return new PageResponse<>(request.getLimit(), request.getOffset(),
+                    (long) userDetailsBeans.size(), userDetailsBeans);
         }
         PageResponse<UserDetailsBean> response = new PageResponse<>(request.getLimit(), request.getOffset(),
                 0L, Collections.emptyList());
@@ -146,7 +148,7 @@ public class UserService {
             return response;
         }
         response.setTotal(count);
-        response.setData(buildUserDetailsBeanList(request));
+        response.setList(buildUserDetailsBeanList(request));
         return response;
     }
 
@@ -154,7 +156,7 @@ public class UserService {
         return userService.queryUserListByRequest(request).stream().map(user -> {
             UserDetailsBean userDetailsBean = new UserDetailsBean();
             BeanUtils.copyProperties(user, userDetailsBean);
-            setSection(request.getSections(), userDetailsBean);
+            fillSection(request.getSections(), userDetailsBean);
             return userDetailsBean;
         }).collect(Collectors.toList());
     }

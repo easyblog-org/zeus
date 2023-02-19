@@ -62,8 +62,8 @@ public class AtomicUserService {
         if (Objects.nonNull(request.getStatus())) {
             criteria.andActiveEqualTo(request.getStatus());
         }
-        if (CollectionUtils.isNotEmpty(request.getIds())) {
-            criteria.andIdIn(request.getIds());
+        if (CollectionUtils.isNotEmpty(request.getCodes())) {
+            criteria.andCodeIn(request.getCodes());
         }
         if (Objects.nonNull(request.getLimit())) {
             example.setLimit(request.getLimit());

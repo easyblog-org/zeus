@@ -1,6 +1,7 @@
 package top.easyblog.titan.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -9,8 +10,10 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import top.easyblog.titan.aspect.UnderlineToHumpArgumentResolver;
+import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.feign.config.http.converter.CustomGsonHttpMessageConverter;
 import top.easyblog.titan.handler.LogInterceptor;
+import top.easyblog.titan.response.ZeusResultCode;
 
 import java.util.List;
 
@@ -44,10 +47,15 @@ public class WebAppConfigurer implements WebMvcConfigurer {
         argumentResolvers.add(new UnderlineToHumpArgumentResolver());
     }
 
-
     @Bean
     public GsonHttpMessageConverter customConverters() {
         return new CustomGsonHttpMessageConverter();
     }
 
+    @Bean
+    public ErrorViewResolver errorViewResolver() {
+        return (request, status, model) -> {
+            throw new BusinessException(ZeusResultCode.FAIL);
+        };
+    }
 }

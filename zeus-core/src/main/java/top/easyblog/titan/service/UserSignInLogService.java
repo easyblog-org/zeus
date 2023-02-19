@@ -64,7 +64,7 @@ public class UserSignInLogService {
             return response;
         }
         response.setTotal(count);
-        response.setData(atomicSignInLogService.querySignInLogListByRequest(request).stream().map(signInLog -> {
+        response.setList(atomicSignInLogService.querySignInLogListByRequest(request).stream().map(signInLog -> {
             SignInLogBean signInLogBean = new SignInLogBean();
             BeanUtils.copyProperties(signInLog, signInLogBean);
             return signInLogBean;

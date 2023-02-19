@@ -1,9 +1,7 @@
 package top.easyblog.titan.request;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * @author: frank.huang
@@ -11,7 +9,5 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class NoticeSendRequest {
 }

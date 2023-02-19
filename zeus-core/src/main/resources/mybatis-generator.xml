@@ -3,7 +3,9 @@
 
 <generatorConfiguration>
     <!--mysql 连接数据库jar 这里选择自己本地位置-->
+<!--
     <classPathEntry location="D:\apache-maven-3.8.3\repository\mysql\mysql-connector-java\8.0.27\mysql-connector-java-8.0.27.jar" />
+-->
     <context id="testTables" targetRuntime="MyBatis3">
         <commentGenerator>
             <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
@@ -11,9 +13,9 @@
         </commentGenerator>
         <!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://47.99.161.205:3306/easyblog-dev?useSSL=false"
-                        userId="root"
-                        password="95162437hx$">
+                        connectionURL="jdbc:mysql://124.221.78.126:3306/zeus_dev?useSSL=false"
+                        userId="zeus_dev_rw"
+                        password="5TykjGsjuqQ">
         </jdbcConnection>
         <!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer，为 true时把JDBC DECIMAL 和
            NUMERIC 类型解析为java.math.BigDecimal -->
@@ -55,27 +57,11 @@
 
         <!--请根据自己数据库对应的表名进行配置修改，这里仅供参考-->
         <!--生成对应表及类名-->
-        <table tableName="account">
-            <property name="useActualColumnNames" value="false"/>
-            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
-        </table>
-        <table tableName="phone_area_code">
-            <property name="useActualColumnNames" value="false"/>
-            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
-        </table>
-        <table tableName="phone_auth">
-            <property name="useActualColumnNames" value="false"/>
-            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
-        </table>
-        <table tableName="sign_in_log">
+        <table tableName="user_header_img">
             <property name="useActualColumnNames" value="false"/>
             <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>
         <table tableName="user">
-            <property name="useActualColumnNames" value="false"/>
-            <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
-        </table>
-        <table tableName="user_header_img">
             <property name="useActualColumnNames" value="false"/>
             <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>

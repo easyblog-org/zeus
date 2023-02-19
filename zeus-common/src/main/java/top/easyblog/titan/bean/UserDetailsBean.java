@@ -19,10 +19,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDetailsBean {
+
     /**
-     * 用户ID
+     * 用户id
      */
     private Long id;
+    /**
+     * 用户Code
+     */
+    private Long code;
     /**
      * 用户昵称
      */

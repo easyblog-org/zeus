@@ -80,7 +80,7 @@ public class PhoneAreaCodeService {
             return response;
         }
         response.setTotal(count);
-        response.setData(buildPhoneAreaCodeBeanList(request));
+        response.setList(buildPhoneAreaCodeBeanList(request));
         return response;
     }
 

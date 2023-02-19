@@ -1,8 +1,6 @@
 package top.easyblog.titan.request;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.util.List;
 
@@ -12,10 +10,12 @@ import java.util.List;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class QueryUserListRequest extends PageRequest {
 
-    private List<Long> ids;
+    private List<String> codes;
 
     private Integer status;
 

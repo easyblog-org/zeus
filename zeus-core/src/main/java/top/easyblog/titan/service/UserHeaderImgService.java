@@ -93,7 +93,7 @@ public class UserHeaderImgService {
             //不分页，默认查询1000条数据
             request.setOffset(Constants.DEFAULT_OFFSET);
             request.setLimit(Objects.isNull(request.getLimit()) ? Constants.DEFAULT_LIMIT : request.getLimit());
-            return buildUserHeaderImgBeans(request);
+            return queryUserHeaderImgBeans(request);
         }
         PageResponse<UserHeaderImgBean> response = new PageResponse<>(request.getLimit(), request.getOffset(),
                 0L, Collections.emptyList());
@@ -102,12 +102,12 @@ public class UserHeaderImgService {
             return response;
         }
         response.setTotal(count);
-        response.setData(buildUserHeaderImgBeans(request));
+        response.setList(queryUserHeaderImgBeans(request));
         return response;
     }
 
 
-    public List<UserHeaderImgBean> buildUserHeaderImgBeans(QueryUserHeaderImgsRequest request) {
+    public List<UserHeaderImgBean> queryUserHeaderImgBeans(QueryUserHeaderImgsRequest request) {
         return headerImgService.queryHeaderImgListByRequest(request).stream().map(header -> {
             UserHeaderImgBean userHeaderImgBean = new UserHeaderImgBean();
             BeanUtils.copyProperties(header, userHeaderImgBean);

@@ -39,7 +39,7 @@ public class UserController {
 
     @ResponseWrapper
     @GetMapping("/list")
-    public Object queryList(@Valid @RequestParamAlias QueryUserListRequest request) {
+    public Object queryList(@RequestParamAlias QueryUserListRequest request) {
         return userService.queryUserListPage(request);
     }
 

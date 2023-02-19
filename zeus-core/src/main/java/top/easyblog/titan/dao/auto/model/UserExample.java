@@ -15,10 +15,6 @@ public class UserExample {
 
     private Integer offset;
 
-    public UserExample() {
-        oredCriteria = new ArrayList<Criteria>();
-    }
-
     public void setLimit(Integer limit) {
         this.limit = limit;
     }
@@ -33,6 +29,10 @@ public class UserExample {
 
     public Integer getOffset() {
         return offset;
+    }
+
+    public UserExample() {
+        oredCriteria = new ArrayList<Criteria>();
     }
 
     public void setOrderByClause(String orderByClause) {
@@ -185,6 +185,76 @@ public class UserExample {
             return (Criteria) this;
         }
 
+        public Criteria andCodeIsNull() {
+            addCriterion("code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeIsNotNull() {
+            addCriterion("code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeEqualTo(String value) {
+            addCriterion("code =", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeNotEqualTo(String value) {
+            addCriterion("code <>", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeGreaterThan(String value) {
+            addCriterion("code >", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("code >=", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeLessThan(String value) {
+            addCriterion("code <", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeLessThanOrEqualTo(String value) {
+            addCriterion("code <=", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeLike(String value) {
+            addCriterion("code like", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeNotLike(String value) {
+            addCriterion("code not like", value, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeIn(List<String> values) {
+            addCriterion("code in", values, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeNotIn(List<String> values) {
+            addCriterion("code not in", values, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeBetween(String value1, String value2) {
+            addCriterion("code between", value1, value2, "code");
+            return (Criteria) this;
+        }
+
+        public Criteria andCodeNotBetween(String value1, String value2) {
+            addCriterion("code not between", value1, value2, "code");
+            return (Criteria) this;
+        }
+
         public Criteria andNickNameIsNull() {
             addCriterion("nick_name is null");
             return (Criteria) this;
@@ -312,6 +382,66 @@ public class UserExample {
 
         public Criteria andIntegrationNotBetween(Integer value1, Integer value2) {
             addCriterion("integration not between", value1, value2, "integration");
+            return (Criteria) this;
+        }
+
+        public Criteria andHeaderImgIdIsNull() {
+            addCriterion("header_img_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHeaderImgIdIsNotNull() {
+            addCriterion("header_img_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHeaderImgIdEqualTo(Integer value) {
+            addCriterion("header_img_id =", value, "headerImgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andHeaderImgIdNotEqualTo(Integer value) {
+            addCriterion("header_img_id <>", value, "headerImgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andHeaderImgIdGreaterThan(Integer value) {
+            addCriterion("header_img_id >", value, "headerImgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andHeaderImgIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("header_img_id >=", value, "headerImgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andHeaderImgIdLessThan(Integer value) {
+            addCriterion("header_img_id <", value, "headerImgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andHeaderImgIdLessThanOrEqualTo(Integer value) {
+            addCriterion("header_img_id <=", value, "headerImgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andHeaderImgIdIn(List<Integer> values) {
+            addCriterion("header_img_id in", values, "headerImgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andHeaderImgIdNotIn(List<Integer> values) {
+            addCriterion("header_img_id not in", values, "headerImgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andHeaderImgIdBetween(Integer value1, Integer value2) {
+            addCriterion("header_img_id between", value1, value2, "headerImgId");
+            return (Criteria) this;
+        }
+
+        public Criteria andHeaderImgIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("header_img_id not between", value1, value2, "headerImgId");
             return (Criteria) this;
         }
 

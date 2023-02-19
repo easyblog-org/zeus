@@ -14,6 +14,7 @@ import lombok.Getter;
 public enum ZeusResultCode {
     //sever internal
     SUCCESS,
+    FAIL,
     INVALID_PARAMS,
     NOT_FOUND,
     INTERNAL_ERROR,

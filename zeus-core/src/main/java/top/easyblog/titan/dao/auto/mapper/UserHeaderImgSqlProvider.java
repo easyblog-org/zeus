@@ -1,13 +1,12 @@
 package top.easyblog.titan.dao.auto.mapper;
 
-import org.apache.ibatis.jdbc.SQL;
-import top.easyblog.titan.dao.auto.model.UserHeaderImg;
-import top.easyblog.titan.dao.auto.model.UserHeaderImgExample;
-import top.easyblog.titan.dao.auto.model.UserHeaderImgExample.Criteria;
-import top.easyblog.titan.dao.auto.model.UserHeaderImgExample.Criterion;
-
 import java.util.List;
 import java.util.Map;
+import org.apache.ibatis.jdbc.SQL;
+import top.easyblog.titan.dao.auto.model.UserHeaderImg;
+import top.easyblog.titan.dao.auto.model.UserHeaderImgExample.Criteria;
+import top.easyblog.titan.dao.auto.model.UserHeaderImgExample.Criterion;
+import top.easyblog.titan.dao.auto.model.UserHeaderImgExample;
 
 public class UserHeaderImgSqlProvider {
 
@@ -29,16 +28,8 @@ public class UserHeaderImgSqlProvider {
         SQL sql = new SQL();
         sql.INSERT_INTO("user_header_img");
         
-        if (record.getId() != null) {
-            sql.VALUES("id", "#{id,jdbcType=BIGINT}");
-        }
-        
         if (record.getHeaderImgUrl() != null) {
             sql.VALUES("header_img_url", "#{headerImgUrl,jdbcType=VARCHAR}");
-        }
-        
-        if (record.getUserId() != null) {
-            sql.VALUES("user_id", "#{userId,jdbcType=BIGINT}");
         }
         
         if (record.getStatus() != null) {
@@ -64,24 +55,25 @@ public class UserHeaderImgSqlProvider {
             sql.SELECT("id");
         }
         sql.SELECT("header_img_url");
-        sql.SELECT("user_id");
         sql.SELECT("status");
         sql.SELECT("create_time");
         sql.SELECT("update_time");
         sql.FROM("user_header_img");
         applyWhere(sql, example, false);
-
+        
         if (example != null && example.getOrderByClause() != null) {
             sql.ORDER_BY(example.getOrderByClause());
         }
 
         StringBuilder sqlBuilder = new StringBuilder(sql.toString());
-        if (example != null && example.getOffset() != null && example.getLimit() >= 0) {
-            sqlBuilder.append(" LIMIT ").append(example.getOffset());
-            if (example.getLimit() != null && example.getLimit() > 0) {
-                sqlBuilder.append(",").append(example.getLimit());
+        if (example != null && example.getLimit() != null) {
+            if (example.getOffset() != null) {
+                sqlBuilder.append(String.format(" limit %s,%s", example.getOffset(), example.getLimit()));
+            } else {
+                sqlBuilder.append(String.format(" limit %s", example.getLimit()));
             }
         }
+
         return sqlBuilder.toString();
     }
 
@@ -98,10 +90,6 @@ public class UserHeaderImgSqlProvider {
         
         if (record.getHeaderImgUrl() != null) {
             sql.SET("header_img_url = #{record.headerImgUrl,jdbcType=VARCHAR}");
-        }
-        
-        if (record.getUserId() != null) {
-            sql.SET("user_id = #{record.userId,jdbcType=BIGINT}");
         }
         
         if (record.getStatus() != null) {
@@ -126,7 +114,6 @@ public class UserHeaderImgSqlProvider {
         
         sql.SET("id = #{record.id,jdbcType=BIGINT}");
         sql.SET("header_img_url = #{record.headerImgUrl,jdbcType=VARCHAR}");
-        sql.SET("user_id = #{record.userId,jdbcType=BIGINT}");
         sql.SET("status = #{record.status,jdbcType=INTEGER}");
         sql.SET("create_time = #{record.createTime,jdbcType=TIMESTAMP}");
         sql.SET("update_time = #{record.updateTime,jdbcType=TIMESTAMP}");
@@ -142,10 +129,6 @@ public class UserHeaderImgSqlProvider {
         
         if (record.getHeaderImgUrl() != null) {
             sql.SET("header_img_url = #{headerImgUrl,jdbcType=VARCHAR}");
-        }
-        
-        if (record.getUserId() != null) {
-            sql.SET("user_id = #{userId,jdbcType=BIGINT}");
         }
         
         if (record.getStatus() != null) {
