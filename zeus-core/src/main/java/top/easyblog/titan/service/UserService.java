@@ -82,9 +82,9 @@ public class UserService {
                     .userId(userDetailsBean.getId()).status(Status.ENABLE.getCode()).build();
             List<UserHeaderImgBean> userHeaderImgBeans = headerImgService.queryUserHeaderImgBeans(queryUserHeaderImgsRequest);
             if (section.equals(QUERY_HEADER_IMG)) {
-                userDetailsBean.setUserHeaderImg(userHeaderImgBeans);
+                userDetailsBean.setUserHistoryImages(userHeaderImgBeans);
             } else {
-                userDetailsBean.setCurrUserHeaderImg(userHeaderImgBeans.stream()
+                userDetailsBean.setUserCurrentImages(userHeaderImgBeans.stream()
                         .filter(item -> Boolean.TRUE.equals(item.getIsCurrentHeader())).findAny()
                         .orElseGet(() -> {
                             UserHeaderImgBean imgBean = new UserHeaderImgBean();

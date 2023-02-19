@@ -105,3 +105,29 @@ CREATE TABLE `user_header_img`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci;
+
+CREATE TABLE `roles`
+(
+    `id`          bigint      NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `code`        varchar(6)  NOT NULL DEFAULT '' COMMENT 'code编码',
+    `name`        smallint    NOT NULL DEFAULT 3 COMMENT '角色名称：1 Admin；2 BIZ_OWNER；3 NORMAL；',
+    `desc`        varchar(10) NOT NULL DEFAULT '' COMMENT '描述',
+    `enabled`     bit         NOT NULL DEFAULT 1 COMMENT '状态：1 有效；0 无效',
+    `create_time` timestamp   NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` timestamp   NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_code` (`code`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;
+
+-- 创建用户角色关联表
+CREATE TABLE user_roles
+(
+    user_id       INT UNSIGNED NOT NULL,
+    role_id       INT UNSIGNED NOT NULL,
+    `enabled`     bit          NOT NULL DEFAULT 1 COMMENT '状态：1 有效；0 无效',
+    `create_time` timestamp    NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` timestamp    NULL     DEFAULT CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`user_id`, `role_id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;

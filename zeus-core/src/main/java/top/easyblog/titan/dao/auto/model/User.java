@@ -11,8 +11,6 @@ public class User {
 
     private Integer integration;
 
-    private Integer headerImgId;
-
     private Integer level;
 
     private Integer visit;
@@ -53,14 +51,6 @@ public class User {
 
     public void setIntegration(Integer integration) {
         this.integration = integration;
-    }
-
-    public Integer getHeaderImgId() {
-        return headerImgId;
-    }
-
-    public void setHeaderImgId(Integer headerImgId) {
-        this.headerImgId = headerImgId;
     }
 
     public Integer getLevel() {

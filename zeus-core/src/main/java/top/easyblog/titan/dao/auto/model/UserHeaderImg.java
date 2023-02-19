@@ -5,6 +5,8 @@ import java.util.Date;
 public class UserHeaderImg {
     private Long id;
 
+    private Long userId;
+
     private String headerImgUrl;
 
     private Integer status;
@@ -13,32 +15,20 @@ public class UserHeaderImg {
 
     private Date updateTime;
 
-    private Integer limit;
-
-    private Integer offset;
-
-    public void setLimit(Integer limit) {
-        this.limit = limit;
-    }
-
-    public Integer getLimit() {
-        return limit;
-    }
-
-    public void setOffset(Integer offset) {
-        this.offset = offset;
-    }
-
-    public Integer getOffset() {
-        return offset;
-    }
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getHeaderImgUrl() {

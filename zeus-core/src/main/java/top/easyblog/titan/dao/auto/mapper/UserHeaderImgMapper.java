@@ -31,10 +31,12 @@ public interface UserHeaderImgMapper {
     int deleteByPrimaryKey(Long id);
 
     @Insert({
-        "insert into user_header_img (header_img_url, status, ",
-        "create_time, update_time)",
-        "values (#{headerImgUrl,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, ",
-        "#{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})"
+        "insert into user_header_img (user_id, header_img_url, ",
+        "status, create_time, ",
+        "update_time)",
+        "values (#{userId,jdbcType=BIGINT}, #{headerImgUrl,jdbcType=VARCHAR}, ",
+        "#{status,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, ",
+        "#{updateTime,jdbcType=TIMESTAMP})"
     })
     @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="id", before=false, resultType=Long.class)
     int insert(UserHeaderImg record);
@@ -46,6 +48,7 @@ public interface UserHeaderImgMapper {
     @SelectProvider(type=UserHeaderImgSqlProvider.class, method="selectByExample")
     @Results({
         @Result(column="id", property="id", jdbcType=JdbcType.BIGINT, id=true),
+        @Result(column="user_id", property="userId", jdbcType=JdbcType.BIGINT),
         @Result(column="header_img_url", property="headerImgUrl", jdbcType=JdbcType.VARCHAR),
         @Result(column="status", property="status", jdbcType=JdbcType.INTEGER),
         @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
@@ -55,12 +58,13 @@ public interface UserHeaderImgMapper {
 
     @Select({
         "select",
-        "id, header_img_url, status, create_time, update_time",
+        "id, user_id, header_img_url, status, create_time, update_time",
         "from user_header_img",
         "where id = #{id,jdbcType=BIGINT}"
     })
     @Results({
         @Result(column="id", property="id", jdbcType=JdbcType.BIGINT, id=true),
+        @Result(column="user_id", property="userId", jdbcType=JdbcType.BIGINT),
         @Result(column="header_img_url", property="headerImgUrl", jdbcType=JdbcType.VARCHAR),
         @Result(column="status", property="status", jdbcType=JdbcType.INTEGER),
         @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
@@ -79,7 +83,8 @@ public interface UserHeaderImgMapper {
 
     @Update({
         "update user_header_img",
-        "set header_img_url = #{headerImgUrl,jdbcType=VARCHAR},",
+        "set user_id = #{userId,jdbcType=BIGINT},",
+          "header_img_url = #{headerImgUrl,jdbcType=VARCHAR},",
           "status = #{status,jdbcType=INTEGER},",
           "create_time = #{createTime,jdbcType=TIMESTAMP},",
           "update_time = #{updateTime,jdbcType=TIMESTAMP}",

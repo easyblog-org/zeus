@@ -57,11 +57,11 @@
 
         <!--请根据自己数据库对应的表名进行配置修改，这里仅供参考-->
         <!--生成对应表及类名-->
-        <table tableName="user_header_img">
+        <table tableName="roles">
             <property name="useActualColumnNames" value="false"/>
             <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>
-        <table tableName="user">
+        <table tableName="user_roles">
             <property name="useActualColumnNames" value="false"/>
             <generatedKey column="id" sqlStatement="MYSQL" identity="true"/>
         </table>

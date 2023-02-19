@@ -32,13 +32,13 @@ public interface UserMapper {
 
     @Insert({
         "insert into user (code, nick_name, ",
-        "integration, header_img_id, ",
-        "level, visit, active, ",
-        "create_time, update_time)",
+        "integration, level, ",
+        "visit, active, create_time, ",
+        "update_time)",
         "values (#{code,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR}, ",
-        "#{integration,jdbcType=INTEGER}, #{headerImgId,jdbcType=INTEGER}, ",
-        "#{level,jdbcType=INTEGER}, #{visit,jdbcType=INTEGER}, #{active,jdbcType=INTEGER}, ",
-        "#{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})"
+        "#{integration,jdbcType=INTEGER}, #{level,jdbcType=INTEGER}, ",
+        "#{visit,jdbcType=INTEGER}, #{active,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, ",
+        "#{updateTime,jdbcType=TIMESTAMP})"
     })
     @SelectKey(statement="SELECT LAST_INSERT_ID()", keyProperty="id", before=false, resultType=Long.class)
     int insert(User record);
@@ -53,7 +53,6 @@ public interface UserMapper {
         @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
         @Result(column="nick_name", property="nickName", jdbcType=JdbcType.VARCHAR),
         @Result(column="integration", property="integration", jdbcType=JdbcType.INTEGER),
-        @Result(column="header_img_id", property="headerImgId", jdbcType=JdbcType.INTEGER),
         @Result(column="level", property="level", jdbcType=JdbcType.INTEGER),
         @Result(column="visit", property="visit", jdbcType=JdbcType.INTEGER),
         @Result(column="active", property="active", jdbcType=JdbcType.INTEGER),
@@ -64,8 +63,7 @@ public interface UserMapper {
 
     @Select({
         "select",
-        "id, code, nick_name, integration, header_img_id, level, visit, active, create_time, ",
-        "update_time",
+        "id, code, nick_name, integration, level, visit, active, create_time, update_time",
         "from user",
         "where id = #{id,jdbcType=BIGINT}"
     })
@@ -74,7 +72,6 @@ public interface UserMapper {
         @Result(column="code", property="code", jdbcType=JdbcType.VARCHAR),
         @Result(column="nick_name", property="nickName", jdbcType=JdbcType.VARCHAR),
         @Result(column="integration", property="integration", jdbcType=JdbcType.INTEGER),
-        @Result(column="header_img_id", property="headerImgId", jdbcType=JdbcType.INTEGER),
         @Result(column="level", property="level", jdbcType=JdbcType.INTEGER),
         @Result(column="visit", property="visit", jdbcType=JdbcType.INTEGER),
         @Result(column="active", property="active", jdbcType=JdbcType.INTEGER),
@@ -97,7 +94,6 @@ public interface UserMapper {
         "set code = #{code,jdbcType=VARCHAR},",
           "nick_name = #{nickName,jdbcType=VARCHAR},",
           "integration = #{integration,jdbcType=INTEGER},",
-          "header_img_id = #{headerImgId,jdbcType=INTEGER},",
           "level = #{level,jdbcType=INTEGER},",
           "visit = #{visit,jdbcType=INTEGER},",
           "active = #{active,jdbcType=INTEGER},",

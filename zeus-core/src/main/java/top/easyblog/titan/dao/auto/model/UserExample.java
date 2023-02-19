@@ -385,66 +385,6 @@ public class UserExample {
             return (Criteria) this;
         }
 
-        public Criteria andHeaderImgIdIsNull() {
-            addCriterion("header_img_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andHeaderImgIdIsNotNull() {
-            addCriterion("header_img_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andHeaderImgIdEqualTo(Integer value) {
-            addCriterion("header_img_id =", value, "headerImgId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHeaderImgIdNotEqualTo(Integer value) {
-            addCriterion("header_img_id <>", value, "headerImgId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHeaderImgIdGreaterThan(Integer value) {
-            addCriterion("header_img_id >", value, "headerImgId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHeaderImgIdGreaterThanOrEqualTo(Integer value) {
-            addCriterion("header_img_id >=", value, "headerImgId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHeaderImgIdLessThan(Integer value) {
-            addCriterion("header_img_id <", value, "headerImgId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHeaderImgIdLessThanOrEqualTo(Integer value) {
-            addCriterion("header_img_id <=", value, "headerImgId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHeaderImgIdIn(List<Integer> values) {
-            addCriterion("header_img_id in", values, "headerImgId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHeaderImgIdNotIn(List<Integer> values) {
-            addCriterion("header_img_id not in", values, "headerImgId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHeaderImgIdBetween(Integer value1, Integer value2) {
-            addCriterion("header_img_id between", value1, value2, "headerImgId");
-            return (Criteria) this;
-        }
-
-        public Criteria andHeaderImgIdNotBetween(Integer value1, Integer value2) {
-            addCriterion("header_img_id not between", value1, value2, "headerImgId");
-            return (Criteria) this;
-        }
-
         public Criteria andLevelIsNull() {
             addCriterion("level is null");
             return (Criteria) this;

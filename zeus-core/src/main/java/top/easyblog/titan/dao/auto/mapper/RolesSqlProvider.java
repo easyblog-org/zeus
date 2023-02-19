@@ -3,53 +3,45 @@ package top.easyblog.titan.dao.auto.mapper;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;
-import top.easyblog.titan.dao.auto.model.User;
-import top.easyblog.titan.dao.auto.model.UserExample.Criteria;
-import top.easyblog.titan.dao.auto.model.UserExample.Criterion;
-import top.easyblog.titan.dao.auto.model.UserExample;
+import top.easyblog.titan.dao.auto.model.Roles;
+import top.easyblog.titan.dao.auto.model.RolesExample.Criteria;
+import top.easyblog.titan.dao.auto.model.RolesExample.Criterion;
+import top.easyblog.titan.dao.auto.model.RolesExample;
 
-public class UserSqlProvider {
+public class RolesSqlProvider {
 
-    public String countByExample(UserExample example) {
+    public String countByExample(RolesExample example) {
         SQL sql = new SQL();
-        sql.SELECT("count(*)").FROM("user");
+        sql.SELECT("count(*)").FROM("roles");
         applyWhere(sql, example, false);
         return sql.toString();
     }
 
-    public String deleteByExample(UserExample example) {
+    public String deleteByExample(RolesExample example) {
         SQL sql = new SQL();
-        sql.DELETE_FROM("user");
+        sql.DELETE_FROM("roles");
         applyWhere(sql, example, false);
         return sql.toString();
     }
 
-    public String insertSelective(User record) {
+    public String insertSelective(Roles record) {
         SQL sql = new SQL();
-        sql.INSERT_INTO("user");
+        sql.INSERT_INTO("roles");
         
         if (record.getCode() != null) {
             sql.VALUES("code", "#{code,jdbcType=VARCHAR}");
         }
         
-        if (record.getNickName() != null) {
-            sql.VALUES("nick_name", "#{nickName,jdbcType=VARCHAR}");
+        if (record.getName() != null) {
+            sql.VALUES("name", "#{name,jdbcType=SMALLINT}");
         }
         
-        if (record.getIntegration() != null) {
-            sql.VALUES("integration", "#{integration,jdbcType=INTEGER}");
+        if (record.getDesc() != null) {
+            sql.VALUES("desc", "#{desc,jdbcType=VARCHAR}");
         }
         
-        if (record.getLevel() != null) {
-            sql.VALUES("level", "#{level,jdbcType=INTEGER}");
-        }
-        
-        if (record.getVisit() != null) {
-            sql.VALUES("visit", "#{visit,jdbcType=INTEGER}");
-        }
-        
-        if (record.getActive() != null) {
-            sql.VALUES("active", "#{active,jdbcType=INTEGER}");
+        if (record.getEnabled() != null) {
+            sql.VALUES("enabled", "#{enabled,jdbcType=BIT}");
         }
         
         if (record.getCreateTime() != null) {
@@ -63,7 +55,7 @@ public class UserSqlProvider {
         return sql.toString();
     }
 
-    public String selectByExample(UserExample example) {
+    public String selectByExample(RolesExample example) {
         SQL sql = new SQL();
         if (example != null && example.isDistinct()) {
             sql.SELECT_DISTINCT("id");
@@ -71,14 +63,12 @@ public class UserSqlProvider {
             sql.SELECT("id");
         }
         sql.SELECT("code");
-        sql.SELECT("nick_name");
-        sql.SELECT("integration");
-        sql.SELECT("level");
-        sql.SELECT("visit");
-        sql.SELECT("active");
+        sql.SELECT("name");
+        sql.SELECT("desc");
+        sql.SELECT("enabled");
         sql.SELECT("create_time");
         sql.SELECT("update_time");
-        sql.FROM("user");
+        sql.FROM("roles");
         applyWhere(sql, example, false);
         
         if (example != null && example.getOrderByClause() != null) {
@@ -96,11 +86,11 @@ public class UserSqlProvider {
     }
 
     public String updateByExampleSelective(Map<String, Object> parameter) {
-        User record = (User) parameter.get("record");
-        UserExample example = (UserExample) parameter.get("example");
+        Roles record = (Roles) parameter.get("record");
+        RolesExample example = (RolesExample) parameter.get("example");
         
         SQL sql = new SQL();
-        sql.UPDATE("user");
+        sql.UPDATE("roles");
         
         if (record.getId() != null) {
             sql.SET("id = #{record.id,jdbcType=BIGINT}");
@@ -110,24 +100,16 @@ public class UserSqlProvider {
             sql.SET("code = #{record.code,jdbcType=VARCHAR}");
         }
         
-        if (record.getNickName() != null) {
-            sql.SET("nick_name = #{record.nickName,jdbcType=VARCHAR}");
+        if (record.getName() != null) {
+            sql.SET("name = #{record.name,jdbcType=SMALLINT}");
         }
         
-        if (record.getIntegration() != null) {
-            sql.SET("integration = #{record.integration,jdbcType=INTEGER}");
+        if (record.getDesc() != null) {
+            sql.SET("desc = #{record.desc,jdbcType=VARCHAR}");
         }
         
-        if (record.getLevel() != null) {
-            sql.SET("level = #{record.level,jdbcType=INTEGER}");
-        }
-        
-        if (record.getVisit() != null) {
-            sql.SET("visit = #{record.visit,jdbcType=INTEGER}");
-        }
-        
-        if (record.getActive() != null) {
-            sql.SET("active = #{record.active,jdbcType=INTEGER}");
+        if (record.getEnabled() != null) {
+            sql.SET("enabled = #{record.enabled,jdbcType=BIT}");
         }
         
         if (record.getCreateTime() != null) {
@@ -144,49 +126,39 @@ public class UserSqlProvider {
 
     public String updateByExample(Map<String, Object> parameter) {
         SQL sql = new SQL();
-        sql.UPDATE("user");
+        sql.UPDATE("roles");
         
         sql.SET("id = #{record.id,jdbcType=BIGINT}");
         sql.SET("code = #{record.code,jdbcType=VARCHAR}");
-        sql.SET("nick_name = #{record.nickName,jdbcType=VARCHAR}");
-        sql.SET("integration = #{record.integration,jdbcType=INTEGER}");
-        sql.SET("level = #{record.level,jdbcType=INTEGER}");
-        sql.SET("visit = #{record.visit,jdbcType=INTEGER}");
-        sql.SET("active = #{record.active,jdbcType=INTEGER}");
+        sql.SET("name = #{record.name,jdbcType=SMALLINT}");
+        sql.SET("desc = #{record.desc,jdbcType=VARCHAR}");
+        sql.SET("enabled = #{record.enabled,jdbcType=BIT}");
         sql.SET("create_time = #{record.createTime,jdbcType=TIMESTAMP}");
         sql.SET("update_time = #{record.updateTime,jdbcType=TIMESTAMP}");
         
-        UserExample example = (UserExample) parameter.get("example");
+        RolesExample example = (RolesExample) parameter.get("example");
         applyWhere(sql, example, true);
         return sql.toString();
     }
 
-    public String updateByPrimaryKeySelective(User record) {
+    public String updateByPrimaryKeySelective(Roles record) {
         SQL sql = new SQL();
-        sql.UPDATE("user");
+        sql.UPDATE("roles");
         
         if (record.getCode() != null) {
             sql.SET("code = #{code,jdbcType=VARCHAR}");
         }
         
-        if (record.getNickName() != null) {
-            sql.SET("nick_name = #{nickName,jdbcType=VARCHAR}");
+        if (record.getName() != null) {
+            sql.SET("name = #{name,jdbcType=SMALLINT}");
         }
         
-        if (record.getIntegration() != null) {
-            sql.SET("integration = #{integration,jdbcType=INTEGER}");
+        if (record.getDesc() != null) {
+            sql.SET("desc = #{desc,jdbcType=VARCHAR}");
         }
         
-        if (record.getLevel() != null) {
-            sql.SET("level = #{level,jdbcType=INTEGER}");
-        }
-        
-        if (record.getVisit() != null) {
-            sql.SET("visit = #{visit,jdbcType=INTEGER}");
-        }
-        
-        if (record.getActive() != null) {
-            sql.SET("active = #{active,jdbcType=INTEGER}");
+        if (record.getEnabled() != null) {
+            sql.SET("enabled = #{enabled,jdbcType=BIT}");
         }
         
         if (record.getCreateTime() != null) {
@@ -202,7 +174,7 @@ public class UserSqlProvider {
         return sql.toString();
     }
 
-    protected void applyWhere(SQL sql, UserExample example, boolean includeExamplePhrase) {
+    protected void applyWhere(SQL sql, RolesExample example, boolean includeExamplePhrase) {
         if (example == null) {
             return;
         }

@@ -27,7 +27,7 @@ public class UserDetailsBean {
     /**
      * 用户Code
      */
-    private Long code;
+    private String code;
     /**
      * 用户昵称
      */
@@ -39,12 +39,12 @@ public class UserDetailsBean {
     /**
      * 用户当前有效头像
      */
-    private UserHeaderImgBean currUserHeaderImg;
+    private UserHeaderImgBean userCurrentImages;
 
     /**
      * 用户历史所有头像
      */
-    private List<UserHeaderImgBean> userHeaderImg;
+    private List<UserHeaderImgBean> userHistoryImages;
 
     /**
      * 当前账户

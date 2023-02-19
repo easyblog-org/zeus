@@ -28,6 +28,10 @@ public class UserHeaderImgSqlProvider {
         SQL sql = new SQL();
         sql.INSERT_INTO("user_header_img");
         
+        if (record.getUserId() != null) {
+            sql.VALUES("user_id", "#{userId,jdbcType=BIGINT}");
+        }
+        
         if (record.getHeaderImgUrl() != null) {
             sql.VALUES("header_img_url", "#{headerImgUrl,jdbcType=VARCHAR}");
         }
@@ -54,6 +58,7 @@ public class UserHeaderImgSqlProvider {
         } else {
             sql.SELECT("id");
         }
+        sql.SELECT("user_id");
         sql.SELECT("header_img_url");
         sql.SELECT("status");
         sql.SELECT("create_time");
@@ -88,6 +93,10 @@ public class UserHeaderImgSqlProvider {
             sql.SET("id = #{record.id,jdbcType=BIGINT}");
         }
         
+        if (record.getUserId() != null) {
+            sql.SET("user_id = #{record.userId,jdbcType=BIGINT}");
+        }
+        
         if (record.getHeaderImgUrl() != null) {
             sql.SET("header_img_url = #{record.headerImgUrl,jdbcType=VARCHAR}");
         }
@@ -113,6 +122,7 @@ public class UserHeaderImgSqlProvider {
         sql.UPDATE("user_header_img");
         
         sql.SET("id = #{record.id,jdbcType=BIGINT}");
+        sql.SET("user_id = #{record.userId,jdbcType=BIGINT}");
         sql.SET("header_img_url = #{record.headerImgUrl,jdbcType=VARCHAR}");
         sql.SET("status = #{record.status,jdbcType=INTEGER}");
         sql.SET("create_time = #{record.createTime,jdbcType=TIMESTAMP}");
@@ -126,6 +136,10 @@ public class UserHeaderImgSqlProvider {
     public String updateByPrimaryKeySelective(UserHeaderImg record) {
         SQL sql = new SQL();
         sql.UPDATE("user_header_img");
+        
+        if (record.getUserId() != null) {
+            sql.SET("user_id = #{userId,jdbcType=BIGINT}");
+        }
         
         if (record.getHeaderImgUrl() != null) {
             sql.SET("header_img_url = #{headerImgUrl,jdbcType=VARCHAR}");
