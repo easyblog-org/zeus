@@ -32,8 +32,8 @@ public class AtomicUserService {
 
     public User insertSelective(CreateUserRequest request) {
         User user = new User();
-        request.setCreateTime(new Date());
-        request.setUpdateTime(new Date());
+        user.setCreateTime(new Date());
+        user.setUpdateTime(new Date());
         BeanUtils.copyProperties(request, user);
         userMapper.insertSelective(user);
         log.info("[DB]Insert new user sucessfully!Details==>{}",JsonUtils.toJSONString(user));

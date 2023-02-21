@@ -25,5 +25,5 @@ public class UpdateRolesRequest {
     /**
      * 角色描述
      */
-    private String desc;
+    private String description;
 }

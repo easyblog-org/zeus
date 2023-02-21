@@ -147,8 +147,7 @@ public class UserService {
      */
     public void updateUser(String code, UpdateUserRequest request) {
         User user = atomicUserService.queryByRequest(QueryUserRequest.builder()
-                .code(code)
-                .build());
+                .code(code).build());
         if (Objects.isNull(user)) {
             throw new BusinessException(ZeusResultCode.USER_NOT_FOUND);
         }

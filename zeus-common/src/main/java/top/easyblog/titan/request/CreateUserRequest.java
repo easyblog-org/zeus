@@ -17,6 +17,4 @@ public class CreateUserRequest {
     private Integer level;
     private Integer visit;
     private Integer active;
-    private Date createTime;
-    private Date updateTime;
 }

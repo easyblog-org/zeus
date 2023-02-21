@@ -1,7 +1,5 @@
 package top.easyblog.titan.request;
 
-import java.util.Date;
-
 import lombok.Builder;
 import lombok.Data;
 
@@ -12,8 +10,6 @@ import lombok.Data;
 @Data
 @Builder
 public class UpdateUserRequest implements BaseRequest {
-    private Long id;
-
     private String nickName;
 
     private Integer integration;
@@ -25,6 +21,4 @@ public class UpdateUserRequest implements BaseRequest {
     private Integer visit;
 
     private Integer active;
-
-    private Date updateTime;
 }

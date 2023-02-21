@@ -88,7 +88,7 @@ public class RolesService {
         Roles roles = new Roles();
         roles.setId(oldRoles.getId());
         roles.setName(request.getName());
-        roles.setDescription(request.getDesc());
+        roles.setDescription(request.getDescription());
         roles.setEnabled(request.getEnabled());
         return roles;
     }
