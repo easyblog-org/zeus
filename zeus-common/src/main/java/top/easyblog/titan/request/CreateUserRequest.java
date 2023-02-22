@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author: frank.huang
@@ -17,4 +18,5 @@ public class CreateUserRequest {
     private Integer level;
     private Integer visit;
     private Integer active;
+    private List<String> roles;
 }

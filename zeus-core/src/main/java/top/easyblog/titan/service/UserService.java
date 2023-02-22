@@ -1,5 +1,6 @@
 package top.easyblog.titan.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.*;
 import top.easyblog.titan.constant.Constants;
+import top.easyblog.titan.context.CreateOrRefreshUserRoleContext;
 import top.easyblog.titan.dao.auto.model.Roles;
 import top.easyblog.titan.dao.auto.model.User;
 import top.easyblog.titan.dao.auto.model.UserRoles;
@@ -22,7 +24,9 @@ import top.easyblog.titan.service.atomic.AtomicUserService;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static top.easyblog.titan.constant.LoginConstants.*;
@@ -31,6 +35,7 @@ import static top.easyblog.titan.constant.LoginConstants.*;
  * @author frank.huang
  * @date 2022/01/30 10:43
  */
+@Slf4j
 @Service
 public class UserService {
 
@@ -155,6 +160,9 @@ public class UserService {
         newUser.setId(user.getId());
         BeanUtils.copyProperties(request, newUser);
         atomicUserService.updateUserByPrimaryKey(newUser);
+
+        createOrRefreshUserRole(CreateOrRefreshUserRoleContext.builder()
+                .userId(user.getId()).roles(request.getRoles()).build());
     }
 
     /**
@@ -212,7 +220,46 @@ public class UserService {
         User newUser = atomicUserService.insertSelective(request);
         UserDetailsBean userDetailsBean = buildUserDetailsBean(newUser);
         Objects.requireNonNull(userDetailsBean).setIsNewUser(Boolean.TRUE);
+
+        // 创建 or 更新用户角色
+        createOrRefreshUserRole(CreateOrRefreshUserRoleContext.builder()
+                .userId(newUser.getId()).roles(request.getRoles()).build());
+
         return userDetailsBean;
+    }
+
+    private void createOrRefreshUserRole(CreateOrRefreshUserRoleContext context) {
+        List<String> roles = context.getRoles();
+        if (CollectionUtils.isEmpty(roles)) {
+            log.info("Empty role list.....ignore!");
+            return;
+        }
+
+        List<RolesBean> rolesBeans = rolesService.queryAllRolesList();
+        if (CollectionUtils.isEmpty(rolesBeans)) {
+            throw new BusinessException(ZeusResultCode.ROLE_NOT_FOUND);
+        }
+
+        Map<String, RolesBean> rolesBeanMap = rolesBeans.stream().collect(Collectors.toMap(RolesBean::getName, Function.identity(), (x, y) -> x));
+
+        // 存在 user-role 映射关系，删除老的
+        long userRoleCount = atomicUserRolesService.countByRequest(QueryUserRolesListRequest.builder()
+                .userIds(Collections.singletonList(context.getUserId().intValue())).enabled(Boolean.TRUE).build());
+        if (userRoleCount > 0) {
+            UserRoles userRoles = new UserRoles();
+            userRoles.setEnabled(Boolean.FALSE);
+            atomicUserRolesService.updateByExampleSelective(userRoles, UpdateUserRolesRequest.builder()
+                    .userId(context.getUserId().intValue()).build());
+        }
+
+        roles.forEach(roleName -> {
+            RolesBean rolesBean = rolesBeanMap.get(roleName);
+            UserRoles userRoles = new UserRoles();
+            userRoles.setRoleId(rolesBean.getId().intValue());
+            userRoles.setUserId(context.getUserId().intValue());
+            userRoles.setEnabled(Boolean.TRUE);
+            atomicUserRolesService.insertOne(userRoles);
+        });
     }
 
 

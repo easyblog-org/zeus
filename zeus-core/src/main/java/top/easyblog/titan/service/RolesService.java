@@ -62,6 +62,12 @@ public class RolesService {
         return roles;
     }
 
+    public List<RolesBean> queryAllRolesList(){
+        List<Roles> roles = atomicRolesService.queryList(QueryRolesListRequest.builder()
+                .enabled(Boolean.TRUE).build());
+        return roles.stream().map(this::buildRolesBean).collect(Collectors.toList());
+    }
+
     public PageResponse<RolesBean> queryRolesList(QueryRolesListRequest request) {
         long count = atomicRolesService.countByRequest(request);
         if (Objects.equals(count, NumberUtils.LONG_ZERO)) {

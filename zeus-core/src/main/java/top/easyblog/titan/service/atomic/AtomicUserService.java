@@ -83,7 +83,7 @@ public class AtomicUserService {
 
     public void updateUserByPrimaryKey(User user) {
         user.setUpdateTime(new Date());
-        userMapper.updateByPrimaryKey(user);
+        userMapper.updateByPrimaryKeySelective(user);
         log.info("[DB]Update user by ok successfully!Details==>{}", JsonUtils.toJSONString(user));
     }
 
