@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.dao.auto.model.Account;
+import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.CreateAccountRequest;
 import top.easyblog.titan.request.QueryAccountListRequest;
@@ -73,10 +74,32 @@ public class AccountService {
         }).collect(Collectors.toList());
     }
 
-    @Transaction
-    public void updateAccount(UpdateAccountRequest request) {
+
+    public void updateByIdentityType(Long userId, Integer identityType, UpdateAccountRequest request) {
+        if (Objects.isNull(request)) {
+            throw new BusinessException(ZeusResultCode.INVALID_PARAMS);
+        }
+
+        Account oldAccount = atomicAccountService.queryAccountByRequest(QueryAccountRequest.builder()
+                .userId(userId).identityType(identityType).build());
+        if (Objects.isNull(oldAccount)) {
+            throw new BusinessException(ZeusResultCode.USER_ACCOUNT_NOT_FOUND);
+        }
+
+        request.setId(oldAccount.getId());
         Account account = buildUpdateAccount(request);
-        atomicAccountService.updateAccountByRequest(account);
+        atomicAccountService.updateAccountByPKSelective(account);
+    }
+
+    public void updateAccount(Long accountId, UpdateAccountRequest request) {
+        Account oldAccount = atomicAccountService.queryAccountByRequest(QueryAccountRequest.builder().id(accountId).build());
+        if (Objects.isNull(oldAccount)) {
+            throw new BusinessException(ZeusResultCode.USER_ACCOUNT_NOT_FOUND);
+        }
+
+        request.setId(oldAccount.getId());
+        Account account = buildUpdateAccount(request);
+        atomicAccountService.updateAccountByPKSelective(account);
     }
 
     private Account buildUpdateAccount(UpdateAccountRequest request) {

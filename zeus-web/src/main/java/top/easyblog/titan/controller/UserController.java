@@ -31,9 +31,9 @@ public class UserController {
 
     @ResponseWrapper
     @PutMapping("/{code}")
-    public void update(@PathVariable("code") String code,
+    public Long update(@PathVariable("code") String code,
                        @RequestBody @Valid UpdateUserRequest request) {
-        userService.updateUser(code,request);
+        return userService.updateUser(code,request);
     }
 
     @ResponseWrapper

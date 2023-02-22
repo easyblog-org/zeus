@@ -150,7 +150,7 @@ public class UserService {
      *
      * @param request
      */
-    public void updateUser(String code, UpdateUserRequest request) {
+    public Long updateUser(String code, UpdateUserRequest request) {
         User user = atomicUserService.queryByRequest(QueryUserRequest.builder()
                 .code(code).build());
         if (Objects.isNull(user)) {
@@ -163,6 +163,7 @@ public class UserService {
 
         createOrRefreshUserRole(CreateOrRefreshUserRoleContext.builder()
                 .userId(user.getId()).roles(request.getRoles()).build());
+        return user.getId();
     }
 
     /**

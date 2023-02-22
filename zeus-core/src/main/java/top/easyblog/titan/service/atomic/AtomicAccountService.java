@@ -9,9 +9,11 @@ import org.springframework.stereotype.Service;
 import top.easyblog.titan.dao.auto.mapper.AccountMapper;
 import top.easyblog.titan.dao.auto.model.Account;
 import top.easyblog.titan.dao.auto.model.AccountExample;
+import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.CreateAccountRequest;
 import top.easyblog.titan.request.QueryAccountListRequest;
 import top.easyblog.titan.request.QueryAccountRequest;
+import top.easyblog.titan.response.ZeusResultCode;
 import top.easyblog.titan.util.JsonUtils;
 
 import java.util.Date;
@@ -70,7 +72,10 @@ public class AtomicAccountService {
         return accountMapper.selectByExample(example);
     }
 
-    public void updateAccountByRequest(Account account) {
+    public void updateAccountByPKSelective(Account account) {
+        if (Objects.isNull(account)) {
+            throw new BusinessException(ZeusResultCode.DB_OPERATE_RECORD_NOT_ALLOW_NULL);
+        }
         account.setUpdateTime(new Date());
         accountMapper.updateByPrimaryKeySelective(account);
         log.info("[DB] update account[id={}]:{}", account.getId(), JsonUtils.toJSONString(account));
