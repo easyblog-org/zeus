@@ -8,6 +8,7 @@ import top.easyblog.titan.request.*;
 import top.easyblog.titan.service.RolesService;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 /**
  * @author frank.huang
@@ -35,7 +36,7 @@ public class RoleController {
 
     @ResponseWrapper
     @GetMapping("/list")
-    public Object queryList(@RequestParamAlias QueryRolesListRequest request) {
+    public Object queryListPage(@RequestParamAlias QueryRolesListRequest request) {
         return userRolesService.queryRolesList(request);
     }
 
@@ -43,5 +44,11 @@ public class RoleController {
     @PostMapping
     public void create(@RequestBody @Valid CreateRolesRequest request) {
         userRolesService.create(request);
+    }
+
+    @ResponseWrapper
+    @GetMapping("/all")
+    public Object queryAllRole(){
+        return userRolesService.queryAllRolesList();
     }
 }

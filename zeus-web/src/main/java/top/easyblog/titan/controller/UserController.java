@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.easyblog.titan.annotation.RequestParamAlias;
 import top.easyblog.titan.annotation.ResponseWrapper;
+import top.easyblog.titan.bean.UserDetailsBean;
 import top.easyblog.titan.request.CreateUserRequest;
 import top.easyblog.titan.request.QueryUserListRequest;
 import top.easyblog.titan.request.QueryUserRequest;
@@ -44,7 +45,7 @@ public class UserController {
 
     @ResponseWrapper
     @PostMapping
-    public void create(@RequestBody @Valid CreateUserRequest request) {
-        userService.createUser(request);
+    public UserDetailsBean create(@RequestBody @Valid CreateUserRequest request) {
+        return userService.createUser(request);
     }
 }

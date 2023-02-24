@@ -16,8 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class QuerySignInLogListRequest extends PageRequest {
+public class QuerySignInLogListRequest {
     private Long id;
 
     private List<Long> ids;
@@ -29,4 +28,10 @@ public class QuerySignInLogListRequest extends PageRequest {
     private Integer status;
 
     private List<Integer> statuses;
+
+    @Builder.Default
+    private Integer offset = 0;
+
+    @Builder.Default
+    private Integer limit = 10;
 }

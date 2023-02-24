@@ -13,6 +13,7 @@ import top.easyblog.titan.dao.auto.model.UserExample;
 import top.easyblog.titan.request.CreateUserRequest;
 import top.easyblog.titan.request.QueryUserListRequest;
 import top.easyblog.titan.request.QueryUserRequest;
+import top.easyblog.titan.util.IdGenerator;
 import top.easyblog.titan.util.JsonUtils;
 
 import java.util.Date;
@@ -32,6 +33,7 @@ public class AtomicUserService {
 
     public User insertSelective(CreateUserRequest request) {
         User user = new User();
+        user.setCode(IdGenerator.generateCaptchaCode(6));
         user.setCreateTime(new Date());
         user.setUpdateTime(new Date());
         BeanUtils.copyProperties(request, user);

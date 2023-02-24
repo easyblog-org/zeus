@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QueryUserRolesDetailsRequest {
-    private Integer userId;
-    private Integer roleId;
+    private Long userId;
+    private Long roleId;
     @Builder.Default
     private Boolean enabled = true;
 }

@@ -2,6 +2,7 @@ package top.easyblog.titan.service.atomic;
 
 import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +67,8 @@ public class AtomicAccountService {
         if (Objects.nonNull(request.getStatus())) {
             criteria.andStatusEqualTo(request.getStatus());
         }
-        if (Objects.nonNull(request.getUserId())) {
-            criteria.andUserIdEqualTo(request.getUserId());
+        if(CollectionUtils.isNotEmpty(request.getUserIds())){
+            criteria.andUserIdIn(request.getUserIds());
         }
         return accountMapper.selectByExample(example);
     }

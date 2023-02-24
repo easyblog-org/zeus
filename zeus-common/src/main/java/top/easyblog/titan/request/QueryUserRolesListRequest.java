@@ -16,8 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QueryUserRolesListRequest {
-    private List<Integer> userIds;
-    private List<Integer> rolesIds;
+    private List<Long> userIds;
+    private List<Long> rolesIds;
     private Boolean enabled;
     @Builder.Default
     private Integer limit = 10;

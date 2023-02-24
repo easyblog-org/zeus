@@ -1,5 +1,6 @@
 package top.easyblog.titan.service;
 
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,7 @@ import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.*;
 import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.context.CreateOrRefreshUserRoleContext;
+import top.easyblog.titan.context.QueryUserSectionContext;
 import top.easyblog.titan.dao.auto.model.Roles;
 import top.easyblog.titan.dao.auto.model.User;
 import top.easyblog.titan.dao.auto.model.UserRoles;
@@ -22,10 +24,7 @@ import top.easyblog.titan.service.atomic.AtomicRolesService;
 import top.easyblog.titan.service.atomic.AtomicUserRolesService;
 import top.easyblog.titan.service.atomic.AtomicUserService;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -75,7 +74,7 @@ public class UserService {
         }
         UserDetailsBean userDetailsBean = buildUserDetailsBean(user);
         //查询其他选项参数
-        fillSection(request.getSections(), userDetailsBean);
+        fillSection(request.getSections(), Collections.singletonList(userDetailsBean));
         return userDetailsBean;
     }
 
@@ -89,60 +88,101 @@ public class UserService {
         return userDetailsBean;
     }
 
+
+    /**
+     * 查看可选值
+     *
+     * @param section
+     * @return
+     */
+    private QueryUserSectionContext queryUserSectionSections(String section, List<Long> userIds) {
+        QueryUserSectionContext context = QueryUserSectionContext.builder().build();
+        if (CollectionUtils.isEmpty(userIds)) {
+            return context;
+        }
+
+        if (section.contains(QUERY_HEADER_IMG)) {
+            QueryUserHeaderImgsRequest queryUserHeaderImgsRequest = QueryUserHeaderImgsRequest.builder()
+                    .userIds(userIds).status(Status.ENABLE.getCode()).build();
+            List<UserHeaderImgBean> userHeaderImgBeans = headerImgService.queryUserHeaderImgBeans(queryUserHeaderImgsRequest);
+            Map<Long, List<UserHeaderImgBean>> userHeaderImgBeanMap = userHeaderImgBeans.stream().filter(Objects::nonNull)
+                    .collect(Collectors.groupingBy(UserHeaderImgBean::getUserId));
+            context.setUserHistoryImagesMap(userHeaderImgBeanMap);
+        }
+        if (section.contains(QUERY_CURRENT_HEADER_IMG)) {
+            QueryUserHeaderImgsRequest queryUserHeaderImgsRequest = QueryUserHeaderImgsRequest.builder()
+                    .userIds(userIds).status(Status.ENABLE.getCode()).build();
+            List<UserHeaderImgBean> userHeaderImgBeans = headerImgService.queryUserHeaderImgBeans(queryUserHeaderImgsRequest);
+            Map<Long, UserHeaderImgBean> userHeaderImgBeanMap = userHeaderImgBeans.stream().
+                    filter(item -> Boolean.TRUE.equals(item.getIsCurrentHeader()))
+                    .collect(Collectors.toMap(UserHeaderImgBean::getUserId, Function.identity(), (x, y) -> x));
+            context.setUserCurrentImagesMap(userHeaderImgBeanMap);
+        }
+        if (section.contains(QUERY_ACCOUNTS)) {
+            QueryAccountListRequest queryAccountListRequest = QueryAccountListRequest.builder()
+                    .userIds(userIds).status(Status.ENABLE.getCode()).build();
+            List<AccountBean> accounts = accountService.queryAccountList(queryAccountListRequest);
+            Map<Long, List<AccountBean>> accountMap = accounts.stream().filter(Objects::nonNull)
+                    .collect(Collectors.groupingBy(AccountBean::getUserId));
+            context.setAccountsMap(accountMap);
+        }
+        if (section.contains(QUERY_SIGN_LOG)) {
+            QuerySignInLogListRequest querySignInLogListRequest = QuerySignInLogListRequest.builder()
+                    .userIds(userIds).status(Status.ENABLE.getCode()).offset(Constants.DEFAULT_OFFSET).limit(Constants.DEFAULT_LIMIT).build();
+            PageResponse<SignInLogBean> signInLogBeanPageResponse = userSignInLogService.querySignInLogList(querySignInLogListRequest);
+            List<SignInLogBean> signInLogBeans = signInLogBeanPageResponse.getList();
+            Map<Long, List<SignInLogBean>> signInLogBeanMap = signInLogBeans.stream().filter(Objects::nonNull)
+                    .collect(Collectors.groupingBy(SignInLogBean::getUserId));
+            context.setSignInLogsMap(signInLogBeanMap);
+        }
+        if (section.contains(QUERY_ROLE)) {
+            List<UserRoles> userRoles = atomicUserRolesService.queryList(QueryUserRolesListRequest.builder()
+                    .userIds(userIds).enabled(Boolean.TRUE).build());
+
+            if (CollectionUtils.isNotEmpty(userRoles)) {
+                Map<Long, Long> userRoleIdMap = userRoles.stream().filter(Objects::nonNull).collect(Collectors.toMap(UserRoles::getRoleId, UserRoles::getUserId, (x, y) -> x));
+                List<Long> roleIds = userRoles.stream().map(UserRoles::getRoleId).collect(Collectors.toList());
+                PageResponse<RolesBean> rolesBeanPageResponse = rolesService.queryRolesList(QueryRolesListRequest.builder()
+                        .ids(roleIds).build());
+                List<RolesBean> rolesBeans = rolesBeanPageResponse.getList();
+                Map<Long, List<RolesBean>> rolesIdMap = rolesBeans.stream().filter(Objects::nonNull).collect(Collectors.groupingBy(RolesBean::getId));
+                Map<Long, List<RolesBean>> userIdRoleMap = Maps.newHashMap();
+                userRoleIdMap.forEach((roleId, userId) -> {
+                    userIdRoleMap.putIfAbsent(userId, rolesIdMap.get(roleId));
+                });
+                context.setRolesMap(userIdRoleMap);
+            }
+        }
+
+        return context;
+    }
+
     /**
      * 设置选项
      *
      * @param section
-     * @param userDetailsBean
+     * @param userDetailsBeans
      */
-    private void fillSection(String section, UserDetailsBean userDetailsBean) {
-        if (StringUtils.isBlank(section)) {
+    private void fillSection(String section, List<UserDetailsBean> userDetailsBeans) {
+        if (StringUtils.isBlank(section) || CollectionUtils.isEmpty(userDetailsBeans)) {
+            log.info("Not found any section param or user list is empty,will not fill section");
             return;
         }
-        if (section.contains(QUERY_HEADER_IMG) || section.contains(QUERY_CURRENT_HEADER_IMG)) {
-            QueryUserHeaderImgsRequest queryUserHeaderImgsRequest = QueryUserHeaderImgsRequest.builder()
-                    .userId(userDetailsBean.getId()).status(Status.ENABLE.getCode()).build();
-            List<UserHeaderImgBean> userHeaderImgBeans = headerImgService.queryUserHeaderImgBeans(queryUserHeaderImgsRequest);
-            if (section.equals(QUERY_HEADER_IMG)) {
-                userDetailsBean.setUserHistoryImages(userHeaderImgBeans);
-            } else {
-                userDetailsBean.setUserCurrentImages(userHeaderImgBeans.stream()
-                        .filter(item -> Boolean.TRUE.equals(item.getIsCurrentHeader())).findAny()
-                        .orElseGet(() -> {
-                            UserHeaderImgBean imgBean = new UserHeaderImgBean();
-                            imgBean.setIsCurrentHeader(true);
-                            imgBean.setHeaderImgUrl(headerImgService.getDefaultUserHeaderImg());
-                            return imgBean;
-                        }));
-            }
-        }
-        if (section.contains(QUERY_ACCOUNTS)) {
-            QueryAccountListRequest queryAccountListRequest = QueryAccountListRequest.builder()
-                    .userId(userDetailsBean.getId()).status(Status.ENABLE.getCode()).build();
-            List<AccountBean> accounts = accountService.queryAccountList(queryAccountListRequest);
-            userDetailsBean.setAccounts(accounts);
-        }
-        if (section.contains(QUERY_SIGN_LOG)) {
-            QuerySignInLogListRequest querySignInLogListRequest = new QuerySignInLogListRequest();
-            querySignInLogListRequest.setUserId(userDetailsBean.getId());
-            querySignInLogListRequest.setStatus(Status.ENABLE.getCode());
-            querySignInLogListRequest.setOffset(Constants.DEFAULT_OFFSET);
-            querySignInLogListRequest.setLimit(Constants.DEFAULT_LIMIT);
-            PageResponse<SignInLogBean> signInLogBeanPageResponse = userSignInLogService.querySignInLogList(querySignInLogListRequest);
-            userDetailsBean.setSignInLogs(signInLogBeanPageResponse.getList());
-        }
-        if (section.contains(QUERY_ROLE)) {
-            List<UserRoles> userRoles = atomicUserRolesService.queryList(QueryUserRolesListRequest.builder()
-                    .userIds(Collections.singletonList(userDetailsBean.getId().intValue()))
-                    .enabled(Boolean.TRUE)
-                    .build());
-            if (CollectionUtils.isNotEmpty(userRoles)) {
-                List<Long> roleIds = userRoles.stream().map(item -> item.getRoleId().longValue()).collect(Collectors.toList());
-                PageResponse<RolesBean> rolesBeanPageResponse = rolesService.queryRolesList(QueryRolesListRequest.builder()
-                        .ids(roleIds).build());
-                userDetailsBean.setRoles(rolesBeanPageResponse.getList());
-            }
-        }
+
+        List<Long> userIds = userDetailsBeans.stream().map(UserDetailsBean::getId).collect(Collectors.toList());
+        QueryUserSectionContext context = queryUserSectionSections(section, userIds);
+        userDetailsBeans.stream().filter(Objects::nonNull).forEach(userDetailsBean -> {
+            userDetailsBean.setUserCurrentImages(getSectionOptional(context.getUserCurrentImagesMap(),userDetailsBean.getId()));
+            userDetailsBean.setUserHistoryImages(getSectionOptional(context.getUserHistoryImagesMap(),userDetailsBean.getId()));
+            userDetailsBean.setAccounts(getSectionOptional(context.getAccountsMap(),userDetailsBean.getId()));
+            userDetailsBean.setRoles(getSectionOptional(context.getRolesMap(),userDetailsBean.getId()));
+            userDetailsBean.setSignInLogs(getSectionOptional(context.getSignInLogsMap(),userDetailsBean.getId()));
+        });
+    }
+
+
+    private <T> T getSectionOptional(Map<Long, T> contextMap, Long key) {
+        return Optional.ofNullable(contextMap).map(map -> map.get(key)).orElse(null);
     }
 
     /**
@@ -197,12 +237,14 @@ public class UserService {
     }
 
     private List<UserDetailsBean> buildUserDetailsBeanList(QueryUserListRequest request) {
-        return atomicUserService.queryUserListByRequest(request).stream().map(user -> {
+        List<UserDetailsBean> userDetailsBeans = atomicUserService.queryUserListByRequest(request).stream().map(user -> {
             UserDetailsBean userDetailsBean = new UserDetailsBean();
             BeanUtils.copyProperties(user, userDetailsBean);
-            fillSection(request.getSections(), userDetailsBean);
             return userDetailsBean;
         }).collect(Collectors.toList());
+
+        fillSection(request.getSections(), userDetailsBeans);
+        return userDetailsBeans;
     }
 
 
@@ -211,6 +253,7 @@ public class UserService {
      *
      * @param request
      */
+    @Transaction
     public UserDetailsBean createUser(CreateUserRequest request) {
         User user = atomicUserService.queryByRequest(QueryUserRequest.builder()
                 .nickName(request.getNickName()).build());
@@ -241,23 +284,23 @@ public class UserService {
             throw new BusinessException(ZeusResultCode.ROLE_NOT_FOUND);
         }
 
-        Map<String, RolesBean> rolesBeanMap = rolesBeans.stream().collect(Collectors.toMap(RolesBean::getName, Function.identity(), (x, y) -> x));
+        Map<String, RolesBean> rolesBeanMap = rolesBeans.stream().collect(Collectors.toMap(RolesBean::getCode, Function.identity(), (x, y) -> x));
 
         // 存在 user-role 映射关系，删除老的
         long userRoleCount = atomicUserRolesService.countByRequest(QueryUserRolesListRequest.builder()
-                .userIds(Collections.singletonList(context.getUserId().intValue())).enabled(Boolean.TRUE).build());
+                .userIds(Collections.singletonList(context.getUserId())).enabled(Boolean.TRUE).build());
         if (userRoleCount > 0) {
             UserRoles userRoles = new UserRoles();
             userRoles.setEnabled(Boolean.FALSE);
             atomicUserRolesService.updateByExampleSelective(userRoles, UpdateUserRolesRequest.builder()
-                    .userId(context.getUserId().intValue()).build());
+                    .userId(context.getUserId()).build());
         }
 
-        roles.forEach(roleName -> {
-            RolesBean rolesBean = rolesBeanMap.get(roleName);
+        roles.forEach(roleCode -> {
+            RolesBean rolesBean = rolesBeanMap.get(roleCode);
             UserRoles userRoles = new UserRoles();
-            userRoles.setRoleId(rolesBean.getId().intValue());
-            userRoles.setUserId(context.getUserId().intValue());
+            userRoles.setRoleId(Objects.requireNonNull(rolesBean, String.format("Role %s not found", roleCode)).getId());
+            userRoles.setUserId(context.getUserId());
             userRoles.setEnabled(Boolean.TRUE);
             atomicUserRolesService.insertOne(userRoles);
         });

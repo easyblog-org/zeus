@@ -109,6 +109,7 @@ public class RolesService {
             return null;
         }
         RolesBean rolesBean = new RolesBean();
+        rolesBean.setId(roles.getId());
         rolesBean.setCode(roles.getCode());
         rolesBean.setName(roles.getName());
         rolesBean.setEnabled(roles.getEnabled());
