@@ -1,5 +1,6 @@
 package top.easyblog.titan.service;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -148,7 +149,13 @@ public class UserService {
                 Map<Long, List<RolesBean>> rolesIdMap = rolesBeans.stream().filter(Objects::nonNull).collect(Collectors.groupingBy(RolesBean::getId));
                 Map<Long, List<RolesBean>> userIdRoleMap = Maps.newHashMap();
                 userRoleIdMap.forEach((roleId, userId) -> {
-                    userIdRoleMap.putIfAbsent(userId, rolesIdMap.get(roleId));
+                    userIdRoleMap.compute(userId, (k, v) -> {
+                        if (v == null) {
+                            v = Lists.newArrayList();
+                        }
+                        v.addAll(rolesIdMap.get(roleId));
+                        return v;
+                    });
                 });
                 context.setRolesMap(userIdRoleMap);
             }
@@ -172,11 +179,11 @@ public class UserService {
         List<Long> userIds = userDetailsBeans.stream().map(UserDetailsBean::getId).collect(Collectors.toList());
         QueryUserSectionContext context = queryUserSectionSections(section, userIds);
         userDetailsBeans.stream().filter(Objects::nonNull).forEach(userDetailsBean -> {
-            userDetailsBean.setUserCurrentImages(getSectionOptional(context.getUserCurrentImagesMap(),userDetailsBean.getId()));
-            userDetailsBean.setUserHistoryImages(getSectionOptional(context.getUserHistoryImagesMap(),userDetailsBean.getId()));
-            userDetailsBean.setAccounts(getSectionOptional(context.getAccountsMap(),userDetailsBean.getId()));
-            userDetailsBean.setRoles(getSectionOptional(context.getRolesMap(),userDetailsBean.getId()));
-            userDetailsBean.setSignInLogs(getSectionOptional(context.getSignInLogsMap(),userDetailsBean.getId()));
+            userDetailsBean.setUserCurrentImages(getSectionOptional(context.getUserCurrentImagesMap(), userDetailsBean.getId()));
+            userDetailsBean.setUserHistoryImages(getSectionOptional(context.getUserHistoryImagesMap(), userDetailsBean.getId()));
+            userDetailsBean.setAccounts(getSectionOptional(context.getAccountsMap(), userDetailsBean.getId()));
+            userDetailsBean.setRoles(getSectionOptional(context.getRolesMap(), userDetailsBean.getId()));
+            userDetailsBean.setSignInLogs(getSectionOptional(context.getSignInLogsMap(), userDetailsBean.getId()));
         });
     }
 
