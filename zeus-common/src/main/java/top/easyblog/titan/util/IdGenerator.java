@@ -35,6 +35,11 @@ public class IdGenerator {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
+    public static String getUUID(int len) {
+        return UUID.randomUUID().toString().replace("-", "").substring(len);
+    }
+
+
     public static String generateCaptchaCode(int len) {
         if (len <= 0) {
             return StringUtils.EMPTY;

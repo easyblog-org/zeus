@@ -4,19 +4,20 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-
-import java.util.Arrays;
-import java.util.Objects;
-
+import org.springframework.stereotype.Component;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.BaseRequest;
 import top.easyblog.titan.response.ZeusResultCode;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * @author frank.huang
  * @date 2022/01/29 14:45
  */
 @Aspect
+@Component
 public class ApiRequestAspect {
 
     @Pointcut("execution(public * top.easyblog.titan.controller..*.*(..)) && " +

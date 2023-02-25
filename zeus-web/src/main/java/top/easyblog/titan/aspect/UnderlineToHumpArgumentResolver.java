@@ -11,14 +11,13 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import top.easyblog.titan.annotation.RequestParamAlias;
 
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.function.Function;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
+ * 请求参数下划线参数自动转驼峰参数处理器
+ *
  * @author: frank.huang
  * @date: 2022-02-12 17:10
  */
@@ -50,15 +49,16 @@ public class UnderlineToHumpArgumentResolver extends AbstractCustomizeArgumentRe
      * @return
      */
     private Object handleParameterNames(MethodParameter parameter, NativeWebRequest webRequest) {
-        Object obj = BeanUtils.instantiate(parameter.getParameterType());
+        Object obj = BeanUtils.instantiateClass(parameter.getParameterType());
         BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(obj);
         Iterator<String> paramNames = webRequest.getParameterNames();
         while (paramNames.hasNext()) {
-            String param = paramNames.next();
-            if (wrapper.isWritableProperty(param)) {
-                Object value = webRequest.getParameter(param);
-                log.debug("Handle request param underline to camel ==> {}={}", param, value);
-                wrapper.setPropertyValue(underLineToCamel(param), value);
+            String originalParam = paramNames.next();
+            String formattedParam = underLineToCamel(originalParam);
+            if (wrapper.isWritableProperty(formattedParam)) {
+                Object value = webRequest.getParameter(originalParam);
+                log.debug("Handle request param underline to camel ==> {}={}", originalParam, value);
+                wrapper.setPropertyValue(formattedParam, value);
             }
         }
         return obj;

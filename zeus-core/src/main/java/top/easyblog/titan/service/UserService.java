@@ -5,6 +5,7 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,6 +78,7 @@ public class UserService {
         return userDetailsBean;
     }
 
+
     private UserDetailsBean buildUserDetailsBean(User user) {
         if (Objects.isNull(user)) {
             return null;
@@ -119,7 +121,7 @@ public class UserService {
         }
         if (section.contains(QUERY_ACCOUNTS)) {
             QueryAccountListRequest queryAccountListRequest = QueryAccountListRequest.builder()
-                    .userIds(userIds).status(Status.ENABLE.getCode()).build();
+                    .userIds(userIds).build();
             List<AccountBean> accounts = accountService.queryAccountList(queryAccountListRequest);
             Map<Long, List<AccountBean>> accountMap = accounts.stream().filter(Objects::nonNull)
                     .collect(Collectors.groupingBy(AccountBean::getUserId));
@@ -195,6 +197,7 @@ public class UserService {
      *
      * @param request
      */
+    @Transaction
     public Long updateUser(String code, UpdateUserRequest request) {
         User user = atomicUserService.queryByRequest(QueryUserRequest.builder()
                 .code(code).build());
@@ -292,16 +295,14 @@ public class UserService {
         Map<String, RolesBean> rolesBeanMap = rolesBeans.stream().collect(Collectors.toMap(RolesBean::getCode, Function.identity(), (x, y) -> x));
 
         // 存在 user-role 映射关系，删除老的
-        long userRoleCount = atomicUserRolesService.countByRequest(QueryUserRolesListRequest.builder()
-                .userIds(Collections.singletonList(context.getUserId())).enabled(Boolean.TRUE).build());
-        if (userRoleCount > 0) {
-            UserRoles userRoles = new UserRoles();
-            userRoles.setEnabled(Boolean.FALSE);
-            atomicUserRolesService.updateByExampleSelective(userRoles, UpdateUserRolesRequest.builder()
+        long userRoleNum = atomicUserRolesService.countByRequest(QueryUserRolesListRequest.builder()
+                .userIds(Collections.singletonList(context.getUserId())).build());
+        if (userRoleNum > 0) {
+            atomicUserRolesService.deleteByExample(UpdateUserRolesRequest.builder()
                     .userId(context.getUserId()).build());
         }
 
-        roles.forEach(roleCode -> {
+        roles.stream().filter(Objects::nonNull).forEach(roleCode -> {
             RolesBean rolesBean = rolesBeanMap.get(roleCode);
             UserRoles userRoles = new UserRoles();
             userRoles.setRoleId(Objects.requireNonNull(rolesBean, String.format("Role %s not found", roleCode)).getId());

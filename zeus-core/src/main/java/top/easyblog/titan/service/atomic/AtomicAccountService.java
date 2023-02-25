@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.easyblog.titan.annotation.DBQueryParamNonNull;
 import top.easyblog.titan.dao.auto.mapper.AccountMapper;
 import top.easyblog.titan.dao.auto.model.Account;
 import top.easyblog.titan.dao.auto.model.AccountExample;
@@ -17,6 +18,7 @@ import top.easyblog.titan.request.QueryAccountRequest;
 import top.easyblog.titan.response.ZeusResultCode;
 import top.easyblog.titan.util.JsonUtils;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -40,14 +42,15 @@ public class AtomicAccountService {
         return account;
     }
 
-    public Account queryAccountByRequest(QueryAccountRequest request) {
+    @DBQueryParamNonNull
+    public Account queryAccountByRequest(@NotEmpty QueryAccountRequest request) {
         AccountExample example = new AccountExample();
         AccountExample.Criteria criteria = example.createCriteria();
         if (Objects.nonNull(request.getId())) {
             criteria.andIdEqualTo(request.getId());
         }
         if (Objects.nonNull(request.getUserId())) {
-            criteria.andUserIdEqualTo(request.getId());
+            criteria.andUserIdEqualTo(request.getUserId());
         }
         if (Objects.nonNull(request.getIdentityType())) {
             criteria.andIdentityTypeEqualTo(request.getIdentityType());
@@ -67,7 +70,7 @@ public class AtomicAccountService {
         if (Objects.nonNull(request.getStatus())) {
             criteria.andStatusEqualTo(request.getStatus());
         }
-        if(CollectionUtils.isNotEmpty(request.getUserIds())){
+        if (CollectionUtils.isNotEmpty(request.getUserIds())) {
             criteria.andUserIdIn(request.getUserIds());
         }
         return accountMapper.selectByExample(example);

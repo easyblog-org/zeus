@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.easyblog.titan.annotation.DBQueryParamNonNull;
 import top.easyblog.titan.dao.auto.mapper.UserMapper;
 import top.easyblog.titan.dao.auto.model.User;
 import top.easyblog.titan.dao.auto.model.UserExample;
@@ -16,6 +17,7 @@ import top.easyblog.titan.request.QueryUserRequest;
 import top.easyblog.titan.util.IdGenerator;
 import top.easyblog.titan.util.JsonUtils;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -33,17 +35,18 @@ public class AtomicUserService {
 
     public User insertSelective(CreateUserRequest request) {
         User user = new User();
-        user.setCode(IdGenerator.generateCaptchaCode(6));
+        user.setCode(IdGenerator.getUUID(6));
         user.setCreateTime(new Date());
         user.setUpdateTime(new Date());
         BeanUtils.copyProperties(request, user);
         userMapper.insertSelective(user);
-        log.info("[DB]Insert new user sucessfully!Details==>{}",JsonUtils.toJSONString(user));
+        log.info("[DB]Insert new user sucessfully!Details==>{}", JsonUtils.toJSONString(user));
         return user;
     }
 
 
-    public User queryByRequest(QueryUserRequest request) {
+    @DBQueryParamNonNull
+    public User queryByRequest(@NotEmpty QueryUserRequest request) {
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria = userExample.createCriteria();
         if (Objects.nonNull(request.getId())) {
@@ -86,7 +89,7 @@ public class AtomicUserService {
     public void updateUserByPrimaryKey(User user) {
         user.setUpdateTime(new Date());
         userMapper.updateByPrimaryKeySelective(user);
-        log.info("[DB]Update user by ok successfully!Details==>{}", JsonUtils.toJSONString(user));
+        log.info("[DB]Update user by primary_key[id={}] successfully!Details==>{}", user.getCode(), JsonUtils.toJSONString(user));
     }
 
     public long countByRequest(QueryUserListRequest request) {
