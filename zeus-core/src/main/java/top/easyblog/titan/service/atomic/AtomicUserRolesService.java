@@ -16,7 +16,6 @@ import top.easyblog.titan.request.UpdateUserRolesRequest;
 import top.easyblog.titan.response.ZeusResultCode;
 import top.easyblog.titan.util.JsonUtils;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -56,7 +55,7 @@ public class AtomicUserRolesService {
 
 
     @DBQueryParamNonNull
-    public UserRoles queryDetails(@NotEmpty QueryUserRolesDetailsRequest request) {
+    public UserRoles queryDetails(QueryUserRolesDetailsRequest request) {
         UserRolesExample example = new UserRolesExample();
         UserRolesExample.Criteria criteria = example.createCriteria();
         if (Objects.nonNull(request.getRoleId())) {

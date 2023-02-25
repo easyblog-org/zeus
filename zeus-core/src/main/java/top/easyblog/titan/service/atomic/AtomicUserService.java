@@ -17,7 +17,6 @@ import top.easyblog.titan.request.QueryUserRequest;
 import top.easyblog.titan.util.IdGenerator;
 import top.easyblog.titan.util.JsonUtils;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +45,7 @@ public class AtomicUserService {
 
 
     @DBQueryParamNonNull
-    public User queryByRequest(@NotEmpty QueryUserRequest request) {
+    public User queryByRequest(QueryUserRequest request) {
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria = userExample.createCriteria();
         if (Objects.nonNull(request.getId())) {

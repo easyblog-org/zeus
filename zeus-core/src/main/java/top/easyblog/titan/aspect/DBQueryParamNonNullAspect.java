@@ -8,7 +8,6 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import top.easyblog.titan.util.PropertiesUtils;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,9 +30,7 @@ public class DBQueryParamNonNullAspect {
     public Object beforeQueryCheck(ProceedingJoinPoint pjp) throws Throwable {
         Object[] args = pjp.getArgs();
         AtomicBoolean allArgEmpty = new AtomicBoolean(true);
-        Arrays.stream(args).filter(arg -> {
-            return Objects.nonNull(arg) && arg.getClass().isAnnotationPresent(NotEmpty.class);
-        }).forEach(arg -> {
+        Arrays.stream(args).filter(Objects::nonNull).forEach(arg -> {
             try {
                 allArgEmpty.set(allArgEmpty.get() & PropertiesUtils.allFieldsAreNull(arg));
             } catch (IllegalAccessException e) {

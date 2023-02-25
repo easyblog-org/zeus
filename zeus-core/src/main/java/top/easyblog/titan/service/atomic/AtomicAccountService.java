@@ -18,7 +18,6 @@ import top.easyblog.titan.request.QueryAccountRequest;
 import top.easyblog.titan.response.ZeusResultCode;
 import top.easyblog.titan.util.JsonUtils;
 
-import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +42,7 @@ public class AtomicAccountService {
     }
 
     @DBQueryParamNonNull
-    public Account queryAccountByRequest(@NotEmpty QueryAccountRequest request) {
+    public Account queryAccountByRequest(QueryAccountRequest request) {
         AccountExample example = new AccountExample();
         AccountExample.Criteria criteria = example.createCriteria();
         if (Objects.nonNull(request.getId())) {

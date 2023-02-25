@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -141,19 +140,23 @@ public class UserService {
                     .userIds(userIds).enabled(Boolean.TRUE).build());
 
             if (CollectionUtils.isNotEmpty(userRoles)) {
-                Map<Long, Long> userRoleIdMap = userRoles.stream().filter(Objects::nonNull).collect(Collectors.toMap(UserRoles::getRoleId, UserRoles::getUserId, (x, y) -> x));
+                Map<String, UserRoles> userRoleIdMap = userRoles.stream().filter(Objects::nonNull)
+                        .collect(Collectors.toMap(item -> String.format("%s-%s", item.getRoleId(), item.getUserId()), Function.identity(), (x, y) -> x));
                 List<Long> roleIds = userRoles.stream().map(UserRoles::getRoleId).collect(Collectors.toList());
                 PageResponse<RolesBean> rolesBeanPageResponse = rolesService.queryRolesList(QueryRolesListRequest.builder()
                         .ids(roleIds).build());
                 List<RolesBean> rolesBeans = rolesBeanPageResponse.getData();
                 Map<Long, List<RolesBean>> rolesIdMap = rolesBeans.stream().filter(Objects::nonNull).collect(Collectors.groupingBy(RolesBean::getId));
                 Map<Long, List<RolesBean>> userIdRoleMap = Maps.newHashMap();
-                userRoleIdMap.forEach((roleId, userId) -> {
-                    userIdRoleMap.compute(userId, (k, v) -> {
+                userRoleIdMap.forEach((roleUserId, userRole) -> {
+                    userIdRoleMap.compute(userRole.getUserId(), (k, v) -> {
                         if (v == null) {
                             v = Lists.newArrayList();
                         }
-                        v.addAll(rolesIdMap.get(roleId));
+                        List<RolesBean> rolesBeanList = rolesIdMap.get(userRole.getRoleId());
+                        if (CollectionUtils.isNotEmpty(rolesBeanList)) {
+                            v.addAll(rolesBeanList);
+                        }
                         return v;
                     });
                 });
