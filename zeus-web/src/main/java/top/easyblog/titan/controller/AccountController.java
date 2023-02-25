@@ -39,8 +39,15 @@ public class AccountController {
     @PutMapping("/{account_id}")
     public void update(@PathVariable("account_id") Long accountId,
                        @RequestBody @Valid UpdateAccountRequest request) {
-        request.setId(accountId);
-        accountService.updateAccount(request);
+        accountService.updateAccount(accountId,request);
+    }
+
+    @ResponseWrapper
+    @PutMapping("/{user_id}/{identify_type}")
+    public void update(@PathVariable("user_id") Long userId,
+                       @PathVariable("identify_type") Integer identityType,
+                       @RequestBody @Valid UpdateAccountRequest request) {
+        accountService.updateByIdentityType(userId,identityType,request);
     }
 
     @ResponseWrapper

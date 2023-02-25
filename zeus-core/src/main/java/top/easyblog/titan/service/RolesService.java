@@ -62,15 +62,21 @@ public class RolesService {
         return roles;
     }
 
+    public List<RolesBean> queryAllRolesList(){
+        List<Roles> roles = atomicRolesService.queryList(QueryRolesListRequest.builder()
+                .enabled(Boolean.TRUE).build());
+        return roles.stream().map(this::buildRolesBean).collect(Collectors.toList());
+    }
+
     public PageResponse<RolesBean> queryRolesList(QueryRolesListRequest request) {
         long count = atomicRolesService.countByRequest(request);
         if (Objects.equals(count, NumberUtils.LONG_ZERO)) {
-            return PageResponse.<RolesBean>builder().list(Collections.emptyList())
+            return PageResponse.<RolesBean>builder().data(Collections.emptyList())
                     .limit(request.getLimit()).offset(request.getOffset()).build();
         }
         List<Roles> roles = atomicRolesService.queryList(request);
         List<RolesBean> rolesBeanList = roles.stream().map(this::buildRolesBean).collect(Collectors.toList());
-        return PageResponse.<RolesBean>builder().list(rolesBeanList)
+        return PageResponse.<RolesBean>builder().data(rolesBeanList)
                 .limit(request.getLimit()).offset(request.getOffset()).build();
     }
 
@@ -88,7 +94,7 @@ public class RolesService {
         Roles roles = new Roles();
         roles.setId(oldRoles.getId());
         roles.setName(request.getName());
-        roles.setDescription(request.getDesc());
+        roles.setDescription(request.getDescription());
         roles.setEnabled(request.getEnabled());
         return roles;
     }
@@ -103,6 +109,7 @@ public class RolesService {
             return null;
         }
         RolesBean rolesBean = new RolesBean();
+        rolesBean.setId(roles.getId());
         rolesBean.setCode(roles.getCode());
         rolesBean.setName(roles.getName());
         rolesBean.setEnabled(roles.getEnabled());

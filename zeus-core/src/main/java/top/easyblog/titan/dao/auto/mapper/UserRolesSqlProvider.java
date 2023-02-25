@@ -29,11 +29,11 @@ public class UserRolesSqlProvider {
         sql.INSERT_INTO("user_roles");
         
         if (record.getUserId() != null) {
-            sql.VALUES("user_id", "#{userId,jdbcType=INTEGER}");
+            sql.VALUES("user_id", "#{userId,jdbcType=BIGINT}");
         }
         
         if (record.getRoleId() != null) {
-            sql.VALUES("role_id", "#{roleId,jdbcType=INTEGER}");
+            sql.VALUES("role_id", "#{roleId,jdbcType=BIGINT}");
         }
         
         if (record.getEnabled() != null) {
@@ -87,11 +87,11 @@ public class UserRolesSqlProvider {
         sql.UPDATE("user_roles");
         
         if (record.getUserId() != null) {
-            sql.SET("user_id = #{record.userId,jdbcType=INTEGER}");
+            sql.SET("user_id = #{record.userId,jdbcType=BIGINT}");
         }
         
         if (record.getRoleId() != null) {
-            sql.SET("role_id = #{record.roleId,jdbcType=INTEGER}");
+            sql.SET("role_id = #{record.roleId,jdbcType=BIGINT}");
         }
         
         if (record.getEnabled() != null) {
@@ -114,8 +114,8 @@ public class UserRolesSqlProvider {
         SQL sql = new SQL();
         sql.UPDATE("user_roles");
         
-        sql.SET("user_id = #{record.userId,jdbcType=INTEGER}");
-        sql.SET("role_id = #{record.roleId,jdbcType=INTEGER}");
+        sql.SET("user_id = #{record.userId,jdbcType=BIGINT}");
+        sql.SET("role_id = #{record.roleId,jdbcType=BIGINT}");
         sql.SET("enabled = #{record.enabled,jdbcType=BIT}");
         sql.SET("create_time = #{record.createTime,jdbcType=TIMESTAMP}");
         sql.SET("update_time = #{record.updateTime,jdbcType=TIMESTAMP}");
@@ -141,8 +141,8 @@ public class UserRolesSqlProvider {
             sql.SET("update_time = #{updateTime,jdbcType=TIMESTAMP}");
         }
         
-        sql.WHERE("user_id = #{userId,jdbcType=INTEGER}");
-        sql.WHERE("role_id = #{roleId,jdbcType=INTEGER}");
+        sql.WHERE("user_id = #{userId,jdbcType=BIGINT}");
+        sql.WHERE("role_id = #{roleId,jdbcType=BIGINT}");
         
         return sql.toString();
     }

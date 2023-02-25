@@ -13,6 +13,7 @@ import top.easyblog.titan.dao.auto.model.UserExample;
 import top.easyblog.titan.request.CreateUserRequest;
 import top.easyblog.titan.request.QueryUserListRequest;
 import top.easyblog.titan.request.QueryUserRequest;
+import top.easyblog.titan.util.IdGenerator;
 import top.easyblog.titan.util.JsonUtils;
 
 import java.util.Date;
@@ -32,8 +33,9 @@ public class AtomicUserService {
 
     public User insertSelective(CreateUserRequest request) {
         User user = new User();
-        request.setCreateTime(new Date());
-        request.setUpdateTime(new Date());
+        user.setCode(IdGenerator.generateCaptchaCode(6));
+        user.setCreateTime(new Date());
+        user.setUpdateTime(new Date());
         BeanUtils.copyProperties(request, user);
         userMapper.insertSelective(user);
         log.info("[DB]Insert new user sucessfully!Details==>{}",JsonUtils.toJSONString(user));
@@ -83,7 +85,7 @@ public class AtomicUserService {
 
     public void updateUserByPrimaryKey(User user) {
         user.setUpdateTime(new Date());
-        userMapper.updateByPrimaryKey(user);
+        userMapper.updateByPrimaryKeySelective(user);
         log.info("[DB]Update user by ok successfully!Details==>{}", JsonUtils.toJSONString(user));
     }
 

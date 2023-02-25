@@ -2,6 +2,7 @@ package top.easyblog.titan.service.atomic;
 
 import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,9 +10,11 @@ import org.springframework.stereotype.Service;
 import top.easyblog.titan.dao.auto.mapper.AccountMapper;
 import top.easyblog.titan.dao.auto.model.Account;
 import top.easyblog.titan.dao.auto.model.AccountExample;
+import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.CreateAccountRequest;
 import top.easyblog.titan.request.QueryAccountListRequest;
 import top.easyblog.titan.request.QueryAccountRequest;
+import top.easyblog.titan.response.ZeusResultCode;
 import top.easyblog.titan.util.JsonUtils;
 
 import java.util.Date;
@@ -64,13 +67,16 @@ public class AtomicAccountService {
         if (Objects.nonNull(request.getStatus())) {
             criteria.andStatusEqualTo(request.getStatus());
         }
-        if (Objects.nonNull(request.getUserId())) {
-            criteria.andUserIdEqualTo(request.getUserId());
+        if(CollectionUtils.isNotEmpty(request.getUserIds())){
+            criteria.andUserIdIn(request.getUserIds());
         }
         return accountMapper.selectByExample(example);
     }
 
-    public void updateAccountByRequest(Account account) {
+    public void updateAccountByPKSelective(Account account) {
+        if (Objects.isNull(account)) {
+            throw new BusinessException(ZeusResultCode.DB_OPERATE_RECORD_NOT_ALLOW_NULL);
+        }
         account.setUpdateTime(new Date());
         accountMapper.updateByPrimaryKeySelective(account);
         log.info("[DB] update account[id={}]:{}", account.getId(), JsonUtils.toJSONString(account));

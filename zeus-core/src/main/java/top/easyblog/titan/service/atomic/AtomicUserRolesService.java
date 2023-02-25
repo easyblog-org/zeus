@@ -13,10 +13,7 @@ import top.easyblog.titan.dao.auto.model.RolesExample;
 import top.easyblog.titan.dao.auto.model.UserRoles;
 import top.easyblog.titan.dao.auto.model.UserRolesExample;
 import top.easyblog.titan.exception.BusinessException;
-import top.easyblog.titan.request.QueryRolesDetailsRequest;
-import top.easyblog.titan.request.QueryRolesListRequest;
-import top.easyblog.titan.request.QueryUserRolesDetailsRequest;
-import top.easyblog.titan.request.QueryUserRolesListRequest;
+import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.ZeusResultCode;
 import top.easyblog.titan.util.IdGenerator;
 import top.easyblog.titan.util.JsonUtils;
@@ -105,5 +102,20 @@ public class AtomicUserRolesService {
             criteria.andEnabledEqualTo(request.getEnabled());
         }
         return example;
+    }
+
+    public void updateByExampleSelective(UserRoles userRoles, UpdateUserRolesRequest request) {
+        UserRolesExample example = new UserRolesExample();
+        UserRolesExample.Criteria criteria = example.createCriteria();
+        if(Objects.nonNull(request.getEnabled())){
+            criteria.andEnabledEqualTo(request.getEnabled());
+        }
+        if(Objects.nonNull(request.getUserId())){
+            criteria.andUserIdEqualTo(request.getUserId());
+        }
+        if(Objects.nonNull(request.getRoleId())){
+            criteria.andRoleIdEqualTo(request.getRoleId());
+        }
+        mapper.updateByExampleSelective(userRoles,example);
     }
 }

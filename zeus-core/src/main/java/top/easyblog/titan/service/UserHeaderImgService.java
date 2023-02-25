@@ -102,7 +102,7 @@ public class UserHeaderImgService {
             return response;
         }
         response.setTotal(count);
-        response.setList(queryUserHeaderImgBeans(request));
+        response.setData(queryUserHeaderImgBeans(request));
         return response;
     }
 

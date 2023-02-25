@@ -1,9 +1,11 @@
 package top.easyblog.titan.request;
 
-import java.util.Date;
-
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * @author frank.huang
@@ -11,14 +13,12 @@ import lombok.Data;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UpdateUserRequest implements BaseRequest {
-    private Long id;
-
     private String nickName;
 
     private Integer integration;
-
-    private Integer headerImgId;
 
     private Integer level;
 
@@ -26,5 +26,5 @@ public class UpdateUserRequest implements BaseRequest {
 
     private Integer active;
 
-    private Date updateTime;
+    private List<String> roles;
 }

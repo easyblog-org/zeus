@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import top.easyblog.titan.dao.auto.model.UserRoles;
 import top.easyblog.titan.dao.auto.model.UserRolesExample;
-import top.easyblog.titan.dao.auto.model.UserRolesKey;
 
 @Mapper
 public interface UserRolesMapper {
@@ -18,16 +17,16 @@ public interface UserRolesMapper {
 
     @Delete({
         "delete from user_roles",
-        "where user_id = #{userId,jdbcType=INTEGER}",
-          "and role_id = #{roleId,jdbcType=INTEGER}"
+        "where user_id = #{userId,jdbcType=BIGINT}",
+          "and role_id = #{roleId,jdbcType=BIGINT}"
     })
-    int deleteByPrimaryKey(UserRolesKey key);
+    int deleteByPrimaryKey(UserRoles key);
 
     @Insert({
         "insert into user_roles (user_id, role_id, ",
         "enabled, create_time, ",
         "update_time)",
-        "values (#{userId,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, ",
+        "values (#{userId,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT}, ",
         "#{enabled,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, ",
         "#{updateTime,jdbcType=TIMESTAMP})"
     })
@@ -38,8 +37,8 @@ public interface UserRolesMapper {
 
     @SelectProvider(type=UserRolesSqlProvider.class, method="selectByExample")
     @Results({
-        @Result(column="user_id", property="userId", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="role_id", property="roleId", jdbcType=JdbcType.INTEGER, id=true),
+        @Result(column="user_id", property="userId", jdbcType=JdbcType.BIGINT, id=true),
+        @Result(column="role_id", property="roleId", jdbcType=JdbcType.BIGINT, id=true),
         @Result(column="enabled", property="enabled", jdbcType=JdbcType.BIT),
         @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP)
@@ -50,17 +49,17 @@ public interface UserRolesMapper {
         "select",
         "user_id, role_id, enabled, create_time, update_time",
         "from user_roles",
-        "where user_id = #{userId,jdbcType=INTEGER}",
-          "and role_id = #{roleId,jdbcType=INTEGER}"
+        "where user_id = #{userId,jdbcType=BIGINT}",
+          "and role_id = #{roleId,jdbcType=BIGINT}"
     })
     @Results({
-        @Result(column="user_id", property="userId", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="role_id", property="roleId", jdbcType=JdbcType.INTEGER, id=true),
+        @Result(column="user_id", property="userId", jdbcType=JdbcType.BIGINT, id=true),
+        @Result(column="role_id", property="roleId", jdbcType=JdbcType.BIGINT, id=true),
         @Result(column="enabled", property="enabled", jdbcType=JdbcType.BIT),
         @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP)
     })
-    UserRoles selectByPrimaryKey(UserRolesKey key);
+    UserRoles selectByPrimaryKey(UserRoles key);
 
     @UpdateProvider(type=UserRolesSqlProvider.class, method="updateByExampleSelective")
     int updateByExampleSelective(@Param("record") UserRoles record, @Param("example") UserRolesExample example);
@@ -76,8 +75,8 @@ public interface UserRolesMapper {
         "set enabled = #{enabled,jdbcType=BIT},",
           "create_time = #{createTime,jdbcType=TIMESTAMP},",
           "update_time = #{updateTime,jdbcType=TIMESTAMP}",
-        "where user_id = #{userId,jdbcType=INTEGER}",
-          "and role_id = #{roleId,jdbcType=INTEGER}"
+        "where user_id = #{userId,jdbcType=BIGINT}",
+          "and role_id = #{roleId,jdbcType=BIGINT}"
     })
     int updateByPrimaryKey(UserRoles record);
 }

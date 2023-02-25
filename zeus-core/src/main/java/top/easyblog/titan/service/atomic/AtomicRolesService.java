@@ -49,7 +49,7 @@ public class AtomicRolesService {
             throw new BusinessException(ZeusResultCode.DB_OPERATE_RECORD_NOT_ALLOW_NULL);
         }
         record.setUpdateTime(new Date());
-        mapper.updateByPrimaryKey(record);
+        mapper.updateByPrimaryKeySelective(record);
         log.info("[DB]Update role by pk successfully!Details==>{}", JsonUtils.toJSONString(record));
     }
 
@@ -99,8 +99,6 @@ public class AtomicRolesService {
         }
         if (Objects.nonNull(request.getEnabled())) {
             criteria.andEnabledEqualTo(request.getEnabled());
-        } else {
-            criteria.andEnabledEqualTo(Boolean.TRUE);
         }
         return example;
     }

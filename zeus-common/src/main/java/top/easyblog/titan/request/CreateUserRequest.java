@@ -1,9 +1,12 @@
 package top.easyblog.titan.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author: frank.huang
@@ -11,12 +14,13 @@ import java.util.Date;
  */
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CreateUserRequest {
     private String nickName;
     private Integer integration;
     private Integer level;
     private Integer visit;
     private Integer active;
-    private Date createTime;
-    private Date updateTime;
+    private List<String> roles;
 }
