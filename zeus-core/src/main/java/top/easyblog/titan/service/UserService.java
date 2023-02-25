@@ -13,7 +13,6 @@ import top.easyblog.titan.bean.*;
 import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.context.CreateOrRefreshUserRoleContext;
 import top.easyblog.titan.context.QueryUserSectionContext;
-import top.easyblog.titan.dao.auto.model.Roles;
 import top.easyblog.titan.dao.auto.model.User;
 import top.easyblog.titan.dao.auto.model.UserRoles;
 import top.easyblog.titan.enums.Status;
@@ -21,7 +20,6 @@ import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ZeusResultCode;
-import top.easyblog.titan.service.atomic.AtomicRolesService;
 import top.easyblog.titan.service.atomic.AtomicUserRolesService;
 import top.easyblog.titan.service.atomic.AtomicUserService;
 
@@ -131,7 +129,7 @@ public class UserService {
             QuerySignInLogListRequest querySignInLogListRequest = QuerySignInLogListRequest.builder()
                     .userIds(userIds).status(Status.ENABLE.getCode()).offset(Constants.DEFAULT_OFFSET).limit(Constants.DEFAULT_LIMIT).build();
             PageResponse<SignInLogBean> signInLogBeanPageResponse = userSignInLogService.querySignInLogList(querySignInLogListRequest);
-            List<SignInLogBean> signInLogBeans = signInLogBeanPageResponse.getList();
+            List<SignInLogBean> signInLogBeans = signInLogBeanPageResponse.getData();
             Map<Long, List<SignInLogBean>> signInLogBeanMap = signInLogBeans.stream().filter(Objects::nonNull)
                     .collect(Collectors.groupingBy(SignInLogBean::getUserId));
             context.setSignInLogsMap(signInLogBeanMap);
@@ -145,7 +143,7 @@ public class UserService {
                 List<Long> roleIds = userRoles.stream().map(UserRoles::getRoleId).collect(Collectors.toList());
                 PageResponse<RolesBean> rolesBeanPageResponse = rolesService.queryRolesList(QueryRolesListRequest.builder()
                         .ids(roleIds).build());
-                List<RolesBean> rolesBeans = rolesBeanPageResponse.getList();
+                List<RolesBean> rolesBeans = rolesBeanPageResponse.getData();
                 Map<Long, List<RolesBean>> rolesIdMap = rolesBeans.stream().filter(Objects::nonNull).collect(Collectors.groupingBy(RolesBean::getId));
                 Map<Long, List<RolesBean>> userIdRoleMap = Maps.newHashMap();
                 userRoleIdMap.forEach((roleId, userId) -> {
@@ -239,7 +237,7 @@ public class UserService {
             return response;
         }
         response.setTotal(count);
-        response.setList(buildUserDetailsBeanList(request));
+        response.setData(buildUserDetailsBeanList(request));
         return response;
     }
 

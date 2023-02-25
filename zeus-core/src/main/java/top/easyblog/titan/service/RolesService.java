@@ -71,12 +71,12 @@ public class RolesService {
     public PageResponse<RolesBean> queryRolesList(QueryRolesListRequest request) {
         long count = atomicRolesService.countByRequest(request);
         if (Objects.equals(count, NumberUtils.LONG_ZERO)) {
-            return PageResponse.<RolesBean>builder().list(Collections.emptyList())
+            return PageResponse.<RolesBean>builder().data(Collections.emptyList())
                     .limit(request.getLimit()).offset(request.getOffset()).build();
         }
         List<Roles> roles = atomicRolesService.queryList(request);
         List<RolesBean> rolesBeanList = roles.stream().map(this::buildRolesBean).collect(Collectors.toList());
-        return PageResponse.<RolesBean>builder().list(rolesBeanList)
+        return PageResponse.<RolesBean>builder().data(rolesBeanList)
                 .limit(request.getLimit()).offset(request.getOffset()).build();
     }
 
