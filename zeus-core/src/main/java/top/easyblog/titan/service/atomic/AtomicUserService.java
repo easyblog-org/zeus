@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.easyblog.titan.annotation.DBQueryParamNonNull;
 import top.easyblog.titan.dao.auto.mapper.UserMapper;
 import top.easyblog.titan.dao.auto.model.User;
 import top.easyblog.titan.dao.auto.model.UserExample;
@@ -33,16 +34,17 @@ public class AtomicUserService {
 
     public User insertSelective(CreateUserRequest request) {
         User user = new User();
-        user.setCode(IdGenerator.generateCaptchaCode(6));
+        user.setCode(IdGenerator.getUUID(6));
         user.setCreateTime(new Date());
         user.setUpdateTime(new Date());
         BeanUtils.copyProperties(request, user);
         userMapper.insertSelective(user);
-        log.info("[DB]Insert new user sucessfully!Details==>{}",JsonUtils.toJSONString(user));
+        log.info("[DB]Insert new user sucessfully!Details==>{}", JsonUtils.toJSONString(user));
         return user;
     }
 
 
+    @DBQueryParamNonNull
     public User queryByRequest(QueryUserRequest request) {
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria = userExample.createCriteria();
@@ -86,7 +88,7 @@ public class AtomicUserService {
     public void updateUserByPrimaryKey(User user) {
         user.setUpdateTime(new Date());
         userMapper.updateByPrimaryKeySelective(user);
-        log.info("[DB]Update user by ok successfully!Details==>{}", JsonUtils.toJSONString(user));
+        log.info("[DB]Update user by primary_key[id={}] successfully!Details==>{}", user.getCode(), JsonUtils.toJSONString(user));
     }
 
     public long countByRequest(QueryUserListRequest request) {

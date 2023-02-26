@@ -77,6 +77,7 @@ public class UserService {
         return userDetailsBean;
     }
 
+
     private UserDetailsBean buildUserDetailsBean(User user) {
         if (Objects.isNull(user)) {
             return null;
@@ -119,8 +120,8 @@ public class UserService {
         }
         if (section.contains(QUERY_ACCOUNTS)) {
             QueryAccountListRequest queryAccountListRequest = QueryAccountListRequest.builder()
-                    .userIds(userIds).status(Status.ENABLE.getCode()).build();
-            List<AccountBean> accounts = accountService.queryAccountList(queryAccountListRequest);
+                    .userIds(userIds).build();
+            List<AccountBean> accounts = accountService.queryAllAccountList(queryAccountListRequest);
             Map<Long, List<AccountBean>> accountMap = accounts.stream().filter(Objects::nonNull)
                     .collect(Collectors.groupingBy(AccountBean::getUserId));
             context.setAccountsMap(accountMap);
@@ -139,19 +140,23 @@ public class UserService {
                     .userIds(userIds).enabled(Boolean.TRUE).build());
 
             if (CollectionUtils.isNotEmpty(userRoles)) {
-                Map<Long, Long> userRoleIdMap = userRoles.stream().filter(Objects::nonNull).collect(Collectors.toMap(UserRoles::getRoleId, UserRoles::getUserId, (x, y) -> x));
+                Map<String, UserRoles> userRoleIdMap = userRoles.stream().filter(Objects::nonNull)
+                        .collect(Collectors.toMap(item -> String.format("%s-%s", item.getRoleId(), item.getUserId()), Function.identity(), (x, y) -> x));
                 List<Long> roleIds = userRoles.stream().map(UserRoles::getRoleId).collect(Collectors.toList());
                 PageResponse<RolesBean> rolesBeanPageResponse = rolesService.queryRolesList(QueryRolesListRequest.builder()
                         .ids(roleIds).build());
                 List<RolesBean> rolesBeans = rolesBeanPageResponse.getData();
                 Map<Long, List<RolesBean>> rolesIdMap = rolesBeans.stream().filter(Objects::nonNull).collect(Collectors.groupingBy(RolesBean::getId));
                 Map<Long, List<RolesBean>> userIdRoleMap = Maps.newHashMap();
-                userRoleIdMap.forEach((roleId, userId) -> {
-                    userIdRoleMap.compute(userId, (k, v) -> {
+                userRoleIdMap.forEach((roleUserId, userRole) -> {
+                    userIdRoleMap.compute(userRole.getUserId(), (k, v) -> {
                         if (v == null) {
                             v = Lists.newArrayList();
                         }
-                        v.addAll(rolesIdMap.get(roleId));
+                        List<RolesBean> rolesBeanList = rolesIdMap.get(userRole.getRoleId());
+                        if (CollectionUtils.isNotEmpty(rolesBeanList)) {
+                            v.addAll(rolesBeanList);
+                        }
                         return v;
                     });
                 });
@@ -195,6 +200,7 @@ public class UserService {
      *
      * @param request
      */
+    @Transaction
     public Long updateUser(String code, UpdateUserRequest request) {
         User user = atomicUserService.queryByRequest(QueryUserRequest.builder()
                 .code(code).build());
@@ -292,16 +298,14 @@ public class UserService {
         Map<String, RolesBean> rolesBeanMap = rolesBeans.stream().collect(Collectors.toMap(RolesBean::getCode, Function.identity(), (x, y) -> x));
 
         // 存在 user-role 映射关系，删除老的
-        long userRoleCount = atomicUserRolesService.countByRequest(QueryUserRolesListRequest.builder()
-                .userIds(Collections.singletonList(context.getUserId())).enabled(Boolean.TRUE).build());
-        if (userRoleCount > 0) {
-            UserRoles userRoles = new UserRoles();
-            userRoles.setEnabled(Boolean.FALSE);
-            atomicUserRolesService.updateByExampleSelective(userRoles, UpdateUserRolesRequest.builder()
+        long userRoleNum = atomicUserRolesService.countByRequest(QueryUserRolesListRequest.builder()
+                .userIds(Collections.singletonList(context.getUserId())).build());
+        if (userRoleNum > 0) {
+            atomicUserRolesService.deleteByExample(UpdateUserRolesRequest.builder()
                     .userId(context.getUserId()).build());
         }
 
-        roles.forEach(roleCode -> {
+        roles.stream().filter(Objects::nonNull).forEach(roleCode -> {
             RolesBean rolesBean = rolesBeanMap.get(roleCode);
             UserRoles userRoles = new UserRoles();
             userRoles.setRoleId(Objects.requireNonNull(rolesBean, String.format("Role %s not found", roleCode)).getId());

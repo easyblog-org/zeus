@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import top.easyblog.titan.annotation.DBQueryParamNonNull;
 import top.easyblog.titan.dao.auto.mapper.AccountMapper;
 import top.easyblog.titan.dao.auto.model.Account;
 import top.easyblog.titan.dao.auto.model.AccountExample;
@@ -40,6 +41,7 @@ public class AtomicAccountService {
         return account;
     }
 
+    @DBQueryParamNonNull
     public Account queryAccountByRequest(QueryAccountRequest request) {
         AccountExample example = new AccountExample();
         AccountExample.Criteria criteria = example.createCriteria();
@@ -47,7 +49,7 @@ public class AtomicAccountService {
             criteria.andIdEqualTo(request.getId());
         }
         if (Objects.nonNull(request.getUserId())) {
-            criteria.andUserIdEqualTo(request.getId());
+            criteria.andUserIdEqualTo(request.getUserId());
         }
         if (Objects.nonNull(request.getIdentityType())) {
             criteria.andIdentityTypeEqualTo(request.getIdentityType());
@@ -62,15 +64,42 @@ public class AtomicAccountService {
     }
 
     public List<Account> queryAccountListByRequest(QueryAccountListRequest request) {
+        AccountExample example = generateExamples(request);
+        if (Objects.nonNull(request.getOffset())) {
+            example.setOffset(request.getOffset());
+        }
+        if (Objects.nonNull(request.getLimit())) {
+            example.setLimit(request.getLimit());
+        }
+        return accountMapper.selectByExample(example);
+    }
+
+    private AccountExample generateExamples(QueryAccountListRequest request) {
         AccountExample example = new AccountExample();
         AccountExample.Criteria criteria = example.createCriteria();
         if (Objects.nonNull(request.getStatus())) {
             criteria.andStatusEqualTo(request.getStatus());
         }
-        if(CollectionUtils.isNotEmpty(request.getUserIds())){
+        if (CollectionUtils.isNotEmpty(request.getUserIds())) {
             criteria.andUserIdIn(request.getUserIds());
         }
-        return accountMapper.selectByExample(example);
+        if (StringUtils.isNotBlank(request.getIdentifier())) {
+            criteria.andIdentifierEqualTo(request.getIdentifier());
+        }
+        if (Objects.nonNull(request.getIdentityType())) {
+            criteria.andIdentityTypeEqualTo(request.getIdentityType());
+        }
+        if (Objects.nonNull(request.getVerified())) {
+            criteria.andVerifiedEqualTo(request.getVerified());
+        }
+
+        return example;
+    }
+
+
+    public long countByRequest(QueryAccountListRequest request) {
+        AccountExample example = generateExamples(request);
+        return accountMapper.countByExample(example);
     }
 
     public void updateAccountByPKSelective(Account account) {

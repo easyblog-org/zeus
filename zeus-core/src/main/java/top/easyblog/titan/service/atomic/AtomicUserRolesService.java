@@ -3,19 +3,17 @@ package top.easyblog.titan.service.atomic;
 import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import top.easyblog.titan.dao.auto.mapper.RolesMapper;
+import top.easyblog.titan.annotation.DBQueryParamNonNull;
 import top.easyblog.titan.dao.auto.mapper.UserRolesMapper;
-import top.easyblog.titan.dao.auto.model.Roles;
-import top.easyblog.titan.dao.auto.model.RolesExample;
 import top.easyblog.titan.dao.auto.model.UserRoles;
 import top.easyblog.titan.dao.auto.model.UserRolesExample;
 import top.easyblog.titan.exception.BusinessException;
-import top.easyblog.titan.request.*;
+import top.easyblog.titan.request.QueryUserRolesDetailsRequest;
+import top.easyblog.titan.request.QueryUserRolesListRequest;
+import top.easyblog.titan.request.UpdateUserRolesRequest;
 import top.easyblog.titan.response.ZeusResultCode;
-import top.easyblog.titan.util.IdGenerator;
 import top.easyblog.titan.util.JsonUtils;
 
 import java.util.Date;
@@ -56,12 +54,8 @@ public class AtomicUserRolesService {
     }
 
 
+    @DBQueryParamNonNull
     public UserRoles queryDetails(QueryUserRolesDetailsRequest request) {
-        if (Objects.nonNull(request.getRoleId()) &&
-                Objects.nonNull(request.getUserId()) &&
-                Objects.nonNull(request.getEnabled())) {
-            return null;
-        }
         UserRolesExample example = new UserRolesExample();
         UserRolesExample.Criteria criteria = example.createCriteria();
         if (Objects.nonNull(request.getRoleId())) {
@@ -107,15 +101,30 @@ public class AtomicUserRolesService {
     public void updateByExampleSelective(UserRoles userRoles, UpdateUserRolesRequest request) {
         UserRolesExample example = new UserRolesExample();
         UserRolesExample.Criteria criteria = example.createCriteria();
-        if(Objects.nonNull(request.getEnabled())){
+        if (Objects.nonNull(request.getEnabled())) {
             criteria.andEnabledEqualTo(request.getEnabled());
         }
-        if(Objects.nonNull(request.getUserId())){
+        if (Objects.nonNull(request.getUserId())) {
             criteria.andUserIdEqualTo(request.getUserId());
         }
-        if(Objects.nonNull(request.getRoleId())){
+        if (Objects.nonNull(request.getRoleId())) {
             criteria.andRoleIdEqualTo(request.getRoleId());
         }
-        mapper.updateByExampleSelective(userRoles,example);
+        mapper.updateByExampleSelective(userRoles, example);
+    }
+
+    public void deleteByExample(UpdateUserRolesRequest request) {
+        UserRolesExample example = new UserRolesExample();
+        UserRolesExample.Criteria criteria = example.createCriteria();
+        if (Objects.nonNull(request.getEnabled())) {
+            criteria.andEnabledEqualTo(request.getEnabled());
+        }
+        if (Objects.nonNull(request.getUserId())) {
+            criteria.andUserIdEqualTo(request.getUserId());
+        }
+        if (Objects.nonNull(request.getRoleId())) {
+            criteria.andRoleIdEqualTo(request.getRoleId());
+        }
+        mapper.deleteByExample(example);
     }
 }

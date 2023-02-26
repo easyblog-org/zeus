@@ -11,6 +11,7 @@ public final class Constants {
 
     //通用
     public static final String UNDERSCORE = "_";
+    public static final String HYPHEN = "-";
     public static final String DELIMETER = "&";
     public static final String SHARP = "#";
     public static final String COMMA = ",";
