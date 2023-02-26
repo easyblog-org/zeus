@@ -121,7 +121,7 @@ public class UserService {
         if (section.contains(QUERY_ACCOUNTS)) {
             QueryAccountListRequest queryAccountListRequest = QueryAccountListRequest.builder()
                     .userIds(userIds).build();
-            List<AccountBean> accounts = accountService.queryAccountList(queryAccountListRequest);
+            List<AccountBean> accounts = accountService.queryAllAccountList(queryAccountListRequest);
             Map<Long, List<AccountBean>> accountMap = accounts.stream().filter(Objects::nonNull)
                     .collect(Collectors.groupingBy(AccountBean::getUserId));
             context.setAccountsMap(accountMap);

@@ -7,15 +7,16 @@ import org.springframework.stereotype.Service;
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.dao.auto.model.Account;
-import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.CreateAccountRequest;
 import top.easyblog.titan.request.QueryAccountListRequest;
 import top.easyblog.titan.request.QueryAccountRequest;
 import top.easyblog.titan.request.UpdateAccountRequest;
+import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.response.ZeusResultCode;
 import top.easyblog.titan.service.atomic.AtomicAccountService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -60,18 +61,33 @@ public class AccountService {
         if (Objects.isNull(account)) {
             return null;
         }
+        return buildAccountBean(account);
+    }
+
+
+    public List<AccountBean> queryAllAccountList(QueryAccountListRequest request) {
+        // 不分页查询，这里去除分页默认值，查询所有符合的数据
+        request.setLimit(null);
+        request.setOffset(null);
+        return atomicAccountService.queryAccountListByRequest(request).stream().map(this::buildAccountBean).collect(Collectors.toList());
+    }
+
+    private AccountBean buildAccountBean(Account account) {
         AccountBean accountBean = new AccountBean();
         BeanUtils.copyProperties(account, accountBean);
         return accountBean;
     }
 
-    @Transaction
-    public List<AccountBean> queryAccountList(QueryAccountListRequest request) {
-        return atomicAccountService.queryAccountListByRequest(request).stream().map(account -> {
-            AccountBean accountBean = new AccountBean();
-            BeanUtils.copyProperties(account, accountBean);
-            return accountBean;
-        }).collect(Collectors.toList());
+    public PageResponse<AccountBean> queryAccountListPage(QueryAccountListRequest request) {
+        long amount = atomicAccountService.countByRequest(request);
+        if (amount == 0) {
+            return PageResponse.<AccountBean>builder().limit(request.getLimit()).offset(request.getOffset())
+                    .total(amount).data(Collections.emptyList()).build();
+        }
+        List<Account> accounts = atomicAccountService.queryAccountListByRequest(request);
+        List<AccountBean> accountBeans = accounts.stream().map(this::buildAccountBean).collect(Collectors.toList());
+        return PageResponse.<AccountBean>builder().limit(request.getLimit()).offset(request.getOffset())
+                .total(amount).data(accountBeans).build();
     }
 
 

@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.easyblog.titan.annotation.RequestParamAlias;
 import top.easyblog.titan.annotation.ResponseWrapper;
+import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.request.CreateAccountRequest;
 import top.easyblog.titan.request.QueryAccountListRequest;
 import top.easyblog.titan.request.QueryAccountRequest;
 import top.easyblog.titan.request.UpdateAccountRequest;
+import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.service.AccountService;
 
 import javax.validation.Valid;
@@ -39,7 +41,7 @@ public class AccountController {
     @PutMapping("/{account_id}")
     public void update(@PathVariable("account_id") Long accountId,
                        @RequestBody @Valid UpdateAccountRequest request) {
-        accountService.updateAccount(accountId,request);
+        accountService.updateAccount(accountId, request);
     }
 
     @ResponseWrapper
@@ -47,12 +49,12 @@ public class AccountController {
     public void update(@PathVariable("user_id") Long userId,
                        @PathVariable("identify_type") Integer identityType,
                        @RequestBody @Valid UpdateAccountRequest request) {
-        accountService.updateByIdentityType(userId,identityType,request);
+        accountService.updateByIdentityType(userId, identityType, request);
     }
 
     @ResponseWrapper
     @GetMapping("/list")
-    public Object queryList(@Valid @RequestParamAlias QueryAccountListRequest request) {
-        return accountService.queryAccountList(request);
+    public PageResponse<AccountBean> queryList(@Valid @RequestParamAlias QueryAccountListRequest request) {
+        return accountService.queryAccountListPage(request);
     }
 }

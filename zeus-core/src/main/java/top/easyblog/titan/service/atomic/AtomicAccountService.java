@@ -64,6 +64,17 @@ public class AtomicAccountService {
     }
 
     public List<Account> queryAccountListByRequest(QueryAccountListRequest request) {
+        AccountExample example = generateExamples(request);
+        if (Objects.nonNull(request.getOffset())) {
+            example.setOffset(request.getOffset());
+        }
+        if (Objects.nonNull(request.getLimit())) {
+            example.setLimit(request.getLimit());
+        }
+        return accountMapper.selectByExample(example);
+    }
+
+    private AccountExample generateExamples(QueryAccountListRequest request) {
         AccountExample example = new AccountExample();
         AccountExample.Criteria criteria = example.createCriteria();
         if (Objects.nonNull(request.getStatus())) {
@@ -72,7 +83,23 @@ public class AtomicAccountService {
         if (CollectionUtils.isNotEmpty(request.getUserIds())) {
             criteria.andUserIdIn(request.getUserIds());
         }
-        return accountMapper.selectByExample(example);
+        if (StringUtils.isNotBlank(request.getIdentifier())) {
+            criteria.andIdentifierEqualTo(request.getIdentifier());
+        }
+        if (Objects.nonNull(request.getIdentityType())) {
+            criteria.andIdentityTypeEqualTo(request.getIdentityType());
+        }
+        if (Objects.nonNull(request.getVerified())) {
+            criteria.andVerifiedEqualTo(request.getVerified());
+        }
+
+        return example;
+    }
+
+
+    public long countByRequest(QueryAccountListRequest request) {
+        AccountExample example = generateExamples(request);
+        return accountMapper.countByExample(example);
     }
 
     public void updateAccountByPKSelective(Account account) {

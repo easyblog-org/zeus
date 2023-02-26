@@ -36,7 +36,7 @@ public class IdGenerator {
     }
 
     public static String getUUID(int len) {
-        return UUID.randomUUID().toString().replace("-", "").substring(len);
+        return UUID.randomUUID().toString().replace("-", "").substring(0, len);
     }
 
 
@@ -45,7 +45,7 @@ public class IdGenerator {
             return StringUtils.EMPTY;
         }
         StringBuilder sb = new StringBuilder();
-        for(int i=0;i<len;i++){
+        for (int i = 0; i < len; i++) {
             sb.append(new Random().nextInt(NUM_STR.length()));
         }
         return sb.toString();

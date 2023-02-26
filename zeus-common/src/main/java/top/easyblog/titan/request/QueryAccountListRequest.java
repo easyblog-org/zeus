@@ -18,4 +18,11 @@ import java.util.List;
 public class QueryAccountListRequest {
     private List<Long> userIds;
     private Integer status;
+    private String identifier;
+    private Integer identityType;
+    private Integer verified;
+    @Builder.Default
+    private Integer limit = 10;
+    @Builder.Default
+    private Integer offset = 0;
 }
