@@ -15,23 +15,20 @@ import top.easyblog.titan.enums.LoginStatus;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.*;
 import top.easyblog.titan.response.ZeusResultCode;
+import top.easyblog.titan.service.ILoginService;
 import top.easyblog.titan.service.PhoneAuthService;
 import top.easyblog.titan.service.RedisService;
 import top.easyblog.titan.service.UserSignInLogService;
-import top.easyblog.titan.service.ILoginService;
 import top.easyblog.titan.strategy.CaptchaSendStrategyContext;
 import top.easyblog.titan.strategy.ICaptchaSendStrategy;
 import top.easyblog.titan.strategy.ILoginStrategy;
 import top.easyblog.titan.strategy.LoginStrategyContext;
-import top.easyblog.titan.util.IdGenerator;
 import top.easyblog.titan.util.JsonUtils;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
-
-import static top.easyblog.titan.constant.LoginConstants.*;
 
 /**
  * @author frank.huang
@@ -53,21 +50,21 @@ public class LoginServiceImpl implements ILoginService {
 
     @Override
     public void sendCaptchaCode(Integer identifierType, String identifier) {
-        if(Objects.equals(identifierType,IdentifierType.PHONE.getSubCode()) ||
-                Objects.equals(identifierType,IdentifierType.PHONE_CAPTCHA.getSubCode())){
+        if (Objects.equals(identifierType, IdentifierType.PHONE.getSubCode()) ||
+                Objects.equals(identifierType, IdentifierType.PHONE_CAPTCHA.getSubCode())) {
             ICaptchaSendStrategy captchaSendStrategy = CaptchaSendStrategyContext.getCaptchaSendStrategy(CaptchaSendChannel.PHONE_SMS.getCode());
             captchaSendStrategy.sendCaptchaCode(identifier);
-        } else if (Objects.equals(identifierType,IdentifierType.E_MAIL.getSubCode())) {
+        } else if (Objects.equals(identifierType, IdentifierType.E_MAIL.getSubCode())) {
             ICaptchaSendStrategy captchaSendStrategy = CaptchaSendStrategyContext.getCaptchaSendStrategy(CaptchaSendChannel.EMAIL.getCode());
             captchaSendStrategy.sendCaptchaCode(identifier);
-        } else{
+        } else {
             throw new UnsupportedOperationException();
         }
     }
 
     @Override
     @Transaction
-    public AuthenticationDetailsBean login(LoginRequest request) {
+    public LoginDetailsBean login(LoginRequest request) {
         ILoginStrategy loginPolicy = LoginStrategyContext.getIdentifyStrategy(request.getIdentifierType());
         if (Objects.isNull(loginPolicy)) {
             throw new BusinessException(ZeusResultCode.INTERNAL_ERROR);
@@ -87,16 +84,24 @@ public class LoginServiceImpl implements ILoginService {
                 .status(LoginStatus.ONLINE.getCode())
                 .build());
 
-        //如果用户已经登录直接返回，否则生成新的token
-        return Optional.ofNullable(signInLogBean).map(signInLog -> loginDetailsBean).orElseGet(() -> {
-            loginDetailsBean.setToken(generateLoginToken());
-            storageToken(request, loginDetailsBean);
-            //保存用户登录日志
-            CompletableFuture.runAsync(() -> {
-                saveLoginLog(request, loginDetailsBean);
-            });
+        if (Objects.nonNull(signInLogBean)) {
+            // 重置token过期时间
+            String userInfo = redisService.get(signInLogBean.getToken());
+            loginDetailsBean.setToken(signInLogBean.getToken());
+            if (StringUtils.isBlank(userInfo)) {
+                storageToken(request, loginDetailsBean);
+            } else {
+                redisService.expire(signInLogBean.getToken(), LoginConstants.LOGIN_TOKEN_MAX_EXPIRE, TimeUnit.DAYS);
+            }
             return loginDetailsBean;
-        });
+        }
+
+        //如果用户已经登录直接返回，否则生成新的token
+        loginDetailsBean.setToken(generateLoginToken());
+        storageToken(request, loginDetailsBean);
+        //保存用户登录日志
+        CompletableFuture.runAsync(() -> saveLoginLog(request, loginDetailsBean));
+        return loginDetailsBean;
     }
 
     /**
@@ -120,6 +125,7 @@ public class LoginServiceImpl implements ILoginService {
                 .token(loginDetailsBean.getToken())
                 .status(LoginStatus.ONLINE.getCode())
                 .build());
+
         Optional.ofNullable(request.getExtra()).ifPresent(extra -> {
             createSignInLogRequest.setDevice(extra.getDevice());
             createSignInLogRequest.setOperationSystem(extra.getOperationSystem());
@@ -137,15 +143,12 @@ public class LoginServiceImpl implements ILoginService {
      * @param loginDetailsBean
      */
     private void storageToken(LoginRequest request, LoginDetailsBean loginDetailsBean) {
-        String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, IdentifierType.subCodeOf(request.getIdentifierType()).getCode(), request.getIdentifier());
-        String userInfoKey = String.format(LoginConstants.USER_INFO_PREFIX, loginDetailsBean.getToken());
-        String token = redisService.storageToken(Lists.newArrayList(accountKey, userInfoKey), loginDetailsBean.getToken(),
-                JsonUtils.toJSONString(loginDetailsBean), String.valueOf(LoginConstants.LOGIN_TOKEN_MAX_EXPIRE));
-        if (StringUtils.isBlank(token)) {
-            log.info("Login failed: internal error,root cause: redis return value is {}", token);
+        String userInfo = JsonUtils.toJSONString(loginDetailsBean.getUser());
+        boolean result = redisService.set(loginDetailsBean.getToken(), userInfo, LoginConstants.LOGIN_TOKEN_MAX_EXPIRE, TimeUnit.DAYS);
+        if (!result) {
+            log.info("Login failed: internal error,root cause: redis return value is {}", request);
             throw new BusinessException(ZeusResultCode.INTERNAL_ERROR);
         }
-        loginDetailsBean.setToken(token);
     }
 
     public AuthenticationDetailsBean checkLoginHealth(LogoutRequest request) {

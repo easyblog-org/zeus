@@ -3,14 +3,11 @@ package top.easyblog.titan.strategy.impl.login;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.bean.UserDetailsBean;
-import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.constant.LoginConstants;
 import top.easyblog.titan.dao.auto.model.Roles;
-import top.easyblog.titan.dao.auto.model.User;
 import top.easyblog.titan.dao.auto.model.UserRoles;
 import top.easyblog.titan.enums.AccountStatus;
 import top.easyblog.titan.enums.IdentifierType;
@@ -25,11 +22,9 @@ import top.easyblog.titan.service.UserService;
 import top.easyblog.titan.service.atomic.AtomicRolesService;
 import top.easyblog.titan.service.atomic.AtomicUserRolesService;
 import top.easyblog.titan.strategy.ILoginStrategy;
-import top.easyblog.titan.util.EncryptUtils;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author: frank.huang
@@ -101,7 +96,7 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
         AccountBean currAccount = userDetailsBean.getCurrAccount();
         //check request password and database password
         String databasePassword = currAccount.getCredential();
-        String requestPassword = encryptPassword(request.getCredential());
+        String requestPassword = request.getCredential();
         if (StringUtils.isEmpty(requestPassword) || Boolean.FALSE.equals(requestPassword.equalsIgnoreCase(databasePassword))) {
             throw new BusinessException(ZeusResultCode.PASSWORD_VALID_FAILED);
         }
@@ -133,7 +128,7 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
                 .userId(newUser.getId())
                 .identityType(IdentifierType.subCodeOf(request.getIdentifierType()).getCode())
                 .identifier(request.getIdentifier())
-                .credential(encryptPassword(request.getCredential()))
+                .credential(request.getCredential())
                 .verified(Objects.isNull(request.getVerified()) ? Status.DISABLE.getCode() : request.getVerified())
                 .status(Objects.isNull(request.getStatus()) ? AccountStatus.PRE_ACTIVE.getCode() : request.getStatus())
                 .createDirect(Boolean.TRUE)
@@ -188,12 +183,5 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
             count++;
         }
         return count;
-    }
-
-    public String encryptPassword(String originalPassword) {
-        if (StringUtils.isBlank(originalPassword)) {
-            return "";
-        }
-        return EncryptUtils.SHA256(originalPassword, Constants.USER_PASSWORD_SECRET_KEY);
     }
 }
