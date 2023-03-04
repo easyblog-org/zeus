@@ -20,7 +20,7 @@ public class UserLoginTokenExpireListener extends AbstractRedisKeyExpireListener
     @Autowired
     private AtomicSignInLogService signInLogService;
 
-    private final static String LISTEN_KEY = "user:token";
+    private final static String LISTEN_KEY = "auth:token";
 
     public UserLoginTokenExpireListener(RedisMessageListenerContainer listenerContainer) {
         super(listenerContainer);
@@ -30,11 +30,8 @@ public class UserLoginTokenExpireListener extends AbstractRedisKeyExpireListener
     public void doTask(Message message) {
         String expireKey = message.toString();
         if (StringUtils.isNotBlank(expireKey) && expireKey.contains(LISTEN_KEY)) {
-            String[] keys = expireKey.split(":");
-            if (keys.length == 3) {
-                String token = keys[2];
-                signInLogService.updateSignInLogByToken(token, LoginStatus.OFFLINE.getCode());
-            }
+            signInLogService.updateSignInLogByToken(expireKey, LoginStatus.OFFLINE.getCode());
+            log.info("Process expire token {} event  successfully!", expireKey);
         }
     }
 }

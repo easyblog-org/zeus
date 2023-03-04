@@ -50,6 +50,7 @@ public enum ZeusResultCode {
     EMAIL_ACCOUNT_EXISTS,
     IDENTIFIER_NOT_PHONE,
     INVALID_IDENTITY_TYPE,
+    AUTH_TOKEN_NOT_FOUND,
 
     SIGN_FAIL,
     SIGN_ERROR,
@@ -62,7 +63,7 @@ public enum ZeusResultCode {
     REQUEST_GITHUB_USER_INFO_FAILED,     //请求Github用户信息失败
     REQUEST_GITEE_ACCESS_TOKEN_FAILED,   //请求Gitee access token失败
     REQUEST_GITEE_USER_INFO_FAILED,      //请求Gitee用户信息失败
-    
+
     REMOTE_INVOKE_FAILED,   //远程调用失败
     SEND_CAPTCHA_FAILED,   // 发送验证码失败
     INCORRECT_OR_EXPIRE_CAPTCHA,    //不正确或已过期的验证码

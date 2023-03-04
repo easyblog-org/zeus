@@ -42,10 +42,10 @@ public class RedisService {
      * @param key  键
      * @param time 时间(秒)
      */
-    public void expire(String key, long time, TimeUnit timeUnit) {
+    public Boolean expire(String key, long time, TimeUnit timeUnit) {
         try {
             if (time >= 0) {
-                stringRedisTemplate.expire(key, time, timeUnit);
+                return stringRedisTemplate.expire(key, time, timeUnit);
             } else {
                 log.error("redis expire time must be greater than 0");
                 throw new IllegalArgumentException("redis expire time must be greater than 0");
@@ -53,6 +53,7 @@ public class RedisService {
         } catch (Exception e) {
             log.error(e.getMessage());
         }
+        return false;
     }
 
     /**

@@ -1,6 +1,5 @@
 package top.easyblog.titan.service.impl;
 
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Service;
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.*;
 import top.easyblog.titan.constant.LoginConstants;
-import top.easyblog.titan.dao.auto.model.PhoneAuth;
 import top.easyblog.titan.enums.CaptchaSendChannel;
 import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.enums.LoginStatus;
@@ -86,8 +84,9 @@ public class LoginServiceImpl implements ILoginService {
 
         if (Objects.nonNull(signInLogBean)) {
             // 重置token过期时间
-            String userInfo = redisService.get(signInLogBean.getToken());
-            loginDetailsBean.setToken(signInLogBean.getToken());
+            String key = signInLogBean.getToken();
+            String userInfo = redisService.get(key);
+            loginDetailsBean.setToken(key);
             if (StringUtils.isBlank(userInfo)) {
                 storageToken(request, loginDetailsBean);
             } else {
@@ -97,7 +96,7 @@ public class LoginServiceImpl implements ILoginService {
         }
 
         //如果用户已经登录直接返回，否则生成新的token
-        loginDetailsBean.setToken(generateLoginToken());
+        loginDetailsBean.setToken(String.format("auth:token:%s", generateLoginToken()));
         storageToken(request, loginDetailsBean);
         //保存用户登录日志
         CompletableFuture.runAsync(() -> saveLoginLog(request, loginDetailsBean));
@@ -152,7 +151,7 @@ public class LoginServiceImpl implements ILoginService {
     }
 
     public AuthenticationDetailsBean checkLoginHealth(LogoutRequest request) {
-        int identifierType = IdentifierType.subCodeOf(request.getIdentifierType()).getCode();
+       /* int identifierType = IdentifierType.subCodeOf(request.getIdentifierType()).getCode();
 
         String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, identifierType, request.getIdentifier());
         String token = redisService.get(accountKey);
@@ -163,43 +162,48 @@ public class LoginServiceImpl implements ILoginService {
             String userInfoKey = String.format(LoginConstants.USER_INFO_PREFIX, token);
             userInfoJsonStr = redisService.get(userInfoKey);
             authenticationDetailsBean.setUser(StringUtils.isNotBlank(userInfoJsonStr) ? JsonUtils.parseObject(userInfoJsonStr, LoginDetailsBean.class).getUser() : null);
-        }
+        }*/
 
-        return authenticationDetailsBean;
+        return null;
     }
 
     @Override
-    public void logout(LogoutRequest request) {
-        int identifierType = IdentifierType.subCodeOf(request.getIdentifierType()).getCode();
-        if (Objects.equals(IdentifierType.PHONE.getCode(), identifierType)) {
-            String[] phoneIdentifier = request.getIdentifier().split("-");
-            PhoneAuth phoneAuth = phoneAuthService.queryPhoneAuthDetails(QueryPhoneAuthRequest.builder()
-                    .phoneAreaCode(phoneIdentifier[0])
-                    .phone(phoneIdentifier[1]).build());
-            request.setIdentifier(String.valueOf(phoneAuth.getId()));
+    public boolean logout(LogoutRequest request) {
+        String token = request.getToken();
+        Boolean hasKey = redisService.exists(token);
+        if (Objects.isNull(hasKey) || !hasKey) {
+            throw new BusinessException(ZeusResultCode.AUTH_TOKEN_NOT_FOUND);
         }
-        //将redis登录时保存的token（如果还未过期）删除
-        String accountKey = String.format(LoginConstants.LOGIN_TOKEN_KEY_PREFIX, identifierType, request.getIdentifier());
-        String token = redisService.get(accountKey);
-        if (StringUtils.isNotBlank(token)) {
-            String userInfoJsonStr = redisService.logout(Lists.newArrayList(accountKey));
-            if (StringUtils.isBlank(userInfoJsonStr)) {
-                log.info("Logout failed: internal error,root cause: redis return value is {}", userInfoJsonStr);
-                throw new BusinessException(ZeusResultCode.LOGOUT_FAILED);
-            }
+        Long expire = redisService.getExpire(token);
+        if (Objects.isNull(expire) || expire < 0) {
+            log.info("Token {} has expire.", token);
+            return true;
+        }
+
+        String userInfoJson = redisService.get(token);
+        UserDetailsBean userDetailsBean = JsonUtils.parseObject(userInfoJson, UserDetailsBean.class);
+        Boolean res = redisService.expire(token, 0L, TimeUnit.NANOSECONDS);
+        if (Objects.isNull(res) || !res) {
+            log.info("Redis delete token failed：{}", token);
+            return false;
         }
 
         //退出成功
         CompletableFuture.runAsync(() -> {
-            //更新用户账户状态为退出
-            Optional.ofNullable(signInLogService.querySignInLogDetails(QuerySignInLogRequest.builder()
-                            .userId(request.getUserId()).token(token).build()))
-                    .ifPresent(signInLogBean -> {
-                        signInLogService.updateSignLog(UpdateSignInLogRequest.builder()
-                                .id(signInLogBean.getId()).status(LoginStatus.OFFLINE.getCode()).build());
-                        log.info("Update the account {} of user [id={}] log out successfully!", request.getIdentifier(), request.getUserId());
-                    });
+            AccountBean currAccount = null;
+            if (Objects.nonNull(userDetailsBean) && Objects.nonNull(currAccount = userDetailsBean.getCurrAccount())) {
+                //更新用户账户状态为退出
+                SignInLogBean signInLogBean = signInLogService.querySignInLogDetails(QuerySignInLogRequest.builder()
+                        .userId(userDetailsBean.getId()).accountId(currAccount.getId()).token(token).build());
+                Optional.ofNullable(signInLogBean).ifPresent(logBean -> {
+                    UpdateSignInLogRequest updateSignInLogRequest = UpdateSignInLogRequest.builder()
+                            .id(logBean.getId()).status(LoginStatus.OFFLINE.getCode()).build();
+                    signInLogService.updateSignLog(updateSignInLogRequest);
+                });
+            }
         });
+
+        return true;
     }
 
     @Override

@@ -73,7 +73,6 @@ public class EmailLoginStrategy extends AbstractLoginStrategy {
             throw new BusinessException(ZeusResultCode.EMAIL_ACCOUNT_EXISTS);
         }
         //检查密码是否符合
-
         String password = decryptPassword(request.getCredential());
         if (validatePasswdComplexity(password) >= MIX_PASSWORD_COMPLEXITY) {
             throw new BusinessException(ZeusResultCode.PASSWORD_NOT_VALID);
