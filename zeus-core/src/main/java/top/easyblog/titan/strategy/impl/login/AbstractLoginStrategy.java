@@ -67,7 +67,7 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
                 .build());
         if (Objects.isNull(accountBean)) {
             //检查账户不存在
-            throw new BusinessException(ZeusResultCode.USER_ACCOUNT_NOT_FOUND);
+            throw new BusinessException(ZeusResultCode.ACCOUNT_NOT_FOUND);
         }
 
         if (AccountStatus.PRE_ACTIVE.getCode().equals(accountBean.getStatus())) {
@@ -101,7 +101,7 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
             throw new BusinessException(ZeusResultCode.PASSWORD_VALID_FAILED);
         }
         return userService.queryUserDetails(QueryUserRequest.builder()
-                .id(currAccount.getUserId()).sections(LoginConstants.QUERY_CURRENT_HEADER_IMG).build());
+                .id(currAccount.getUserId()).sections(String.format("%s,%s", LoginConstants.QUERY_CURRENT_HEADER_IMG, LoginConstants.QUERY_ROLE)).build());
     }
 
     /**
