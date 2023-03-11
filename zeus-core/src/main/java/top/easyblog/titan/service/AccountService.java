@@ -99,7 +99,7 @@ public class AccountService {
         Account oldAccount = atomicAccountService.queryAccountByRequest(QueryAccountRequest.builder()
                 .userId(userId).identityType(identityType).build());
         if (Objects.isNull(oldAccount)) {
-            throw new BusinessException(ZeusResultCode.USER_ACCOUNT_NOT_FOUND);
+            throw new BusinessException(ZeusResultCode.ACCOUNT_NOT_FOUND);
         }
 
         request.setId(oldAccount.getId());
@@ -110,7 +110,7 @@ public class AccountService {
     public void updateAccount(Long accountId, UpdateAccountRequest request) {
         Account oldAccount = atomicAccountService.queryAccountByRequest(QueryAccountRequest.builder().id(accountId).build());
         if (Objects.isNull(oldAccount)) {
-            throw new BusinessException(ZeusResultCode.USER_ACCOUNT_NOT_FOUND);
+            throw new BusinessException(ZeusResultCode.ACCOUNT_NOT_FOUND);
         }
 
         request.setId(oldAccount.getId());

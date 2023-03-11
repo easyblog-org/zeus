@@ -1,6 +1,5 @@
 package top.easyblog.titan.strategy.impl.login;
 
-import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import top.easyblog.titan.annotation.Transaction;
@@ -39,7 +38,7 @@ public class EmailLoginStrategy extends AbstractLoginStrategy {
                               UserHeaderImgService headerImgService,
                               AtomicUserRolesService atomicUserRolesService,
                               AtomicRolesService atomicRolesService) {
-        super(accountService, userService, randomNicknameService, headerImgService, atomicUserRolesService,atomicRolesService);
+        super(accountService, userService, randomNicknameService, headerImgService, atomicUserRolesService, atomicRolesService);
     }
 
 
@@ -72,9 +71,6 @@ public class EmailLoginStrategy extends AbstractLoginStrategy {
             throw new BusinessException(ZeusResultCode.EMAIL_ACCOUNT_EXISTS);
         }
         //检查密码是否符合
-        if (validatePasswdComplexity(request.getCredential()) >= MIX_PASSWORD_COMPLEXITY) {
-            throw new BusinessException(ZeusResultCode.PASSWORD_NOT_VALID);
-        }
         if (Boolean.FALSE.equals(StringUtils.equals(request.getCredential(), request.getCredentialAgain()))) {
             throw new BusinessException(ZeusResultCode.PASSWORD_NOT_EQUAL);
         }
@@ -82,5 +78,6 @@ public class EmailLoginStrategy extends AbstractLoginStrategy {
         UserDetailsBean userDetailsBean = processRegister(request);
         return AuthenticationDetailsBean.builder().user(userDetailsBean).build();
     }
+
 
 }

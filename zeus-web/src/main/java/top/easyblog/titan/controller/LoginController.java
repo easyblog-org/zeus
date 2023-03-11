@@ -34,7 +34,7 @@ public class LoginController {
     @ResponseWrapper
     @GetMapping("/captcha-code")
     public void sendCaptchaCode(@RequestParam("identifier_type") Integer identifierType,
-                                  @RequestParam("identifier") String identifier) {
+                                @RequestParam("identifier") String identifier) {
         loginService.sendCaptchaCode(identifierType, identifier);
     }
 
@@ -55,8 +55,8 @@ public class LoginController {
 
     @ResponseWrapper
     @PostMapping("/logout")
-    public void logout(@RequestBody @Valid LogoutRequest request) {
-        loginService.logout(request);
+    public Boolean logout(@RequestBody LogoutRequest request) {
+        return loginService.logout(request);
     }
 
     @ResponseWrapper

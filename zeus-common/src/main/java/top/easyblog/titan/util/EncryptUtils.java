@@ -22,7 +22,7 @@ public class EncryptUtils {
     private static final String SHA256 = "SHA-256";
     private static final String HmacMD5 = "HmacMD5";
     private static final String HmacSHA1 = "HmacSHA1";
-    private static final String HmacSHA256="HmacSHA256";
+    private static final String HmacSHA256 = "HmacSHA256";
     private static final String DES = "DES";
     private static final String AES = "AES";
     private static final int keysizeDES = 0;
@@ -31,6 +31,20 @@ public class EncryptUtils {
 
     private EncryptUtils() {
         //单例
+    }
+
+    public static void main(String[] args) {
+        String password = "admin123";
+        String xorEncode1 = XOREncode(password, Constants.USER_PASSWORD_SECRET_KEY);
+        String xorEncode2 = XOREncode(xorEncode1, Constants.USER_PASSWORD_SECRET_KEY);
+        String xorEncode3 = XOREncode(xorEncode2, Constants.USER_PASSWORD_SECRET_KEY);
+
+        System.out.println(xorEncode3);
+
+        String xorDecode1 = XORDecode(xorEncode3, Constants.USER_PASSWORD_SECRET_KEY);
+        String xorDecode2 = XORDecode(xorDecode1, Constants.USER_PASSWORD_SECRET_KEY);
+        String xorDecode3 = XORDecode(xorDecode2, Constants.USER_PASSWORD_SECRET_KEY);
+        System.out.println(xorDecode3);
     }
 
 
@@ -217,7 +231,6 @@ public class EncryptUtils {
     public static String SHA256(String res, String key) {
         return keyGeneratorMac(res, HmacSHA256, key);
     }
-
 
 
     /**

@@ -1,12 +1,11 @@
 package top.easyblog.titan.request;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 /**
  * @author frank.huang
@@ -24,6 +23,8 @@ public class QuerySignInLogListRequest {
     private Long userId;
 
     private List<Long> userIds;
+
+    private Long accountId;
 
     private Integer status;
 

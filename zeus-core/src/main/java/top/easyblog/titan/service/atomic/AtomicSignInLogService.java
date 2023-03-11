@@ -65,7 +65,15 @@ public class AtomicSignInLogService {
     }
 
     public List<SignInLog> querySignInLogListByRequest(QuerySignInLogListRequest request) {
-        return signInLogMapper.selectByExample(generateExamples(request));
+        SignInLogExample example = generateExamples(request);
+        if (Objects.nonNull(request.getLimit())) {
+            example.setLimit(request.getLimit());
+        }
+        if (Objects.nonNull(request.getOffset())) {
+            example.setOffset(request.getOffset());
+        }
+        example.setOrderByClause(" create_time desc");
+        return signInLogMapper.selectByExample(example);
     }
 
     public long countByRequest(QuerySignInLogListRequest request) {
@@ -85,18 +93,15 @@ public class AtomicSignInLogService {
         } else if (CollectionUtils.isNotEmpty(request.getUserIds())) {
             criteria.andUserIdIn(request.getUserIds());
         }
+        if (Objects.nonNull(request.getAccountId())) {
+            criteria.andAccountIdEqualTo(request.getAccountId());
+        }
         if (Objects.nonNull(request.getStatus())) {
             criteria.andStatusEqualTo(request.getStatus());
         } else if (CollectionUtils.isNotEmpty(request.getStatuses())) {
             criteria.andStatusIn(request.getStatuses());
         }
 
-        if (Objects.nonNull(request.getLimit())) {
-            example.setLimit(request.getLimit());
-        }
-        if (Objects.nonNull(request.getOffset())) {
-            example.setOffset(request.getOffset());
-        }
         return example;
     }
 

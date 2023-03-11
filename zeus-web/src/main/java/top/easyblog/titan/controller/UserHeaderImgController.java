@@ -4,10 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import top.easyblog.titan.annotation.RequestParamAlias;
 import top.easyblog.titan.annotation.ResponseWrapper;
+import top.easyblog.titan.bean.UserHeaderImgBean;
 import top.easyblog.titan.request.CreateUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
-import top.easyblog.titan.request.UpdateUserHeaderImgRequest;
+import top.easyblog.titan.response.PageResponse;
 import top.easyblog.titan.service.UserHeaderImgService;
 
 import javax.validation.Valid;
@@ -37,15 +38,7 @@ public class UserHeaderImgController {
 
     @ResponseWrapper
     @GetMapping("/list")
-    public Object queryList(@Valid @RequestParamAlias QueryUserHeaderImgsRequest request) {
+    public PageResponse<UserHeaderImgBean> queryList(@Valid @RequestParamAlias QueryUserHeaderImgsRequest request) {
         return headerImgService.queryUserHeaderList(request);
-    }
-
-    @ResponseWrapper
-    @PutMapping("/{id}")
-    public Object update(@PathVariable("id") Long id,
-                         @Valid UpdateUserHeaderImgRequest request) {
-        request.setId(id);
-        return headerImgService.updateUserHeaderImg(request);
     }
 }

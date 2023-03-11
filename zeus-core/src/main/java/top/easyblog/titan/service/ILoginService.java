@@ -36,7 +36,7 @@ public interface ILoginService {
      *
      * @param request
      */
-    void logout(LogoutRequest request);
+    boolean logout(LogoutRequest request);
 
     /**
      * 注册
@@ -62,7 +62,7 @@ public interface ILoginService {
      *
      * @return
      */
-    default void sendCaptchaCode(Integer identifierType,String identifier) {
+    default void sendCaptchaCode(Integer identifierType, String identifier) {
         throw new UnsupportedOperationException();
     }
 }

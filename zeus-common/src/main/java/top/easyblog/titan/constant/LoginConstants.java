@@ -14,7 +14,7 @@ public final class LoginConstants {
     /**
      * 用户登录 token 最大过期时间: 15天
      */
-    public final static Long LOGIN_TOKEN_MAX_EXPIRE = 60 * 60 * 24 * 15L;
+    public final static Long LOGIN_TOKEN_MAX_EXPIRE = 15L;
     /**
      * 用户登录token
      */

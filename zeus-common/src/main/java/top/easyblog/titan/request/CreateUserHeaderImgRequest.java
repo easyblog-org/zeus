@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author frank.huang
  * @date 2022/02/06 11:02
@@ -14,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateUserHeaderImgRequest {
-      private Long userId;
-      private String headerImgUrl;
-      private Integer status;
+    @NotNull(message = "Required param 'user_id' is not present.")
+    private Long userId;
+    private String headerImgUrl;
 }

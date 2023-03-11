@@ -39,9 +39,9 @@ public class LoginRequest implements BaseRequest {
      * 登录时关于用户的其他详细信息
      */
     private CreateSignInLogRequest extra;
-    
+
 
     public boolean validate() {
-        return IdentifierType.codeOf(identifierType) != null;
+        return IdentifierType.subCodeOf(identifierType) != null;
     }
 }

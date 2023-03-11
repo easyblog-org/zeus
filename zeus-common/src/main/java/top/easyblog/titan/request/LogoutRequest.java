@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author: frank.huang
@@ -21,18 +20,6 @@ public class LogoutRequest {
     /**
      * 用户id
      */
-    @NotNull(message = "Required parameter `user_id` is not present")
-    private Long userId;
-
-    /**
-     * 登录账户类型
-     */
-    @NotNull(message = "Required parameter `identifier_type` is not present")
-    private Integer identifierType;
-
-    /**
-     * 登录账号
-     */
-    @NotBlank(message = "Required parameter `identifier` is not present")
-    private String identifier;
+    @NotBlank(message = "Required parameter `token` is not present")
+    private String token;
 }

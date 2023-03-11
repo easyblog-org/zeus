@@ -3,17 +3,16 @@ package top.easyblog.titan.service.atomic;
 import com.google.common.collect.Iterables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import top.easyblog.titan.dao.auto.mapper.UserHeaderImgMapper;
 import top.easyblog.titan.dao.auto.model.UserHeaderImg;
 import top.easyblog.titan.dao.auto.model.UserHeaderImgExample;
+import top.easyblog.titan.enums.Status;
 import top.easyblog.titan.request.CreateUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgRequest;
 import top.easyblog.titan.request.QueryUserHeaderImgsRequest;
-import top.easyblog.titan.request.UpdateUserHeaderImgRequest;
 import top.easyblog.titan.util.JsonUtils;
 
 import java.util.Date;
@@ -36,6 +35,7 @@ public class AtomicUserHeaderImgService {
         UserHeaderImg userHeaderImg = new UserHeaderImg();
         userHeaderImg.setCreateTime(new Date());
         userHeaderImg.setUpdateTime(new Date());
+        userHeaderImg.setStatus(Status.ENABLE.getCode());
         BeanUtils.copyProperties(request, userHeaderImg);
         userHeaderImgMapper.insertSelective(userHeaderImg);
         log.info("[DB]Insert new header images: {}", JsonUtils.toJSONString(userHeaderImg));
@@ -43,6 +43,11 @@ public class AtomicUserHeaderImgService {
 
 
     public UserHeaderImg queryByRequest(QueryUserHeaderImgRequest request) {
+        if (Objects.isNull(request.getId()) &&
+                Objects.isNull(request.getUserId()) &&
+                Objects.nonNull(request.getStatus())) {
+            return null;
+        }
         UserHeaderImgExample example = new UserHeaderImgExample();
         UserHeaderImgExample.Criteria criteria = example.createCriteria();
         if (Objects.nonNull(request.getId())) {
@@ -51,12 +56,10 @@ public class AtomicUserHeaderImgService {
         if (Objects.nonNull(request.getUserId())) {
             criteria.andUserIdEqualTo(request.getUserId());
         }
-        if (CollectionUtils.isNotEmpty(request.getStatuses())) {
-            criteria.andStatusIn(request.getStatuses());
+        if (Objects.nonNull(request.getStatus())) {
+            criteria.andStatusEqualTo(request.getStatus());
         }
-        List<UserHeaderImg> userHeaderImgs = userHeaderImgMapper.selectByExample(example);
-        log.info("[DB]Get user header images: {}", JsonUtils.toJSONString(userHeaderImgs));
-        return Iterables.getFirst(userHeaderImgs, null);
+        return Iterables.getFirst(userHeaderImgMapper.selectByExample(example), null);
     }
 
 
@@ -95,20 +98,10 @@ public class AtomicUserHeaderImgService {
         return example;
     }
 
-    public void updateHeaderImgByRequest(UpdateUserHeaderImgRequest request) {
-        UserHeaderImg userHeaderImg = new UserHeaderImg();
-        if (Objects.nonNull(request.getStatus())) {
-            userHeaderImg.setStatus(request.getStatus());
-        }
-        if (StringUtils.isNotBlank(request.getHeaderImgUrl())) {
-            userHeaderImg.setHeaderImgUrl(request.getHeaderImgUrl());
-        }
-        if (Objects.nonNull(request.getUserId())) {
-            userHeaderImg.setUserId(request.getUserId());
-        }
-        userHeaderImg.setUpdateTime(new Date());
-        userHeaderImgMapper.updateByPrimaryKeySelective(userHeaderImg);
-        log.info("[DB]Update user header images: {}", JsonUtils.toJSONString(request));
+    public void updateHeaderImgByRequest(UserHeaderImg record) {
+        record.setUpdateTime(new Date());
+        userHeaderImgMapper.updateByPrimaryKeySelective(record);
+        log.info("[DB]Update user header images: {}", JsonUtils.toJSONString(record));
     }
 
 }

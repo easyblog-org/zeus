@@ -245,6 +245,11 @@ public class SignInLogExample {
             return (Criteria) this;
         }
 
+        public Criteria andAccountIdEqualTo(Long value) {
+            addCriterion("account_id =", value, "accountId");
+            return (Criteria) this;
+        }
+
         public Criteria andTokenIsNull() {
             addCriterion("token is null");
             return (Criteria) this;
