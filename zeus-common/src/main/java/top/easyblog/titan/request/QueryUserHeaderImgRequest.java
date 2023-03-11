@@ -1,7 +1,5 @@
 package top.easyblog.titan.request;
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,5 +16,5 @@ import lombok.NoArgsConstructor;
 public class QueryUserHeaderImgRequest {
     private Long id;
     private Long userId;
-    private List<Integer> statuses;
+    private Integer status;
 }

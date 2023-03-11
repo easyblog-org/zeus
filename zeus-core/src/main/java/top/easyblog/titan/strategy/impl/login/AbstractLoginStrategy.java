@@ -101,7 +101,7 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
             throw new BusinessException(ZeusResultCode.PASSWORD_VALID_FAILED);
         }
         return userService.queryUserDetails(QueryUserRequest.builder()
-                .id(currAccount.getUserId()).sections(String.format("%s,%s", LoginConstants.QUERY_CURRENT_HEADER_IMG, LoginConstants.QUERY_ROLE)).build());
+                .id(currAccount.getUserId()).sections(String.format("%s,%s,%s", LoginConstants.QUERY_CURRENT_HEADER_IMG, LoginConstants.QUERY_ROLE, LoginConstants.QUERY_CURRENT_HEADER_IMG)).build());
     }
 
     /**
@@ -121,7 +121,7 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
         headerImgService.createUserHeaderImg(CreateUserHeaderImgRequest.builder()
                 .userId(newUser.getId())
                 .headerImgUrl(Optional.ofNullable(headerImg).map(CreateUserHeaderImgRequest::getHeaderImgUrl).orElse(headerImgService.getDefaultUserHeaderImg()))
-                .status(Status.ENABLE.getCode()).build());
+                .build());
 
         //4. 创建账户并绑定user_id
         accountService.createAccount(CreateAccountRequest.builder()

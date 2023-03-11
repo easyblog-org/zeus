@@ -7,7 +7,6 @@ import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.bean.AuthenticationDetailsBean;
 import top.easyblog.titan.bean.LoginDetailsBean;
 import top.easyblog.titan.bean.UserDetailsBean;
-import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.enums.IdentifierType;
 import top.easyblog.titan.exception.BusinessException;
 import top.easyblog.titan.request.LoginRequest;
@@ -20,7 +19,6 @@ import top.easyblog.titan.service.UserHeaderImgService;
 import top.easyblog.titan.service.UserService;
 import top.easyblog.titan.service.atomic.AtomicRolesService;
 import top.easyblog.titan.service.atomic.AtomicUserRolesService;
-import top.easyblog.titan.util.EncryptUtils;
 import top.easyblog.titan.util.RegexUtils;
 
 import java.util.Objects;
@@ -73,11 +71,7 @@ public class EmailLoginStrategy extends AbstractLoginStrategy {
             throw new BusinessException(ZeusResultCode.EMAIL_ACCOUNT_EXISTS);
         }
         //检查密码是否符合
-        String password = decryptPassword(request.getCredential());
-        if (validatePasswdComplexity(password) >= MIX_PASSWORD_COMPLEXITY) {
-            throw new BusinessException(ZeusResultCode.PASSWORD_NOT_VALID);
-        }
-        if (Boolean.FALSE.equals(StringUtils.equals(password, decryptPassword(request.getCredentialAgain())))) {
+        if (Boolean.FALSE.equals(StringUtils.equals(request.getCredential(), request.getCredentialAgain()))) {
             throw new BusinessException(ZeusResultCode.PASSWORD_NOT_EQUAL);
         }
         //创建 User & Account
@@ -85,16 +79,5 @@ public class EmailLoginStrategy extends AbstractLoginStrategy {
         return AuthenticationDetailsBean.builder().user(userDetailsBean).build();
     }
 
-
-    public String decryptPassword(String originalPassword) {
-        if (StringUtils.isBlank(originalPassword)) {
-            return "";
-        }
-        return EncryptUtils.XORDecode(
-                EncryptUtils.XORDecode(
-                        EncryptUtils.XORDecode(originalPassword, Constants.USER_PASSWORD_SECRET_KEY),
-                        Constants.USER_PASSWORD_SECRET_KEY)
-                , Constants.USER_PASSWORD_SECRET_KEY);
-    }
 
 }
