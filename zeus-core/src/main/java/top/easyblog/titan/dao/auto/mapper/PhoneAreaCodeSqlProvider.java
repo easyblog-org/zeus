@@ -29,8 +29,8 @@ public class PhoneAreaCodeSqlProvider {
         SQL sql = new SQL();
         sql.INSERT_INTO("phone_area_code");
 
-        if (record.getId() != null) {
-            sql.VALUES("id", "#{id,jdbcType=BIGINT}");
+        if (record.getContinentCode() != null) {
+            sql.VALUES("continent_code", "#{continentCode,jdbcType=VARCHAR}");
         }
 
         if (record.getCrownCode() != null) {
@@ -67,6 +67,7 @@ public class PhoneAreaCodeSqlProvider {
         } else {
             sql.SELECT("id");
         }
+        sql.SELECT("continent_code");
         sql.SELECT("crown_code");
         sql.SELECT("country_code");
         sql.SELECT("area_code");
@@ -99,6 +100,10 @@ public class PhoneAreaCodeSqlProvider {
 
         if (record.getId() != null) {
             sql.SET("id = #{record.id,jdbcType=BIGINT}");
+        }
+
+        if (record.getContinentCode() != null) {
+            sql.SET("continent_code = #{record.continentCode,jdbcType=VARCHAR}");
         }
 
         if (record.getCrownCode() != null) {
@@ -134,6 +139,7 @@ public class PhoneAreaCodeSqlProvider {
         sql.UPDATE("phone_area_code");
 
         sql.SET("id = #{record.id,jdbcType=BIGINT}");
+        sql.SET("continent_code = #{record.continentCode,jdbcType=VARCHAR}");
         sql.SET("crown_code = #{record.crownCode,jdbcType=VARCHAR}");
         sql.SET("country_code = #{record.countryCode,jdbcType=VARCHAR}");
         sql.SET("area_code = #{record.areaCode,jdbcType=VARCHAR}");
@@ -149,6 +155,10 @@ public class PhoneAreaCodeSqlProvider {
     public String updateByPrimaryKeySelective(PhoneAreaCode record) {
         SQL sql = new SQL();
         sql.UPDATE("phone_area_code");
+
+        if (record.getContinentCode() != null) {
+            sql.SET("continent_code = #{continentCode,jdbcType=VARCHAR}");
+        }
 
         if (record.getCrownCode() != null) {
             sql.SET("crown_code = #{crownCode,jdbcType=VARCHAR}");

@@ -34,8 +34,7 @@ public class PhoneAreaCodeController {
     @PutMapping("/{id}")
     public void update(@PathVariable("id") Long areaCodeId,
                        @RequestBody @Valid UpdatePhoneAreaCodeRequest request) {
-        request.setId(areaCodeId);
-        phoneAreaCodeService.updatePhoneAreaCode(request);
+        phoneAreaCodeService.updatePhoneAreaCode(areaCodeId, request);
     }
 
     @ResponseWrapper

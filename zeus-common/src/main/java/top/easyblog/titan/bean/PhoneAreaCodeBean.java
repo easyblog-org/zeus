@@ -16,6 +16,8 @@ import java.util.Date;
 public class PhoneAreaCodeBean {
     private Long id;
 
+    private String continentCode;
+
     private String crownCode;
 
     private String countryCode;

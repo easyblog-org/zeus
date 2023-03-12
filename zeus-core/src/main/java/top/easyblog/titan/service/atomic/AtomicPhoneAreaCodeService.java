@@ -44,8 +44,11 @@ public class AtomicPhoneAreaCodeService {
         if (Objects.nonNull(request.getId())) {
             criteria.andIdEqualTo(request.getId());
         }
+        if (StringUtils.isNotBlank(request.getContinentCode())) {
+            criteria.andContinentCodeEqualTo(request.getContinentCode());
+        }
         if (StringUtils.isNotBlank(request.getCrownCode())) {
-            criteria.andCountryCodeEqualTo(request.getCountryCode());
+            criteria.andCrownCodeEqualTo(request.getCrownCode());
         }
         if (StringUtils.isNotBlank(request.getCountryCode())) {
             criteria.andCountryCodeEqualTo(request.getCountryCode());
@@ -59,6 +62,12 @@ public class AtomicPhoneAreaCodeService {
 
     public List<PhoneAreaCode> queryPhoneAreaCodeListByRequest(QueryPhoneAreaCodeListRequest request) {
         PhoneAreaCodeExample example = generatePhoneAreaCodeExamples(request);
+        if (Objects.nonNull(request.getLimit())) {
+            example.setLimit(request.getLimit());
+        }
+        if (Objects.nonNull(request.getOffset())) {
+            example.setOffset(request.getOffset());
+        }
         return phoneAreaCodeMapper.selectByExample(example);
     }
 
@@ -72,14 +81,14 @@ public class AtomicPhoneAreaCodeService {
         if (CollectionUtils.isNotEmpty(request.getIds())) {
             criteria.andIdIn(request.getIds());
         }
+        if (StringUtils.isNotBlank(request.getContinentCode())) {
+            criteria.andContinentCodeEqualTo(request.getContinentCode());
+        }
+        if (StringUtils.isNotBlank(request.getCountryCode())) {
+            criteria.andCountryCodeEqualTo(request.getCountryCode());
+        }
         if (StringUtils.isNotBlank(request.getAreaName())) {
             criteria.andAreaNameLike("%" + request.getAreaName() + "%");
-        }
-        if (Objects.nonNull(request.getLimit())) {
-            example.setLimit(request.getLimit());
-        }
-        if (Objects.nonNull(request.getOffset())) {
-            example.setOffset(request.getOffset());
         }
 
         return example;

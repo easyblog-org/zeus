@@ -14,8 +14,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdatePhoneAreaCodeRequest {
-    private Long id;
-
     private String crownCode;
 
     private String countryCode;

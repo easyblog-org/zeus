@@ -22,25 +22,26 @@ public interface PhoneAreaCodeMapper {
     int deleteByPrimaryKey(Long id);
 
     @Insert({
-            "insert into phone_area_code (id, crown_code, ",
+            "insert into phone_area_code (continent_code, crown_code, ",
             "country_code, area_code, ",
             "area_name, create_time, ",
             "update_time)",
-            "values (#{id,jdbcType=BIGINT}, #{crownCode,jdbcType=VARCHAR}, ",
+            "values (#{continentCode,jdbcType=VARCHAR}, #{crownCode,jdbcType=VARCHAR}, ",
             "#{countryCode,jdbcType=VARCHAR}, #{areaCode,jdbcType=VARCHAR}, ",
             "#{areaName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, ",
             "#{updateTime,jdbcType=TIMESTAMP})"
     })
-    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+    @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "id", before = false, resultType = Long.class)
     int insert(PhoneAreaCode record);
 
     @InsertProvider(type = PhoneAreaCodeSqlProvider.class, method = "insertSelective")
-    @Options(useGeneratedKeys = true, keyProperty = "id", keyColumn = "id")
+    @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "id", before = false, resultType = Long.class)
     int insertSelective(PhoneAreaCode record);
 
     @SelectProvider(type = PhoneAreaCodeSqlProvider.class, method = "selectByExample")
     @Results({
             @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
+            @Result(column = "continent_code", property = "continentCode", jdbcType = JdbcType.VARCHAR),
             @Result(column = "crown_code", property = "crownCode", jdbcType = JdbcType.VARCHAR),
             @Result(column = "country_code", property = "countryCode", jdbcType = JdbcType.VARCHAR),
             @Result(column = "area_code", property = "areaCode", jdbcType = JdbcType.VARCHAR),
@@ -52,12 +53,14 @@ public interface PhoneAreaCodeMapper {
 
     @Select({
             "select",
-            "id, crown_code, country_code, area_code, area_name, create_time, update_time",
+            "id, continent_code, crown_code, country_code, area_code, area_name, create_time, ",
+            "update_time",
             "from phone_area_code",
             "where id = #{id,jdbcType=BIGINT}"
     })
     @Results({
             @Result(column = "id", property = "id", jdbcType = JdbcType.BIGINT, id = true),
+            @Result(column = "continent_code", property = "continentCode", jdbcType = JdbcType.VARCHAR),
             @Result(column = "crown_code", property = "crownCode", jdbcType = JdbcType.VARCHAR),
             @Result(column = "country_code", property = "countryCode", jdbcType = JdbcType.VARCHAR),
             @Result(column = "area_code", property = "areaCode", jdbcType = JdbcType.VARCHAR),
@@ -78,7 +81,8 @@ public interface PhoneAreaCodeMapper {
 
     @Update({
             "update phone_area_code",
-            "set crown_code = #{crownCode,jdbcType=VARCHAR},",
+            "set continent_code = #{continentCode,jdbcType=VARCHAR},",
+            "crown_code = #{crownCode,jdbcType=VARCHAR},",
             "country_code = #{countryCode,jdbcType=VARCHAR},",
             "area_code = #{areaCode,jdbcType=VARCHAR},",
             "area_name = #{areaName,jdbcType=VARCHAR},",
