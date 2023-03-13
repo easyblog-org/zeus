@@ -1,11 +1,13 @@
 package top.easyblog.titan.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.PhoneAreaCodeBean;
 import top.easyblog.titan.constant.Constants;
 import top.easyblog.titan.dao.auto.model.PhoneAreaCode;
@@ -35,7 +37,9 @@ public class PhoneAreaCodeService {
     @Autowired
     private AtomicPhoneAreaCodeService atomicPhoneAreaCodeService;
 
-    @Transaction
+    @Value("${custom.batch-delete-password}")
+    private String batchDeletePassword;
+
     public void createPhoneAreaCode(CreatePhoneAreaCodeRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
@@ -50,11 +54,11 @@ public class PhoneAreaCodeService {
         if (Objects.isNull(continentEnum)) {
             throw new BusinessException(ZeusResultCode.INVALID_CONTINENT_TYPE);
         }
-        
+
         atomicPhoneAreaCodeService.insertPhoneAreaCodeByRequest(request);
     }
 
-    @Transaction
+
     public PhoneAreaCodeBean queryPhoneAreaCodeDetails(QueryPhoneAreaCodeRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
@@ -68,7 +72,7 @@ public class PhoneAreaCodeService {
         return phoneAreaCodeBean;
     }
 
-    @Transaction
+
     public PageResponse<PhoneAreaCodeBean> queryPhoneAreaCodePage(QueryPhoneAreaCodeListRequest request) {
         if (Objects.isNull(request)) {
             throw new BusinessException(ZeusResultCode.REQUIRED_REQUEST_PARAM_NOT_EXISTS);
@@ -102,7 +106,7 @@ public class PhoneAreaCodeService {
         }).collect(Collectors.toList());
     }
 
-    @Transaction
+
     public void updatePhoneAreaCode(Long areaCodeId, UpdatePhoneAreaCodeRequest request) {
         PhoneAreaCode areaCode = atomicPhoneAreaCodeService.queryPhoneAreaCodeByRequest(QueryPhoneAreaCodeRequest.builder()
                 .id(areaCodeId).build());
@@ -114,5 +118,17 @@ public class PhoneAreaCodeService {
         phoneAreaCode.setId(areaCodeId);
         BeanUtils.copyProperties(request, phoneAreaCode);
         atomicPhoneAreaCodeService.updatePhoneAreaCodeByRequest(phoneAreaCode);
+    }
+
+
+    public void deleteByIds(List<Long> ids, String password) {
+        if (CollectionUtils.isEmpty(ids)) {
+            log.info("Empty delete phone area code list,ignore operate.");
+            return;
+        }
+        if (StringUtils.isBlank(password) || !StringUtils.equals(password, batchDeletePassword)) {
+            throw new BusinessException(ZeusResultCode.DELETE_OPERATION_NOT_PERMISSION);
+        }
+        atomicPhoneAreaCodeService.deleteByIds(ids);
     }
 }

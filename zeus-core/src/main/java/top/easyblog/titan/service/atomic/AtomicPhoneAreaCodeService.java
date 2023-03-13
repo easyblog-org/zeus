@@ -99,4 +99,12 @@ public class AtomicPhoneAreaCodeService {
         phoneAreaCodeMapper.updateByPrimaryKeySelective(areaCode);
         log.info("[DB] update area code:{}", JsonUtils.toJSONString(areaCode));
     }
+
+    public void deleteByIds(List<Long> ids) {
+        PhoneAreaCodeExample example = new PhoneAreaCodeExample();
+        PhoneAreaCodeExample.Criteria criteria = example.createCriteria();
+        criteria.andIdIn(ids);
+        phoneAreaCodeMapper.deleteByExample(example);
+        log.info("[DB] batch delete phone area code by id:{}", ids);
+    }
 }
