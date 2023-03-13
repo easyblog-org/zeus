@@ -15,5 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class QueryPhoneAreaCodeListRequest extends PageRequest {
     private List<Long> ids;
+    private String continentCode;
+    private String countryCode;
     private String areaName;
 }

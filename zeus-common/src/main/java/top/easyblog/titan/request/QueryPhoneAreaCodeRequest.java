@@ -16,6 +16,9 @@ import lombok.NoArgsConstructor;
 public class QueryPhoneAreaCodeRequest {
     private Long id;
 
+    private String continentCode;
+    ;
+
     private String crownCode;
 
     private String countryCode;

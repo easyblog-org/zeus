@@ -11,6 +11,7 @@ import top.easyblog.titan.request.UpdatePhoneAreaCodeRequest;
 import top.easyblog.titan.service.PhoneAreaCodeService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author: frank.huang
@@ -34,8 +35,7 @@ public class PhoneAreaCodeController {
     @PutMapping("/{id}")
     public void update(@PathVariable("id") Long areaCodeId,
                        @RequestBody @Valid UpdatePhoneAreaCodeRequest request) {
-        request.setId(areaCodeId);
-        phoneAreaCodeService.updatePhoneAreaCode(request);
+        phoneAreaCodeService.updatePhoneAreaCode(areaCodeId, request);
     }
 
     @ResponseWrapper
@@ -48,6 +48,13 @@ public class PhoneAreaCodeController {
     @PostMapping
     public void create(@RequestBody @Valid CreatePhoneAreaCodeRequest request) {
         phoneAreaCodeService.createPhoneAreaCode(request);
+    }
+
+    @ResponseWrapper
+    @DeleteMapping
+    public void deleteByIds(@RequestParam("phone_area_code_ids") List<Long> phoneAreaCodeIds,
+                            @RequestParam("password") String password) {
+        phoneAreaCodeService.deleteByIds(phoneAreaCodeIds, password);
     }
 
 }

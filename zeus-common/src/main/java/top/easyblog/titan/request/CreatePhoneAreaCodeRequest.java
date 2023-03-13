@@ -16,19 +16,23 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreatePhoneAreaCodeRequest {
+
+    @NotBlank(message = "Required parameter `continent_code` is not present!")
+    private String continentCode;
+
     /**
      * 国际冠码 eg:+86
      */
-    @NotBlank(message = "Required parameter `crownCode` is not present!")
+    @NotBlank(message = "Required parameter `crown_code` is not present!")
     private String crownCode;
     /**
      * 国家码
      */
-    @NotBlank(message = "Required parameter `countryCode` is not present!")
+    @NotBlank(message = "Required parameter `country_code` is not present!")
     private String countryCode;
     /**
      * 区域名称
      */
-    @NotBlank(message = "Required parameter `areaName` is not present!")
+    @NotBlank(message = "Required parameter `area_name` is not present!")
     private String areaName;
 }

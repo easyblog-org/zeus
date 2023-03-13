@@ -185,6 +185,76 @@ public class PhoneAreaCodeExample {
             return (Criteria) this;
         }
 
+        public Criteria andContinentCodeIsNull() {
+            addCriterion("continent_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeIsNotNull() {
+            addCriterion("continent_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeEqualTo(String value) {
+            addCriterion("continent_code =", value, "continentCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeNotEqualTo(String value) {
+            addCriterion("continent_code <>", value, "continentCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeGreaterThan(String value) {
+            addCriterion("continent_code >", value, "continentCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("continent_code >=", value, "continentCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeLessThan(String value) {
+            addCriterion("continent_code <", value, "continentCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeLessThanOrEqualTo(String value) {
+            addCriterion("continent_code <=", value, "continentCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeLike(String value) {
+            addCriterion("continent_code like", value, "continentCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeNotLike(String value) {
+            addCriterion("continent_code not like", value, "continentCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeIn(List<String> values) {
+            addCriterion("continent_code in", values, "continentCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeNotIn(List<String> values) {
+            addCriterion("continent_code not in", values, "continentCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeBetween(String value1, String value2) {
+            addCriterion("continent_code between", value1, value2, "continentCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andContinentCodeNotBetween(String value1, String value2) {
+            addCriterion("continent_code not between", value1, value2, "continentCode");
+            return (Criteria) this;
+        }
+
         public Criteria andCrownCodeIsNull() {
             addCriterion("crown_code is null");
             return (Criteria) this;
