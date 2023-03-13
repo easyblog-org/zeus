@@ -15,9 +15,7 @@ import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.QueryUserRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.response.ZeusResultCode;
-import top.easyblog.titan.service.*;
-import top.easyblog.titan.service.atomic.AtomicRolesService;
-import top.easyblog.titan.service.atomic.AtomicUserRolesService;
+import top.easyblog.titan.service.RedisService;
 
 import static top.easyblog.titan.constant.LoginConstants.PHONE_LOGIN_CAPTCHA_CODE;
 
@@ -32,16 +30,7 @@ public class PhoneCaptchaLoginStrategy extends PhoneLoginStrategy {
 
     @Autowired
     private RedisService redisService;
-
-
-    public PhoneCaptchaLoginStrategy(AccountService accountService,
-                                     UserService userService,
-                                     RandomNicknameService randomNicknameService,
-                                     UserHeaderImgService headerImgService,
-                                     AtomicUserRolesService atomicUserRolesService,
-                                     AtomicRolesService atomicRolesService) {
-        super(accountService, userService, randomNicknameService, headerImgService, atomicUserRolesService,atomicRolesService);
-    }
+    
 
     @Override
     public Integer getIdentifierType() {

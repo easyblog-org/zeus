@@ -13,12 +13,6 @@ import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.QueryAccountRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.response.ZeusResultCode;
-import top.easyblog.titan.service.AccountService;
-import top.easyblog.titan.service.RandomNicknameService;
-import top.easyblog.titan.service.UserHeaderImgService;
-import top.easyblog.titan.service.UserService;
-import top.easyblog.titan.service.atomic.AtomicRolesService;
-import top.easyblog.titan.service.atomic.AtomicUserRolesService;
 import top.easyblog.titan.util.RegexUtils;
 
 import java.util.Objects;
@@ -31,16 +25,6 @@ import java.util.Objects;
  */
 @Component
 public class EmailLoginStrategy extends AbstractLoginStrategy {
-
-    public EmailLoginStrategy(AccountService accountService,
-                              UserService userService,
-                              RandomNicknameService randomNicknameService,
-                              UserHeaderImgService headerImgService,
-                              AtomicUserRolesService atomicUserRolesService,
-                              AtomicRolesService atomicRolesService) {
-        super(accountService, userService, randomNicknameService, headerImgService, atomicUserRolesService, atomicRolesService);
-    }
-
 
     @Override
     public Integer getIdentifierType() {

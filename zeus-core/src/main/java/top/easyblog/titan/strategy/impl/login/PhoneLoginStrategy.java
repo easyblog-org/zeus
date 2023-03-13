@@ -14,9 +14,7 @@ import top.easyblog.titan.request.LoginRequest;
 import top.easyblog.titan.request.QueryPhoneAuthRequest;
 import top.easyblog.titan.request.RegisterUserRequest;
 import top.easyblog.titan.response.ZeusResultCode;
-import top.easyblog.titan.service.*;
-import top.easyblog.titan.service.atomic.AtomicRolesService;
-import top.easyblog.titan.service.atomic.AtomicUserRolesService;
+import top.easyblog.titan.service.PhoneAuthService;
 import top.easyblog.titan.util.RegexUtils;
 
 import java.util.Objects;
@@ -33,14 +31,6 @@ public class PhoneLoginStrategy extends AbstractLoginStrategy {
     @Autowired
     private PhoneAuthService phoneAuthService;
 
-    public PhoneLoginStrategy(AccountService accountService,
-                              UserService userService,
-                              RandomNicknameService randomNicknameService,
-                              UserHeaderImgService headerImgService,
-                              AtomicUserRolesService atomicUserRolesService,
-                              AtomicRolesService atomicRolesService) {
-        super(accountService, userService, randomNicknameService, headerImgService, atomicUserRolesService, atomicRolesService);
-    }
 
     @Override
     public Integer getIdentifierType() {

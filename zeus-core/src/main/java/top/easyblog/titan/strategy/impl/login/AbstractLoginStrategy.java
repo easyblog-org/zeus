@@ -1,8 +1,9 @@
 package top.easyblog.titan.strategy.impl.login;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import top.easyblog.titan.annotation.Transaction;
 import top.easyblog.titan.bean.AccountBean;
 import top.easyblog.titan.bean.UserDetailsBean;
@@ -31,7 +32,7 @@ import java.util.Optional;
  * @date: 2022-02-13 21:55
  */
 @Slf4j
-@AllArgsConstructor
+@Component
 public abstract class AbstractLoginStrategy implements ILoginStrategy {
 
     //最小密码复杂度
@@ -40,16 +41,22 @@ public abstract class AbstractLoginStrategy implements ILoginStrategy {
     // 默认用户角色
     public static final String DEFAULT_USER_ROLE_NAME = "NORMAL";
 
+    @Autowired
     protected AccountService accountService;
 
+    @Autowired
     protected UserService userService;
 
+    @Autowired
     protected RandomNicknameService randomNicknameService;
 
+    @Autowired
     protected UserHeaderImgService headerImgService;
 
+    @Autowired
     private AtomicUserRolesService atomicUserRolesService;
 
+    @Autowired
     private AtomicRolesService atomicRolesService;
 
 
